@@ -17,6 +17,10 @@ new Promise(function(accept){
 
 	document.head.appendChild(statelessJs)
 }).then(function(){
+	return promise.resolve(function(str){
+		eval(str)
+	})
+}).then(function(saferEval){
 	stateless.register(`<div id="wrapper"></div>`)
 	stateless.register(
 		`<div id="jsonDisplay" class="data-div">
