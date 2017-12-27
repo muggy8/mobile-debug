@@ -1,10 +1,10 @@
 var inspect
 new Promise(function(accept){
-	// load dependencies here	
+	// load dependencies here
 	var statelessJs = document.createElement("script")
 	statelessJs.onload = statelessJs.onreadystatechange = function(){
 		if (statelessJs.readyState == "loaded" || statelessJs.readyState == "complete") {}
-		
+
 		if (document.readyState!='loading'){
 			accept()
 		} else {
@@ -14,12 +14,12 @@ new Promise(function(accept){
 	statelessJs.src = "https://unpkg.com/statelessjs"
 	statelessJs.setAttribute("async", true)
 	statelessJs.setAttribute("defer", true)
-	
+
 	document.head.appendChild(statelessJs)
 }).then(function(){
 	stateless.register(`<div id="wrapper"></div>`)
 	stateless.register(
-		`<div id="jsonDisplay" class="data-div" onclick="this.scope.minimize(this.scope.property)">
+		`<div id="jsonDisplay" class="data-div" onclick="this.scope.hide()">
 			<div class="starting-brace">{</div>
 			<div class="properties"></div>
 			<div class="ending-brace">}</div>
@@ -27,7 +27,7 @@ new Promise(function(accept){
 	)
 
 	stateless.register(
-		`<div id="jsonHidden" class="data-div" onclick="this.scope.show(this.scope.property)">
+		`<div id="jsonHidden" class="data-div" onclick="this.scope.show()">
 			<div>{...}</div>
 		</div>`
 	)
@@ -37,17 +37,27 @@ new Promise(function(accept){
 			<pre></pre>
 		</div>`
 	)
-	
+
+	var createDomStringRepresentation = function(text){
+		return stateless.instantiate("otherData").html("$pre", text)
+	}
+
 	var createDomJsonRepresentation = function(theJson){
 		var jsonBlock = stateless.instantiate("wrapper")
-		var displayed = stateless.instantiate("jsonDisplay")
 		var hidden = stateless.instantiate("jsonHidden")
-		
-		jsonBlock.define("data", theJson)
-		
-		return jsonBlock
+
+		jsonBlock
+			.define("data", theJson)
+			.define("show", function(){
+				var keys = Object.keys(theJson)
+				var props = Object.getOwnPropertyNames(theJson)
+
+				props.sort
+			})
+
+		return jsonBlock.append(hidden)
 	}
-	
+
 	var domConsole = inspect = stateless
 		.instantiate("wrapper")
 		.addClass("console")
@@ -55,13 +65,29 @@ new Promise(function(accept){
 		.define("log", {
 			asVar: function(){
 				Array.prototype.forEach.call(arguments, function(item){
-					if (typeof item == "object"){
+					if (item === null){
+						domConsole.append(createDomStringRepresentation("null"))
+					}
+					else if (typeof item == "object"){
 						domConsole.append(createDomJsonRepresentation(item))
 					}
+					else if (typeof item == "string"){
+						domConsole.append(createDomStringRepresentation(item))
+					}
+					else if (typeof item == "function" || typeof item == "number"){
+						domConsole.append(createDomStringRepresentation(item.toString()))
+					}
+					else if (typeof item == "boolean"){
+						domConsole.append(createDomStringRepresentation(item ? "true" : "false"))
+					}
+					else if (typeof item == "undefined"){
+						domConsole.append(createDomStringRepresentation("undefined"))
+					}
 				})
-				
+
 			}
 		})
+		.css("max-height", "3560px")
+		.css("scroll", "auto")
 
-	
 })
