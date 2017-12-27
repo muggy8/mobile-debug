@@ -19,7 +19,7 @@ new Promise(function(accept){
 }).then(function(){
 	stateless.register(`<div id="wrapper"></div>`)
 	stateless.register(
-		`<div id="jsonDisplay" class="data-div" onclick="this.scope.hide()">
+		`<div id="jsonDisplay" class="data-div">
 			<div class="starting-brace">{</div>
 			<div class="properties"></div>
 			<div class="ending-brace">}</div>
@@ -27,7 +27,7 @@ new Promise(function(accept){
 	)
 
 	stateless.register(
-		`<div id="jsonHidden" class="data-div" onclick="this.scope.show()">
+		`<div id="jsonHidden" class="data-div">
 			<div>{...}</div>
 		</div>`
 	)
@@ -44,18 +44,50 @@ new Promise(function(accept){
 
 	var createDomJsonRepresentation = function(theJson){
 		var jsonBlock = stateless.instantiate("wrapper")
-		var hidden = stateless.instantiate("jsonHidden")
 
-		jsonBlock
-			.define("data", theJson)
-			.define("show", function(){
+		var hidden = stateless
+			.instantiate("jsonHidden")
+			.on("click", function(){
 				var keys = Object.keys(theJson)
 				var props = Object.getOwnPropertyNames(theJson)
 
-				props.sort
+				hidden.unlink()
+				jsonBlock.append(shown)
+
+				props.forEach(function(item){
+
+				})
+			})
+
+		var shown = stateless
+			.instantiate("jsonDisplay")
+			.on("click", function(){
+				shown.unlink()
+				jsonBlock.append(hidden)
 			})
 
 		return jsonBlock.append(hidden)
+	}
+
+	var createAppropriateRepresentation = function(somedata){
+		if (somedata === null){
+			return createDomStringRepresentation("null")
+		}
+		else if (typeof somedata == "object"){
+			return createDomJsonRepresentation(somedata)
+		}
+		else if (typeof somedata == "string"){
+			return createDomStringRepresentation(somedata)
+		}
+		else if (typeof somedata == "function" || typeof somedata == "number"){
+			return createDomStringRepresentation(somedata.toString())
+		}
+		else if (typeof somedata == "boolean"){
+			return createDomStringRepresentation(somedata ? "true" : "false")
+		}
+		else{
+			return createDomStringRepresentation("undefined")
+		}
 	}
 
 	var domConsole = inspect = stateless
@@ -65,29 +97,12 @@ new Promise(function(accept){
 		.define("log", {
 			asVar: function(){
 				Array.prototype.forEach.call(arguments, function(item){
-					if (item === null){
-						domConsole.append(createDomStringRepresentation("null"))
-					}
-					else if (typeof item == "object"){
-						domConsole.append(createDomJsonRepresentation(item))
-					}
-					else if (typeof item == "string"){
-						domConsole.append(createDomStringRepresentation(item))
-					}
-					else if (typeof item == "function" || typeof item == "number"){
-						domConsole.append(createDomStringRepresentation(item.toString()))
-					}
-					else if (typeof item == "boolean"){
-						domConsole.append(createDomStringRepresentation(item ? "true" : "false"))
-					}
-					else if (typeof item == "undefined"){
-						domConsole.append(createDomStringRepresentation("undefined"))
-					}
+					domConsole.append(createAppropriateRepresentation(item))
 				})
-
 			}
 		})
 		.css("max-height", "3560px")
-		.css("scroll", "auto")
+		.css("overflow", "auto")
+		.css("font-family", "monospace")
 
 })
