@@ -33,10 +33,17 @@ new Promise(function(accept){
 	)
 
 	stateless.register(
+		`<div id="keyVal">
+			<div class="key"></div>
+			<div class="val"></div>
+		</div>`
+	)
+	stateless.register(
 		`<div id="otherData" class="data-div">
 			<pre></pre>
 		</div>`
 	)
+	stateless.register(`<style id="style"></style>`)
 
 	var createDomStringRepresentation = function(text){
 		return stateless.instantiate("otherData").html("$pre", text)
@@ -47,21 +54,40 @@ new Promise(function(accept){
 
 		var hidden = stateless
 			.instantiate("jsonHidden")
-			.on("click", function(){
-				var keys = Object.keys(theJson)
-				var props = Object.getOwnPropertyNames(theJson)
-
+			.on("dblclick", function(ev){
+				ev.stopPropagation()
 				hidden.unlink()
 				jsonBlock.append(shown)
 
-				props.forEach(function(item){
+				var keys = Object.keys(theJson)
+				var props = Object.getOwnPropertyNames(theJson)
+				if (shown.children.length > 0 ){
+					return
+				}
 
+
+				props.forEach(function(item){
+					var keyValDomPair = stateless
+						.instantiate("keyVal")
+						.html("$ .key", item)
+						.append("$ .val", createAppropriateRepresentation(theJson[item]))
+					shown.appendChild("$ .properties", keyValDomPair)
 				})
+
+				var inheritedFrom = Object.getPrototypeOf(theJson)
+				if (inheritedFrom){
+					shown.appendChild("$ .properties", stateless
+						.instantiate("keyVal")
+						.html("$ .key", "__proto__")
+						.append("$ .val", createAppropriateRepresentation(inheritedFrom))
+					)
+				}
 			})
 
 		var shown = stateless
 			.instantiate("jsonDisplay")
-			.on("click", function(){
+			.on("dblclick", function(ev){
+				ev.stopPropagation()
 				shown.unlink()
 				jsonBlock.append(hidden)
 			})
@@ -92,7 +118,33 @@ new Promise(function(accept){
 
 	var domConsole = inspect = stateless
 		.instantiate("wrapper")
-		.addClass("console")
+		.attr("id", "mobile-console")
+		.appendChild(
+			stateless
+				.instantiate("style")
+				.html(
+					`#mobile-console {
+						max-height: 360px;
+						overflow: auto;
+						font-family: monospace;
+					}
+					#mobile-console .jsonDisplay .properties {
+						margin-left: 1em;
+					}
+					#mobile-console .jsonDisplay .properties .keyVal {
+						display: flex
+					}
+					#mobile-console .jsonDisplay .properties .keyVal .val {
+						flex-grow: 1;
+					}
+					#mobile-console .jsonDisplay .properties .keyVal .key:after {
+						content: ":";
+					}
+					#mobile-console .jsonHidden {
+						cursor: pointer;
+					}`
+				)
+		)
 		.render()
 		.define("log", {
 			asVar: function(){
@@ -101,8 +153,5 @@ new Promise(function(accept){
 				})
 			}
 		})
-		.css("max-height", "3560px")
-		.css("overflow", "auto")
-		.css("font-family", "monospace")
 
 })
