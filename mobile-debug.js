@@ -17,11 +17,12 @@ new Promise(function(accept){
 
 	document.head.appendChild(statelessJs)
 }).then(function(){
-	return promise.resolve(function(str){
+	return Promise.resolve(function(str){
 		eval(str)
 	})
 }).then(function(saferEval){
 	stateless.register(`<div id="wrapper"></div>`)
+
 	stateless.register(
 		`<div id="jsonDisplay" class="data-div">
 			<div class="starting-brace">{</div>
@@ -32,7 +33,7 @@ new Promise(function(accept){
 
 	stateless.register(
 		`<div id="jsonHidden" class="data-div">
-			<div>{...}</div>
+			<div class="json-placeholder">{...}</div>
 		</div>`
 	)
 
@@ -42,12 +43,12 @@ new Promise(function(accept){
 			<div class="val"></div>
 		</div>`
 	)
+
 	stateless.register(
 		`<div id="otherData" class="data-div">
-			<pre></pre>
+			<pre style="margin: 0"></pre>
 		</div>`
 	)
-	stateless.register(`<style id="style"></style>`)
 
 	var createDomStringRepresentation = function(text){
 		return stateless.instantiate("otherData").html("$pre", text)
@@ -69,11 +70,10 @@ new Promise(function(accept){
 					return
 				}
 
-
 				props.forEach(function(item){
 					var keyValDomPair = stateless
 						.instantiate("keyVal")
-						.html("$ .key", item)
+						.html("$ .key", '"' + item + '": ')
 						.append("$ .val", createAppropriateRepresentation(theJson[item]))
 					shown.appendChild("$ .properties", keyValDomPair)
 				})
@@ -96,12 +96,32 @@ new Promise(function(accept){
 				jsonBlock.append(hidden)
 			})
 
-		return jsonBlock.append(hidden)
+		return jsonBlock
+			.append(hidden)
+			.property("useBrackets", {
+				static: function(bracket){
+					shown
+						.html("$ .starting-brace", bracket[0])
+						.html("$ .ending-brace", bracket[1])
+					hidden
+						.html(
+							"$ .json-placeholder",
+							hidden.html("$ .json-placeholder")
+								.replace("{", bracket[0])
+								.replace("}", bracket[1])
+						)
+				}
+			})
 	}
 
 	var createAppropriateRepresentation = function(somedata){
 		if (somedata === null){
 			return createDomStringRepresentation("null")
+		}
+		else if (typeof somedata == "object" && Array.isArray(somedata)){
+			var jsonRep = createDomJsonRepresentation(somedata)
+			jsonRep.useBrackets("[]")
+			return jsonRep
 		}
 		else if (typeof somedata == "object"){
 			return createDomJsonRepresentation(somedata)
@@ -125,7 +145,7 @@ new Promise(function(accept){
 		.attr("id", "mobile-console")
 		.appendChild(
 			stateless
-				.instantiate("style")
+				.view("<style></style>")
 				.html(
 					`#mobile-console {
 						max-height: 360px;
@@ -140,9 +160,6 @@ new Promise(function(accept){
 					}
 					#mobile-console .jsonDisplay .properties .keyVal .val {
 						flex-grow: 1;
-					}
-					#mobile-console .jsonDisplay .properties .keyVal .key:after {
-						content: ":";
 					}
 					#mobile-console .jsonHidden {
 						cursor: pointer;
