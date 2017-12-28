@@ -166,7 +166,7 @@ new Promise(function(accept){
 					}`
 				)
 		)
-		.render()
+		//.render()
 		.define("log", {
 			asVar: function(){
 				Array.prototype.forEach.call(arguments, function(item){
@@ -174,5 +174,33 @@ new Promise(function(accept){
 				})
 			}
 		})
-
+		
+		var inputConsole = stateless
+			.view(
+				`<div>
+					<textarea></textarea>
+					<button onclick="this.scope.execute()">execute</button>
+				</div>`
+			)
+			.css("width", "100%")
+			.define("value", {
+				get: function(){
+					return inputConsole.element("textarea").value
+				},
+				set: function(val){
+					inputConsole.element("textarea").value = val
+				}
+			})
+			.define("execute", {
+				asVar: function(){
+					domConsole.log(saferEval(domInputter.value))
+					inputConsole.value = ""
+				}
+			})
+			
+			var consoleModule = stateless
+				.instantiate("wrapper")
+				.append(domConsole)
+				.append(inputConsole)
+				.render()
 })
