@@ -182,7 +182,7 @@ new Promise(function(accept){
 				<button onclick="this.scope.execute()">execute</button>
 			</div>`
 		)
-		.css("width", "100%")
+		.css("$ textarea", "width", "100%")
 		.define("value", {
 			get: function(){
 				return inputConsole.element("textarea").value
@@ -193,7 +193,7 @@ new Promise(function(accept){
 		})
 		.define("execute", {
 			asVar: function(){
-				domConsole.log(saferEval(domInputter.value))
+				domConsole.log(saferEval(inputConsole.value))
 				inputConsole.value = ""
 			}
 		})
