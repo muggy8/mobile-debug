@@ -17,10 +17,6 @@ new Promise(function(accept){
 
 	document.head.appendChild(statelessJs)
 }).then(function(){
-	return Promise.resolve(function(str){
-		eval(str)
-	})
-}).then(function(saferEval){
 	stateless.register(`<div id="wrapper"></div>`)
 
 	stateless.register(
@@ -193,7 +189,7 @@ new Promise(function(accept){
 		})
 		.define("execute", {
 			asVar: function(){
-				domConsole.log(saferEval(inputConsole.value))
+				domConsole.log(eval.call(this, inputConsole.value))
 				inputConsole.value = ""
 			}
 		})
