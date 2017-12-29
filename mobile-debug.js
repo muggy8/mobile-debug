@@ -1,6 +1,23 @@
 var inspect
 new Promise(function(accept){
 	// load dependencies here
+
+	var loadLib = function(url){
+		return new Promise(function(accept, reject){
+			var script = document.createElement("script")
+			script.onload = script.onreadystatechange = function(){
+				if (statelessJs.readyState == "loaded" || statelessJs.readyState == "complete") {
+					accept()
+				}
+			}
+
+			script.src = url
+			script.setAttribute("async", true)
+			script.setAttribute("defer", true)
+
+			document.head.appendChild(script)
+		})
+	}
 	var statelessJs = document.createElement("script")
 	statelessJs.onload = statelessJs.onreadystatechange = function(){
 		if (statelessJs.readyState == "loaded" || statelessJs.readyState == "complete") {}
