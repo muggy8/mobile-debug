@@ -17,6 +17,22 @@ new Promise(function(accept){
 
 	document.head.appendChild(statelessJs)
 }).then(function(){
+	// put a whole container here so we can do some stuff to it later
+	var domDebugger = stateless
+		.instantiate("wrapper")
+	var stylesBlock = stateless.view(`<style></style>`)
+	domDebugger.append(stylesBlock)
+	domDebugger.define("styles", {
+		get: function(){
+			return stylesBlock.html().
+		},
+		set: function(val){
+			stylesBlock.html(val)
+			return val
+		}
+	})
+	Promise.resolve(domDebugger)
+}).then(function(debugContainer){
 	stateless.register(`<div id="wrapper"></div>`)
 
 	stateless.register(
@@ -199,4 +215,6 @@ new Promise(function(accept){
 		.append(domConsole)
 		.append(inputConsole)
 		.render()
+
+	return Promise.resolve(consoleMoldule)
 })
