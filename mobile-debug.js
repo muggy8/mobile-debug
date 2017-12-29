@@ -19,7 +19,9 @@ new Promise(function(accept){
 }).then(function(){
 	stateless.register(`<div id="wrapper"></div>`)
 	// put a whole container here so we can do some stuff to it later
-	var domDebugger = stateless.instantiate("wrapper")
+	var domDebugger = stateless
+		.instantiate("wrapper")
+		.render()
 	var stylesBlock = stateless.view(`<style></style>`)
 	domDebugger.append(stylesBlock)
 	domDebugger.define("styles", {
@@ -150,38 +152,50 @@ new Promise(function(accept){
 		}
 	}
 
+	debugContainer.styles +=
+	`#mobile-console {
+		max-height: 360px;
+		overflow: auto;
+		font-family: monospace;
+	}
+	#mobile-console .jsonDisplay .properties {
+		margin-left: 1em;
+	}
+	#mobile-console .jsonDisplay .properties .keyVal {
+		display: flex
+	}
+	#mobile-console .jsonDisplay .properties .keyVal .val {
+		flex-grow: 1;
+	}
+	#mobile-console .jsonHidden {
+		cursor: pointer;
+	}
+	#mobile-console .log,
+	#mobile-console .err,
+	#mobile-console .warn {
+		border-top: solid 1px #DDD;
+		padding: 0.25em 0.5em;
+	}
+	#mobile-console .log {
+		color: black;
+	}
+	#mobile-console .err {
+		color: red;
+	}
+	#mobile-console .warn {
+		color: yellow;
+	}`
 	var domConsole = inspect = stateless
 		.instantiate("wrapper")
 		.attr("id", "mobile-console")
-		.appendChild(
-			stateless
-				.view("<style></style>")
-				.html(
-					`#mobile-console {
-						max-height: 360px;
-						overflow: auto;
-						font-family: monospace;
-					}
-					#mobile-console .jsonDisplay .properties {
-						margin-left: 1em;
-					}
-					#mobile-console .jsonDisplay .properties .keyVal {
-						display: flex
-					}
-					#mobile-console .jsonDisplay .properties .keyVal .val {
-						flex-grow: 1;
-					}
-					#mobile-console .jsonHidden {
-						cursor: pointer;
-					}`
-				)
-		)
-		//.render()
 		.define("log", {
 			asVar: function(){
+				var logBlock = stateless.instantiate("wrapper")
 				Array.prototype.forEach.call(arguments, function(item){
-					domConsole.append(createAppropriateRepresentation(item))
+					logBlock.append(createAppropriateRepresentation(item))
 				})
+				domConsole.append(logBlock)
+				return logBlock
 			}
 		})
 
@@ -203,6 +217,7 @@ new Promise(function(accept){
 		})
 		.define("execute", {
 			asVar: function(){
+				domConsole.log("Input:\n" + inputConsole.value)
 				domConsole.log(eval.call(this, inputConsole.value))
 				inputConsole.value = ""
 			}
@@ -212,7 +227,39 @@ new Promise(function(accept){
 		.instantiate("wrapper")
 		.append(domConsole)
 		.append(inputConsole)
-		.render()
+
+	debugContainer.append(debugContainer.console = consoleModule)
+
+	var sourceLog = console.log
+	console.log = function(){
+		var inputs = Array.prototype.slice.call(arguments)
+		domConsole.log.apply(this, inputs).addClass("log")
+		sourceLog.apply(console, inputs)
+	}
+
+	var sourceErr = console.error
+	console.error = function(){
+		var inputs = Array.prototype.slice.call(arguments)
+		var errors = inputs.map(function(item){
+			return new Error(item)
+		})
+		domConsole.log.apply(this, inputs).addClass("err")
+		sourceErr.apply(console, inputs)
+	}
+
+	var sourceWarn = console.warn
+	console.warn = function(){
+		var inputs = Array.prototype.slice.call(arguments)
+		var errors = inputs.map(function(item){
+			return new Error(item)
+		})
+		sourceWarn.log.apply(this, inputs).addClass("warn")
+		sourceErr.apply(console, inputs)
+	}
+
+	window.addEventListener("error", function(event){
+		console.log(event)
+	})
 
 	return Promise.resolve(consoleModule)
 })
