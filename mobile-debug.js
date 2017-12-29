@@ -6,7 +6,7 @@ new Promise(function(accept){
 		return new Promise(function(accept, reject){
 			var script = document.createElement("script")
 			script.onload = script.onreadystatechange = function(){
-				if (statelessJs.readyState == "loaded" || statelessJs.readyState == "complete") {
+				if (script.readyState == "loaded" || script.readyState == "complete") {
 					accept()
 				}
 			}
@@ -18,6 +18,11 @@ new Promise(function(accept){
 			document.head.appendChild(script)
 		})
 	}
+	return Promise.all([
+		loadLib("https://unpkg.com/statelessjs"),
+		loadLib("https://rawgit.com/muggy8/mobile-debug/master/dependencies/cssParser.js")
+	])
+
 	var statelessJs = document.createElement("script")
 	statelessJs.onload = statelessJs.onreadystatechange = function(){
 		if (statelessJs.readyState == "loaded" || statelessJs.readyState == "complete") {}
@@ -28,7 +33,7 @@ new Promise(function(accept){
 			document.addEventListener("DOMContentLoaded", accept)
 		}
 	}
-	statelessJs.src = "https://unpkg.com/statelessjs"
+	statelessJs.src =
 	statelessJs.setAttribute("async", true)
 	statelessJs.setAttribute("defer", true)
 
