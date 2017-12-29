@@ -190,7 +190,9 @@ new Promise(function(accept){
 		.attr("id", "mobile-console")
 		.define("log", {
 			asVar: function(){
-				var logBlock = stateless.instantiate("wrapper")
+				var logBlock = stateless
+					.instantiate("wrapper")
+					.addClass("log")
 				Array.prototype.forEach.call(arguments, function(item){
 					logBlock.append(createAppropriateRepresentation(item))
 				})
@@ -218,8 +220,15 @@ new Promise(function(accept){
 		.define("execute", {
 			asVar: function(){
 				domConsole.log("Input:\n" + inputConsole.value)
-				domConsole.log(eval.call(this, inputConsole.value))
-				inputConsole.value = ""
+				try {
+					domConsole.log(eval.call(this, inputConsole.value))
+				}
+				catch (o3o){
+					domConsole.log(o3o).addClass("err")
+				}
+				finally {
+					inputConsole.value = ""
+				}
 			}
 		})
 
@@ -257,8 +266,8 @@ new Promise(function(accept){
 		sourceErr.apply(console, inputs)
 	}
 
-	window.addEventListener("error", function(event){
-		console.log(event)
+	window.addEventListener("error", function(ev){
+		domConsole.log(ev.message + "\nError in file: " + ev.fileName  + " on line " + ev.lineno + ":" + ev.colno).addClass("err")
 	})
 
 	return Promise.resolve(consoleModule)
