@@ -5,10 +5,8 @@ new Promise(function(accept){
 	var loadLib = function(url){
 		return new Promise(function(accept, reject){
 			var script = document.createElement("script")
-			script.onload = script.onreadystatechange = function(){
-				if (script.readyState == "loaded" || script.readyState == "complete") {
-					accept()
-				}
+			script.onload = function(){
+				accept()
 			}
 
 			script.src = url
@@ -18,26 +16,11 @@ new Promise(function(accept){
 			document.head.appendChild(script)
 		})
 	}
-	return Promise.all([
+
+	Promise.all([
 		loadLib("https://unpkg.com/statelessjs"),
-		loadLib("https://rawgit.com/muggy8/mobile-debug/master/dependencies/cssParser.js")
-	])
-
-	var statelessJs = document.createElement("script")
-	statelessJs.onload = statelessJs.onreadystatechange = function(){
-		if (statelessJs.readyState == "loaded" || statelessJs.readyState == "complete") {}
-
-		if (document.readyState!='loading'){
-			accept()
-		} else {
-			document.addEventListener("DOMContentLoaded", accept)
-		}
-	}
-	statelessJs.src =
-	statelessJs.setAttribute("async", true)
-	statelessJs.setAttribute("defer", true)
-
-	document.head.appendChild(statelessJs)
+		loadLib("https://cdn.rawgit.com/muggy8/mobile-debug/master/dependencies/cssParser.js")
+	]).then(accept)
 }).then(function(){
 	stateless.register(`<div id="wrapper"></div>`)
 	// put a whole container here so we can do some stuff to it later
