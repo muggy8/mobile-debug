@@ -17,13 +17,14 @@ new Promise(function(accept){
 
 	document.head.appendChild(statelessJs)
 }).then(function(){
+	stateless.register(`<div id="wrapper"></div>`)
 	// put a whole container here so we can do some stuff to it later
 	var domDebugger = stateless.instantiate("wrapper")
 	var stylesBlock = stateless.view(`<style></style>`)
 	domDebugger.append(stylesBlock)
 	domDebugger.define("styles", {
 		get: function(){
-			return stylesBlock.html().
+			return stylesBlock.html()
 		},
 		set: function(val){
 			stylesBlock.html(val)
@@ -32,8 +33,6 @@ new Promise(function(accept){
 	})
 	return Promise.resolve(domDebugger)
 }).then(function(debugContainer){
-	stateless.register(`<div id="wrapper"></div>`)
-
 	stateless.register(
 		`<div id="jsonDisplay" class="data-div">
 			<div class="starting-brace">{</div>
@@ -215,5 +214,5 @@ new Promise(function(accept){
 		.append(inputConsole)
 		.render()
 
-	return Promise.resolve(consoleMoldule)
+	return Promise.resolve(consoleModule)
 })
