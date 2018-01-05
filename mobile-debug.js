@@ -1,7 +1,25 @@
 var inspect
+var temp =
 new Promise(function(accept){
-	// load dependencies here
+	// cleaver function from https://stackoverflow.com/questions/710957/how-might-i-get-the-script-filename-from-within-that-script
+	function getScriptName(){
+		var error = new Error()
+			, source
+			, lastStackFrameRegex = new RegExp(/.+\/(.*?):\d+(:\d+)*$/)
+			, currentStackFrameRegex = new RegExp(/getScriptName \(.+\/(.*):\d+:\d+\)/)
 
+		if((source = lastStackFrameRegex.exec(error.stack.trim())) && source[1] != "")
+				return source[1]
+		else if((source = currentStackFrameRegex.exec(error.stack.trim())))
+				return source[1]
+		else if(error.fileName != undefined)
+				return error.fileName
+	}
+	
+	var currentScriptName = getScriptName()
+	var appendBeforeItem = document.querySelector("script[src='" + currentScriptName + "']")
+	
+	// load dependencies here
 	var loadLib = function(url){
 		return new Promise(function(accept, reject){
 			var script = document.createElement("script")
@@ -10,8 +28,8 @@ new Promise(function(accept){
 			}
 
 			script.src = url
-			script.setAttribute("async", true)
-			script.setAttribute("defer", true)
+			// script.setAttribute("async", true)
+			// script.setAttribute("defer", true)
 
 			document.head.appendChild(script)
 		})
@@ -272,7 +290,7 @@ new Promise(function(accept){
 	}
 
 	window.addEventListener("error", function(ev){
-		domConsole.log(ev.message + "\nError in file: " + ev.fileName  + " on line " + ev.lineno + ":" + ev.colno).addClass("err")
+		domConsole.log(ev.message + "\nError in file: " + ev.fileName	+ " on line " + ev.lineno + ":" + ev.colno).addClass("err")
 	})
 
 	return Promise.resolve(consoleModule)
