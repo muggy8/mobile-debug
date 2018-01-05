@@ -1,0 +1,28 @@
+{
+  "name": "mobile-debug",
+  "version": "0.0.1",
+  "description": "a mobile friendly front ond javascript, css and html debugger",
+  "main": "dist/mobile-debug.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/muggy8/mobile-debug.git"
+  },
+  "keywords": [
+    "console",
+    "mobile",
+    "debugger",
+    "debug",
+    "javascribt",
+    "mobile",
+    "debug"
+  ],
+  "author": "Muggy Ate",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/muggy8/mobile-debug/issues"
+  },
+  "homepage": "https://github.com/muggy8/mobile-debug#readme"
+}
