@@ -14,8 +14,7 @@ new Promise(function(accept){
 	}
 
 	Promise.all([
-		loadLib("https://unpkg.com/statelessjs"),
-		loadLib("https://cdn.rawgit.com/muggy8/mobile-debug/master/dependencies/cssParser.js")
+		loadLib("https://unpkg.com/statelessjs")
 	]).then(accept)
 }).then(function(){
 	stateless.register(`<div id="wrapper"></div>`)
