@@ -41,6 +41,21 @@ dependencyBased.then
 			else {
 				console.warn("no name declared for element or the name is already in use")
 			}
+			return library
+		},
+		clone: function(name){
+			if (library[name]){
+				return library[name].cloneNode()
+			}
+			else {
+				console.warn(name + " not found")
+			}
+		},
+		convert: function(string){
+			converter.innerHTML = ele
+			if (converter.children.length){
+				return converter.children[0]
+			}
 		}
 	})
 })
