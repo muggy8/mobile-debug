@@ -1,4 +1,3 @@
-dependencyBased.then
 (function(){
 	var converter = document.createElement("div")
 	var library = peak = Object.create({
@@ -35,7 +34,7 @@ dependencyBased.then
 					enumerable: false,
 					configurable: false,
 					writable: false,
-					value: ele.cloneNode()
+					value: ele.cloneNode(true)
 				})
 			}
 			else {
@@ -45,17 +44,297 @@ dependencyBased.then
 		},
 		clone: function(name){
 			if (library[name]){
-				return library[name].cloneNode()
+				return library[name].cloneNode(true)
 			}
 			else {
 				console.warn(name + " not found")
 			}
 		},
 		convert: function(string){
-			converter.innerHTML = ele
+			converter.innerHTML = string
 			if (converter.children.length){
 				return converter.children[0]
 			}
 		}
 	})
-})
+
+	library.add(`<div id="wrapper"></div>`)
+
+	var domDebugger = library.clone("wrapper")
+	var stylesBlock = library.convert(`<style></style>`)
+	domDebugger.appendChild(stylesBlock)
+
+	Object.defineProperty(domDebugger, "styles", {
+		enumerable: false,
+		configurable: false,
+		get: function(){
+			return stylesBlock.innerText
+		},
+		set: function(val){
+			stylesBlock.innerText = val
+			return val
+		}
+	})
+
+	library.add(`
+		<div id="jsonDisplay" class="data-div">
+			<div class="starting-brace">{</div>
+			<div class="properties"></div>
+			<div class="ending-brace">}</div>
+		</div>
+
+		<div id="jsonHidden" class="data-div">
+			<div class="json-placeholder">{...}</div>
+		</div>
+
+		<div id="keyVal">
+			<div class="key"></div>
+			<div class="val"></div>
+		</div>
+
+		<div id="otherData" class="data-div">
+			<pre style="margin: 0"></pre>
+		</div>`
+	)
+
+	var createDomStringRepresentation = function(text){
+		var returnNode = library.clone("otherData").querySelector("pre")
+		returnNode.innerText = text
+		return returnNode
+	}
+
+	var createDomJsonRepresentation = function(theJson){
+		var jsonBlock = library.clone("wrapper")
+
+		var hidden = library.clone("jsonHidden")
+		hidden.addEventListener("dblclick", function(ev){
+			ev.stopPropagation()
+			// take the hidden element out and replace it with the snown element instead
+			hidden.parentNode ? hidden.parentNode.removeChild(hidden) : false
+			jsonBlock.appendChild(shown)
+
+			// if the element that's gonna replace this one already has children then skip the rest cuz the rest of the code generates the children
+			if (shown.querySelector(".properties").children.length > 0){
+				return
+			}
+
+			// get the object keys and create child elements
+			var keys = Object.keys(theJson)
+			var props = Object.getOwnPropertyNames(theJson)
+			props.forEach(function(item){
+				var keyValDomPair = library.clone("keyVal")
+				keyValDomPair.querySelector(".key").innerText = '"' + item + '": '
+				keyValDomPair.querySelector(".val").appendChild(createAppropriateRepresentation(theJson[item]))
+
+				shown.querySelector(".properties").appendChild(keyValDomPair)
+			})
+
+			var inheritedFrom = Object.getPrototypeOf(theJson)
+			if (inheritedFrom){
+				var keyValDomPair = library.clone("keyVal")
+				keyValDomPair.querySelector(".key").innerText = '"__proto__\"'
+				keyValDomPair.querySelector(".val").appendChild(createAppropriateRepresentation(inheritedFrom))
+
+				shown.querySelector(".properties").appendChild(keyValDomPair)
+			}
+		})
+
+		var shown = library.clone("jsonDisplay")
+		shown.addEventListener("dblclick", function(ev){
+			ev.stopPropagation()
+			shown.parentNode ? shown.parentNode.removeChild(shown) : false
+			jsonBlock.appendChild(hidden)
+		})
+
+		jsonBlock.appendChild(hidden)
+		Object.defineProperty(jsonBlock, "useBrackets", {
+			enumerable: true,
+			configurable: true,
+			writable: false,
+			value: function(bracket){
+				shown.querySelector(".starting-brace").innerText = bracket[0]
+				shown.querySelector(".ending-brace").innerText = bracket[1]
+				var textContainer = hidden.querySelector(".json-placeholder")
+				textContainer.innerText = textContainer.innerText
+					.replace("{", bracket[0])
+					.replace("}", bracket[1])
+			}
+		})
+		return jsonBlock
+	}
+
+	var createAppropriateRepresentation = function(somedata){
+		if (somedata === null){
+			return createDomStringRepresentation("null")
+		}
+		else if (typeof somedata == "object" && Array.isArray(somedata)){
+			var jsonRep = createDomJsonRepresentation(somedata)
+			jsonRep.useBrackets("[]")
+			return jsonRep
+		}
+		else if (typeof somedata == "object"){
+			return createDomJsonRepresentation(somedata)
+		}
+		else if (typeof somedata == "string"){
+			return createDomStringRepresentation(somedata)
+		}
+		else if (typeof somedata == "function" || typeof somedata == "number"){
+			return createDomStringRepresentation(somedata.toString())
+		}
+		else if (typeof somedata == "boolean"){
+			return createDomStringRepresentation(somedata ? "true" : "false")
+		}
+		else{
+			return createDomStringRepresentation("undefined")
+		}
+	}
+
+	// alright we are done declaring the passive functions and now we're ready to use them
+
+	domDebugger.styles +=
+	`#mobile-console {
+		max-height: 360px;
+		overflow: auto;
+		font-family: monospace;
+	}
+	#mobile-console .jsonDisplay .properties {
+		margin-left: 1em;
+	}
+	#mobile-console .jsonDisplay .properties .keyVal {
+		display: flex
+	}
+	#mobile-console .jsonDisplay .properties .keyVal .val {
+		flex-grow: 1;
+	}
+	#mobile-console .jsonHidden {
+		cursor: pointer;
+	}
+	#mobile-console .log,
+	#mobile-console .err,
+	#mobile-console .warn {
+		border-top: solid 1px #DDD;
+		padding: 0.25em 0.5em;
+	}
+	#mobile-console .log {
+		color: Black;
+	}
+	#mobile-console .err {
+		color: Red;
+	}
+	#mobile-console .warn {
+		color: GoldenRod;
+	}`
+
+	var domConsole = library.clone("wrapper")
+	domConsole.id = "mobile-console"
+
+	Object.defineProperty(domConsole, "log", {
+		enumerable: true,
+		configurable: true,
+		writable: true,
+		value: function(){
+			var logBlock = library.clone("wrapper")
+			logBlock.className += " log"
+
+			Array.prototype.forEach.call(arguments, function(item){
+				logBlock.appendChild(createAppropriateRepresentation(item))
+			})
+
+			domConsole.appendChild(logBlock)
+			return logBlock
+		}
+	})
+
+	var inputConsole = library.convert(
+		`<div>
+			<textarea></textarea>
+			<button>execute</button>
+		</div>`
+	)
+
+	inputConsole.querySelector("textarea").style.width = "100%"
+
+	Object.defineProperty(inputConsole, "value", {
+		enumerable: true,
+		configurable: true,
+		get: function(){
+			return inputConsole.querySelector("textarea").value
+		},
+		set: function(val){
+			inputConsole.querySelector("textarea").value = val
+			return val
+		}
+	})
+
+	Object.defineProperty(inputConsole, "execute", {
+		enumerable: true,
+		configurable: true,
+		writable: true,
+		value: function(){
+			domConsole.log("Input:\n" + inputConsole.value)
+			try {
+				domConsole.log(eval.call(this, inputConsole.value))
+			}
+			catch (o3o){
+				var logEle = domConsole.log(o3o).className += " err"
+			}
+			finally {
+				inputConsole.value = ""
+			}
+		}
+	})
+
+	inputConsole.querySelector("button").addEventListener("click", inputConsole.execute)
+
+	var consoleModule = library.clone("wrapper")
+	consoleModule.appendChild(domConsole)
+	consoleModule.appendChild(inputConsole)
+
+	domDebugger.appendChild(domDebugger.console = consoleModule)
+
+	var sourceLog = console.log
+	console.log = function(){
+		var inputs = Array.prototype.slice.call(arguments)
+		domConsole.log.apply(this, inputs).className += " log"
+		sourceLog.apply(console, inputs)
+	}
+
+	var generateDomLog = function(inputs){
+		return inputs.reduce(function(currentLogs, item){
+			currentLogs.push(item)
+			currentLogs.push(new Error(item))
+			return currentLogs
+		}, [])
+	}
+
+	var sourceErr = console.error
+	console.error = function(){
+		var inputs = Array.prototype.slice.call(arguments)
+		var errors = generateDomLog(inputs)
+		domConsole.log.apply(this, errors).className += " err"
+		sourceErr.apply(console, inputs)
+	}
+
+	var sourceWarn = console.warn
+	console.warn = function(){
+		var inputs = Array.prototype.slice.call(arguments)
+		var errors = generateDomLog(inputs)
+		domConsole.log.apply(this, errors).className += " warn"
+		sourceWarn.apply(console, inputs)
+	}
+
+	window.addEventListener("error", function(ev){
+		domConsole.log(ev.message + "\nError in file: " + ev.fileName	+ " on line " + ev.lineno + ":" + ev.colno).className += " err"
+	})
+
+	if (document.body){
+		document.body.appendChild(domDebugger)
+	}
+	else {
+		document.addEventListener("readystatechange", function(){
+			if (document.readyState === "interactive"){
+				document.body.appendChild(domDebugger)
+			}
+		})
+	}
+})()
