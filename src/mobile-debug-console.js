@@ -1,4 +1,3 @@
-(function(){
 	library.add(`
 		<div id="jsonDisplay" class="data-div">
 			<div class="starting-brace">{</div>
@@ -270,4 +269,3 @@
 	window.addEventListener("error", function(ev){
 		domConsole.log(ev.message + "\nError in file: " + ev.fileName	+ " on line " + ev.lineno + ":" + ev.colno).className += " err"
 	})
-})()
