@@ -19,6 +19,6 @@ The goal is to create a self contained script that you add wherever you want in 
 
 ## Current State
 
-The current project is somewhat useable as a console thingy. If you want to use it go right ahead but it doesn't look very good and only display the information that JS runtime has access to so i guess good luck with that.
+The current project is somewhat useable as a console thingy. However if all you need is a somewhat working console that you can use to test code in then what I have right now would probably easily fill that need.
 
 I have no idea when this is going to be ready as I do have a full time job and I'm kinda running alot of other side projects and hobbies on my spare time so this may not see completion for a while. In any case, if you would like to help make any contributions, feel free to make a pull request :)
