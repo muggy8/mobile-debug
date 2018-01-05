@@ -1,4 +1,4 @@
-var inspect
+var peak
 var dependencyBased =
 new Promise(function(accept){
 	// load dependencies here
@@ -178,13 +178,13 @@ new Promise(function(accept){
 		padding: 0.25em 0.5em;
 	}
 	#mobile-console .log {
-		color: black;
+		color: Black;
 	}
 	#mobile-console .err {
-		color: red;
+		color: Red;
 	}
 	#mobile-console .warn {
-		color: yellow;
+		color: GoldenRod;
 	}`
 	var domConsole = inspect = stateless
 		.instantiate("wrapper")
@@ -247,23 +247,27 @@ new Promise(function(accept){
 		sourceLog.apply(console, inputs)
 	}
 
+	var generateDomLog = function(inputs){
+		return inputs.reduce(function(currentLogs, item){
+			currentLogs.push(item)
+			currentLogs.push(new Error(item))
+			return currentLogs
+		}, [])
+	}
+
 	var sourceErr = console.error
 	console.error = function(){
 		var inputs = Array.prototype.slice.call(arguments)
-		var errors = inputs.map(function(item){
-			return new Error(item)
-		})
-		domConsole.log.apply(this, inputs).addClass("err")
+		var errors = generateDomLog(inputs)
+		domConsole.log.apply(this, errors).addClass("err")
 		sourceErr.apply(console, inputs)
 	}
 
 	var sourceWarn = console.warn
 	console.warn = function(){
 		var inputs = Array.prototype.slice.call(arguments)
-		var errors = inputs.map(function(item){
-			return new Error(item)
-		})
-		domConsole.log.apply(this, inputs).addClass("warn")
+		var errors = generateDomLog(inputs)
+		domConsole.log.apply(this, errors).addClass("warn")
 		sourceWarn.apply(console, inputs)
 	}
 

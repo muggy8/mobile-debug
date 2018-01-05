@@ -1,7 +1,7 @@
 dependencyBased.then
 (function(){
 	var converter = document.createElement("div")
-	var library = inspect = Object.create({
+	var library = peak = Object.create({
 		add: function(nameOrEle, ele){
 			var name
 			if (ele){
