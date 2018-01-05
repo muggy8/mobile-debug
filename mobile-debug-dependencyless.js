@@ -121,20 +121,30 @@
 			// get the object keys and create child elements
 			var keys = Object.keys(theJson)
 			var props = Object.getOwnPropertyNames(theJson)
-			props.forEach(function(item){
-				var keyValDomPair = library.clone("keyVal")
-				keyValDomPair.querySelector(".key").innerText = '"' + item + '": '
-				keyValDomPair.querySelector(".val").appendChild(createAppropriateRepresentation(theJson[item]))
+			var createSubJsonGroup = function(key, data){
+				var returnNode = library.clone("keyVal")
+				returnNode.querySelector(".key").innerText = '"' + key + '": '
+				returnNode.querySelector(".key").style.cursor = "pointer"
+				var subJsonBlock = createAppropriateRepresentation(data)
+				returnNode.querySelector(".val").appendChild(subJsonBlock)
+				returnNode.querySelector(".key").addEventListener("dblclick", function(ev){
+					ev.stopPropagation()
 
+					var target = subJsonBlock.querySelector(".data-div")
+					var clickEvent = document.createEvent("MouseEvents")
+					clickEvent.initEvent("dblclick", true, true)
+					target && target.dispatchEvent(clickEvent)
+				})
+				return returnNode
+			}
+			props.forEach(function(item){
+				var keyValDomPair = createSubJsonGroup(item, theJson[item])
 				shown.querySelector(".properties").appendChild(keyValDomPair)
 			})
 
 			var inheritedFrom = Object.getPrototypeOf(theJson)
 			if (inheritedFrom){
-				var keyValDomPair = library.clone("keyVal")
-				keyValDomPair.querySelector(".key").innerText = '"__proto__\"'
-				keyValDomPair.querySelector(".val").appendChild(createAppropriateRepresentation(inheritedFrom))
-
+				var keyValDomPair = createSubJsonGroup("__proto__" , inheritedFrom)
 				shown.querySelector(".properties").appendChild(keyValDomPair)
 			}
 		})
@@ -163,6 +173,7 @@
 		return jsonBlock
 	}
 
+	var systemLog = false
 	var createAppropriateRepresentation = function(somedata){
 		if (somedata === null){
 			return createDomStringRepresentation("null")
@@ -176,7 +187,13 @@
 			return createDomJsonRepresentation(somedata)
 		}
 		else if (typeof somedata == "string"){
-			return createDomStringRepresentation(somedata)
+			if (systemLog){
+				systemLog = false
+				return createDomStringRepresentation(somedata)
+			}
+			else {
+				return createDomStringRepresentation('"' + somedata.replace(/\"/g, '\\"') + '"')
+			}
 		}
 		else if (typeof somedata == "function" || typeof somedata == "number"){
 			return createDomStringRepresentation(somedata.toString())
@@ -271,12 +288,14 @@
 		configurable: true,
 		writable: true,
 		value: function(){
+			systemLog = true // disable quotest around string for this log
 			domConsole.log("Input:\n" + inputConsole.value)
 			try {
 				domConsole.log(eval.call(this, inputConsole.value))
 			}
 			catch (o3o){
-				var logEle = domConsole.log(o3o).className += " err"
+				systemLog = true
+				var logEle = domConsole.log("Error", o3o).className += " err"
 			}
 			finally {
 				inputConsole.value = ""
