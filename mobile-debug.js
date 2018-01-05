@@ -186,7 +186,7 @@ new Promise(function(accept){
 	#mobile-console .warn {
 		color: GoldenRod;
 	}`
-	var domConsole = inspect = stateless
+	var domConsole = stateless
 		.instantiate("wrapper")
 		.attr("id", "mobile-console")
 		.define("log", {
