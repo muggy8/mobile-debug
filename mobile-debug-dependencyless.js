@@ -137,7 +137,9 @@
 				})
 				return returnNode
 			}
-			props.forEach(function(item){
+			props.filter(function(item){
+				return item !== "__proto__"
+			}).forEach(function(item){
 				var keyValDomPair = createSubJsonGroup(item, theJson[item])
 				shown.querySelector(".properties").appendChild(keyValDomPair)
 			})
