@@ -1,24 +1,5 @@
 var inspect
-var temp =
 new Promise(function(accept){
-	// cleaver function from https://stackoverflow.com/questions/710957/how-might-i-get-the-script-filename-from-within-that-script
-	function getScriptName(){
-		var error = new Error()
-			, source
-			, lastStackFrameRegex = new RegExp(/.+\/(.*?):\d+(:\d+)*$/)
-			, currentStackFrameRegex = new RegExp(/getScriptName \(.+\/(.*):\d+:\d+\)/)
-
-		if((source = lastStackFrameRegex.exec(error.stack.trim())) && source[1] != "")
-				return source[1]
-		else if((source = currentStackFrameRegex.exec(error.stack.trim())))
-				return source[1]
-		else if(error.fileName != undefined)
-				return error.fileName
-	}
-	
-	var currentScriptName = getScriptName()
-	var appendBeforeItem = document.querySelector("script[src='" + currentScriptName + "']")
-	
 	// load dependencies here
 	var loadLib = function(url){
 		return new Promise(function(accept, reject){
@@ -28,9 +9,6 @@ new Promise(function(accept){
 			}
 
 			script.src = url
-			// script.setAttribute("async", true)
-			// script.setAttribute("defer", true)
-
 			document.head.appendChild(script)
 		})
 	}
