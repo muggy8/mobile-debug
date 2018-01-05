@@ -103,7 +103,7 @@
 		return returnNode
 	}
 
-	var createDomJsonRepresentation = function(theJson){
+	var createDomJsonRepresentation = function(theJson, props, findProtoFrom){
 		var jsonBlock = library.clone("wrapper")
 
 		var hidden = library.clone("jsonHidden")
@@ -119,13 +119,13 @@
 			}
 
 			// get the object keys and create child elements
-			var keys = Object.keys(theJson)
-			var props = Object.getOwnPropertyNames(theJson)
-			var createSubJsonGroup = function(key, data){
+			props = props || Object.getOwnPropertyNames(theJson)
+			
+			var createSubJsonGroup = function(key, data, props, protoFrom){
 				var returnNode = library.clone("keyVal")
 				returnNode.querySelector(".key").innerText = '"' + key + '": '
 				returnNode.querySelector(".key").style.cursor = "pointer"
-				var subJsonBlock = createAppropriateRepresentation(data)
+				var subJsonBlock = createAppropriateRepresentation(data, props, protoFrom)
 				returnNode.querySelector(".val").appendChild(subJsonBlock)
 				returnNode.querySelector(".key").addEventListener("dblclick", function(ev){
 					ev.stopPropagation()
@@ -142,9 +142,9 @@
 				shown.querySelector(".properties").appendChild(keyValDomPair)
 			})
 
-			var inheritedFrom = Object.getPrototypeOf(theJson)
+			var inheritedFrom = Object.getPrototypeOf(findProtoFrom || theJson)
 			if (inheritedFrom){
-				var keyValDomPair = createSubJsonGroup("__proto__" , inheritedFrom)
+				var keyValDomPair = createSubJsonGroup("__proto__" , theJson, Object.getOwnPropertyNames(inheritedFrom), inheritedFrom)
 				shown.querySelector(".properties").appendChild(keyValDomPair)
 			}
 		})
@@ -174,17 +174,17 @@
 	}
 
 	var systemLog = false
-	var createAppropriateRepresentation = function(somedata){
+	var createAppropriateRepresentation = function(somedata, props, protoFrom){
 		if (somedata === null){
 			return createDomStringRepresentation("null")
 		}
 		else if (typeof somedata == "object" && Array.isArray(somedata)){
-			var jsonRep = createDomJsonRepresentation(somedata)
+			var jsonRep = createDomJsonRepresentation(somedata, props, protoFrom)
 			jsonRep.useBrackets("[]")
 			return jsonRep
 		}
 		else if (typeof somedata == "object"){
-			return createDomJsonRepresentation(somedata)
+			return createDomJsonRepresentation(somedata, props, protoFrom)
 		}
 		else if (typeof somedata == "string"){
 			if (systemLog){
