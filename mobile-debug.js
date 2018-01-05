@@ -1,5 +1,5 @@
 var inspect
-var dependencyBased = 
+var dependencyBased =
 new Promise(function(accept){
 	// load dependencies here
 	var loadLib = function(url){
@@ -263,8 +263,8 @@ new Promise(function(accept){
 		var errors = inputs.map(function(item){
 			return new Error(item)
 		})
-		sourceWarn.log.apply(this, inputs).addClass("warn")
-		sourceErr.apply(console, inputs)
+		domConsole.log.apply(this, inputs).addClass("warn")
+		sourceWarn.apply(console, inputs)
 	}
 
 	window.addEventListener("error", function(ev){
