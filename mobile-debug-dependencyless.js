@@ -192,38 +192,38 @@
 	// alright we are done declaring the passive functions and now we're ready to use them
 
 	domDebugger.styles +=
-	`#mobile-console {
-		max-height: 360px;
-		overflow: auto;
-		font-family: monospace;
-	}
-	#mobile-console .jsonDisplay .properties {
-		margin-left: 1em;
-	}
-	#mobile-console .jsonDisplay .properties .keyVal {
-		display: flex
-	}
-	#mobile-console .jsonDisplay .properties .keyVal .val {
-		flex-grow: 1;
-	}
-	#mobile-console .jsonHidden {
-		cursor: pointer;
-	}
-	#mobile-console .log,
-	#mobile-console .err,
-	#mobile-console .warn {
-		border-top: solid 1px #DDD;
-		padding: 0.25em 0.5em;
-	}
-	#mobile-console .log {
-		color: Black;
-	}
-	#mobile-console .err {
-		color: Red;
-	}
-	#mobile-console .warn {
-		color: GoldenRod;
-	}`
+		`#mobile-console {
+			max-height: 360px;
+			overflow: auto;
+			font-family: monospace;
+		}
+		#mobile-console .jsonDisplay .properties {
+			margin-left: 1em;
+		}
+		#mobile-console .jsonDisplay .properties .keyVal {
+			display: flex
+		}
+		#mobile-console .jsonDisplay .properties .keyVal .val {
+			flex-grow: 1;
+		}
+		#mobile-console .jsonHidden {
+			cursor: pointer;
+		}
+		#mobile-console .log,
+		#mobile-console .err,
+		#mobile-console .warn {
+			border-top: solid 1px #DDD;
+			padding: 0.25em 0.5em;
+		}
+		#mobile-console .log {
+			color: Black;
+		}
+		#mobile-console .err {
+			color: Red;
+		}
+		#mobile-console .warn {
+			color: GoldenRod;
+		}`
 
 	var domConsole = library.clone("wrapper")
 	domConsole.id = "mobile-console"
