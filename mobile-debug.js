@@ -1,4 +1,5 @@
 var inspect
+var dependencyBased = 
 new Promise(function(accept){
 	// load dependencies here
 	var loadLib = function(url){
