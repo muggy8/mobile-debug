@@ -1,4 +1,3 @@
-(function(){
 	var converter = document.createElement("div")
 	var library = peak = Object.create({
 		add: function(nameOrEle, ele){
@@ -58,6 +57,7 @@
 		}
 	})
 
+;(function(){
 	library.add(`<div id="wrapper"></div>`)
 
 	var domDebugger = library.clone("wrapper")
