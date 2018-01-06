@@ -2,7 +2,7 @@ const fs = require("fs")
 
 // this is the build script for writing
 new Promise(function(accept, reject){
-    fs.readFile('index.html', function(o3o, html){
+    fs.readFile("index.html", "utf8",  function(o3o, html){
         if (o3o){
             reject(o3o)
         }
@@ -11,5 +11,30 @@ new Promise(function(accept, reject){
         }
     })
 }).then(function(html){
-    html.match(/<script[^>]+><\/script>/gi)
+    var getScriptPromises = html
+		.match(/<script[^>]+><\/script>/gi)
+		.map(function(script){
+			var srcMatch = script.match(/src=\"([^"]+)\"/i)
+			if (srcMatch){
+				return srcMatch[1]
+			}
+		})
+		.map(function(src){
+			if (src && src.match(/^src\//)){
+				return new Promise(function(accept, reject){
+					fs.readFile(src, "utf8", function(o3o, html){
+      			 	 if (o3o){
+     			 	      reject(o3o)
+    			 	   }
+   			 	    else {
+      				      accept(html)
+     				   }
+    				})
+				})
+			}
+		})
+		
+	return Promise.all(getScriptPromises)
+}).then(function(scriptBodies){
+	console.log(scriptBodies)
 })
