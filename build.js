@@ -36,5 +36,10 @@ new Promise(function(accept, reject){
 		
 	return Promise.all(getScriptPromises)
 }).then(function(scriptBodies){
-	console.log(scriptBodies)
+	var dist = fs.createWriteStream("dist/mobile-debug.js")
+	dist.write("(function(){")
+	scriptBodies.forEach(function(body, index){
+		dist.write("\n// file " + index + "\n" + body)
+	})
+	dist.write("})")
 })
