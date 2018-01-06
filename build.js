@@ -27,7 +27,10 @@ new Promise(function(accept, reject){
      			 	      reject(o3o)
     			 	   }
    			 	    else {
-      				      accept(html)
+      				      accept({
+								src: src,
+								contents: html
+							})
      				   }
     				})
 				})
@@ -38,8 +41,10 @@ new Promise(function(accept, reject){
 }).then(function(scriptBodies){
 	var dist = fs.createWriteStream("dist/mobile-debug.js")
 	dist.write("(function(){")
-	scriptBodies.forEach(function(body, index){
-		dist.write("\n// file " + index + "\n" + body)
+	scriptBodies.forEach(function(file){
+		if (file){
+			dist.write("\n// file " + file.src + "\n" + file.contents)
+		}
 	})
 	dist.write("})")
 })

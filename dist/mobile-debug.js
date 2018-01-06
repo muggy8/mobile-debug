@@ -1,5 +1,5 @@
 (function(){
-// file 0
+// file src/mobile-debug-foundations.js
 	var converter = document.createElement("div")
 	var library = peak = Object.create({
 		add: function(nameOrEle, ele){
@@ -87,7 +87,7 @@
 			}
 		})
 	}
-// file 1
+// file src/mobile-debug-console.js
 	library.add(`
 		<div id="jsonDisplay" class="data-div">
 			<div class="starting-brace">{</div>
@@ -359,5 +359,5 @@
 	window.addEventListener("error", function(ev){
 		domConsole.log(ev.message + "\nError in file: " + ev.fileName	+ " on line " + ev.lineno + ":" + ev.colno).className += " err"
 	})
-// file 2
+// file src/mobile-debug-elements.js
 })
