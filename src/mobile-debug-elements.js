@@ -13,13 +13,23 @@
 		if (ele instanceof HTMLElement){
 			var clone = ele.cloneNode()
 			var nodeText = clone.outerHTML
+			var nodeRepresentation = library.clone("htmlContainer")
 			var closingTagMatch = nodeText.match(/<\/[^>]+>/)
-			if (!closingTagMatch){
-				return
+			var oppeningTag
+			console.log(closingTagMatch)
+			if (closingTagMatch){
+				var closingTag = closingTagMatch[0]
+				oppeningTag = nodeText.replace(closingTag, "")
+				nodeRepresentation.querySelector(".html-close").innerText = closingTag
+				nodeRepresentation.querySelector(".html-body").innerText = "..."
 			}
-			var closingTag = closingTagMatch[0]
-			var oppeningTag = nodeText.replace(closingTag, "")
+			else {
+				oppeningTag = nodeText
+			}
 			var childNodes = ele.childNodes
+			nodeRepresentation.querySelector(".html-open").innerText = oppeningTag
+			
+			return nodeRepresentation
 
 			// debug and testing returns
 			return {
