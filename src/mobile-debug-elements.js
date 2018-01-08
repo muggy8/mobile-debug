@@ -17,7 +17,6 @@
 			var nodeRepresentation = library.clone("htmlContainer")
 			var closingTagMatch = nodeText.match(/<\/[^>]+>/)
 			var oppeningTag
-			console.log(closingTagMatch)
 			if (closingTagMatch){
 				var closingTag = closingTagMatch[0]
 				oppeningTag = nodeText.replace(closingTag, "")
@@ -31,11 +30,34 @@
 			nodeRepresentation.querySelector(".html-open").innerText = oppeningTag
 
 			var show = function(){
-				nodeRepresentation.classname = nodeRepresentation.classname.replace(" closed", "")
+				nodeRepresentation.className = nodeRepresentation.className.replace(" closed", "") + " open"
+
+				nodeRepresentation.querySelector(".html-body").innerHTML = ""
+				var appendTarget = nodeRepresentation.querySelector(".html-body")
+				Array.prototype.map.call(childNodes, function(item){
+					return createDomHtmlRepresentation(item)
+				}).forEach(function(item){
+					appendTarget.appendChild(item)
+				})
+
+				nodeRepresentation.dblclickAction = hide
 			}
 			var hide = function(){
-				nodeRepresentation.classname = nodeRepresentation.classname.replace(" open", "")
+				nodeRepresentation.className = nodeRepresentation.className.replace(" open", "") + " closed"
+				nodeRepresentation.querySelector(".html-body").innerHTML = "..."
+
+				nodeRepresentation.dblclickAction = show
 			}
+
+			// it is default hidden show show on double click for default
+			nodeRepresentation.dblclickAction = show
+
+			nodeRepresentation.addEventListener("dblclick", function(ev){
+				ev.stopPropagation()
+				nodeRepresentation.dblclickAction()
+			})
+
+			return nodeRepresentation
 
 			// debug and testing returns
 			return {
@@ -51,8 +73,11 @@
 
 	}
 
-	domDebugger.style += `
+	domDebugger.styles += `
 		.htmlContainer.closed > * {
 			display: inline-block;
+		}
+		.htmlContainer.open > .html-body {
+			padding-left: 1em;
 		}
 	`
