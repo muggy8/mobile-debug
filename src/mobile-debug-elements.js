@@ -74,12 +74,16 @@
 	}
 
 	var domView = library.clone("wrapper")
-	domView.className += " dom-view"
+	domView.id = "dom-view"
 	domView.appendChild(createDomHtmlRepresentation(document.querySelector("html")))
 	var cssView = library.clone("wrapper")
+	cssView.id = "css-view"
 
 	domDebugger.styles += `
-		#mobile-elements {
+		#dom-view,
+		#css-view{
+			border-style: solid;
+			border-width: 1px;
 			max-height: 360px;
 			overflow: auto;
 			font-family: monospace;
