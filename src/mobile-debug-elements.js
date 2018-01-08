@@ -79,14 +79,22 @@
 	var cssView = library.clone("wrapper")
 	cssView.id = "css-view"
 
+    var sizeSlider = library.convert('<input type="range" min="0" max="100" step="1" style="width: 100%">')
+    sizeSlider.addEventListener("change", function(ev){
+        domView.style.width = sizeSlider.value + "%"
+        cssView.style.width = (100 - sizeSlider.value) + "%"
+    })
+
 	domDebugger.styles += `
 		#dom-view,
 		#css-view{
 			border-style: solid;
 			border-width: 1px;
-			max-height: 360px;
+			height: 360px;
 			overflow: auto;
 			font-family: monospace;
+            display: inline-block;
+            width: 50%;
 		}
 		#mobile-debug .htmlContainer.closed > * {
 			display: inline-block;
@@ -97,7 +105,7 @@
 	`
 
 	var domElementInspector = library.clone("wrapper")
-	domElementInspector.id = "mobile-elements"
 	domElementInspector.appendChild(domView)
 	domElementInspector.appendChild(cssView)
 	domDebugger.appendChild(domElementInspector)
+    domElementInspector.appendChild(sizeSlider)

@@ -93,5 +93,6 @@
 		}
 		#mobile-debug * {
 			border-color: inherit;
+            box-sizing: border-box;
 		}
 	`
