@@ -133,7 +133,9 @@
 	// alright we are done declaring the passive functions and now we're ready to use them
 
 	domDebugger.styles +=
-		`#mobile-debug {
+		`#mobile-console {
+			border-style: solid;
+			border-width: 1px;
 			max-height: 360px;
 			overflow: auto;
 			font-family: monospace;
@@ -164,6 +166,9 @@
 		}
 		#mobile-debug .warn {
 			color: GoldenRod;
+		}
+		#mobile-debug .data-div {
+			cursor: pointer
 		}`
 
 	var domConsole = library.clone("wrapper")

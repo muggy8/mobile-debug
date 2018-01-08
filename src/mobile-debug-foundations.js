@@ -86,3 +86,12 @@
 			}
 		})
 	}
+
+	domDebugger.styles += `
+		#mobile-debug {
+			border-color: #DDD;
+		}
+		#mobile-debug * {
+			border-color: inherit;
+		}
+	`
