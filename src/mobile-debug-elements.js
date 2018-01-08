@@ -73,11 +73,25 @@
 
 	}
 
+	var domView = library.clone("wrapper")
+	domView.className += " dom-view"
+	var cssView = library.clone("wrapper")
+
 	domDebugger.styles += `
-		.htmlContainer.closed > * {
+		#mobile-elements {
+			max-height: 360px;
+			overflow: auto;
+			font-family: monospace;
+		}
+		#mobile-debug .htmlContainer.closed > * {
 			display: inline-block;
 		}
-		.htmlContainer.open > .html-body {
+		#mobile-debug .htmlContainer.open > .html-body {
 			padding-left: 1em;
 		}
 	`
+
+	var domElementInspector = library.clone("wrapper")
+	domElementInspector.id = "mobile-elements"
+	domElementInspector.appendChild(domView)
+	domElementInspector.appendChild(cssView)

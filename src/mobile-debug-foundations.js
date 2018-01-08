@@ -56,10 +56,11 @@
 			}
 		}
 	})
-	
+
 	library.add(`<div id="wrapper"></div>`)
 
 	var domDebugger = library.clone("wrapper")
+	domDebugger.id = "mobile-debug"
 	var stylesBlock = library.convert(`<style></style>`)
 	domDebugger.appendChild(stylesBlock)
 
@@ -74,7 +75,7 @@
 			return val
 		}
 	})
-	
+
 	if (document.body){
 		document.body.appendChild(domDebugger)
 	}

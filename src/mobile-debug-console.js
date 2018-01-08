@@ -42,7 +42,7 @@
 
 			// get the object keys and create child elements
 			props = props || Object.getOwnPropertyNames(theJson)
-			
+
 			var createSubJsonGroup = function(key, data, props, protoFrom){
 				var returnNode = library.clone("keyVal")
 				returnNode.querySelector(".key").innerText = '"' + key + '": '
@@ -133,36 +133,36 @@
 	// alright we are done declaring the passive functions and now we're ready to use them
 
 	domDebugger.styles +=
-		`#mobile-console {
+		`#mobile-debug {
 			max-height: 360px;
 			overflow: auto;
 			font-family: monospace;
 		}
-		#mobile-console .jsonDisplay .properties {
+		#mobile-debug .jsonDisplay .properties {
 			margin-left: 1em;
 		}
-		#mobile-console .jsonDisplay .properties .keyVal {
+		#mobile-debug .jsonDisplay .properties .keyVal {
 			display: flex
 		}
-		#mobile-console .jsonDisplay .properties .keyVal .val {
+		#mobile-debug .jsonDisplay .properties .keyVal .val {
 			flex-grow: 1;
 		}
-		#mobile-console .jsonHidden {
+		#mobile-debug .jsonHidden {
 			cursor: pointer;
 		}
-		#mobile-console .log,
-		#mobile-console .err,
-		#mobile-console .warn {
+		#mobile-debug .log,
+		#mobile-debug .err,
+		#mobile-debug .warn {
 			border-top: solid 1px #DDD;
 			padding: 0.25em 0.5em;
 		}
-		#mobile-console .log {
+		#mobile-debug .log {
 			color: Black;
 		}
-		#mobile-console .err {
+		#mobile-debug .err {
 			color: Red;
 		}
-		#mobile-console .warn {
+		#mobile-debug .warn {
 			color: GoldenRod;
 		}`
 
