@@ -75,6 +75,7 @@
 
 	var domView = library.clone("wrapper")
 	domView.className += " dom-view"
+	domView.appendChild(createDomHtmlRepresentation(document.querySelector("html")))
 	var cssView = library.clone("wrapper")
 
 	domDebugger.styles += `
@@ -95,3 +96,4 @@
 	domElementInspector.id = "mobile-elements"
 	domElementInspector.appendChild(domView)
 	domElementInspector.appendChild(cssView)
+	domDebugger.appendChild(domElementInspector)
