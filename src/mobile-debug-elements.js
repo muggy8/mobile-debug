@@ -4,6 +4,7 @@
 			<div class="html-body"></div>
 			<div class="html-close"></div>
 		</div>
+        <input id="underlineInput" style="border: none; border-bottom: solid 1px #CCC;">
 	`)
 
 	var createDomHtmlRepresentation = function(ele){
@@ -79,11 +80,13 @@
     var getElementCssRules = function(ele){
         ele.matches = ele.matches || ele.webkitMatchesSelector || ele.mozMatchesSelector || el.msMatchesSelector || el.oMatchesSelector
         var foundRules = []
+        // loop over style sheets in reverse order
         for (var i = document.styleSheets.length; i > 0; !function(styleSheet){
             var rules = styleSheet.rules || styleSheet.cssRules
-            if (!rules){ // the stylesheet api sometimes wont give us styles because of CROS 
+            if (!rules){ // the stylesheet api sometimes wont give us styles because of CROS
                 return
             }
+            // loop over stylesheet rules in reverse order to find rules that apply to the element
             for (var i = rules.length; i > 0; !function(rule){
                 if (ele.matches(rule.selectorText)){
                     foundRules.push(rule)
@@ -92,16 +95,38 @@
         }(document.styleSheets[--i]));
         return foundRules
     }
+
+    var createDomCssKeyValPair = function(rule, ruleIndex){
+        var domPair = library.clone("keyVal")
+        domPair.querySelector(".key").appendChild(domPair.keyInput = library.clone("underlineInput"))
+        domPair.querySelector(".val").appendChild(domPair.valInput = library.clone("underlineInput"))
+
+        domPair.keyInput.value = rule.style[ruleIndex]
+        domPair.valInput.value = rule.style.getPropertyValue(rule.style[ruleIndex])
+
+        domPair.keyInput.addEventListener("change", console.log)
+        domPair.valInput.addEventListener("change", console.log)
+        return domPair
+    }
+
+    var createDomCssRuleRepresentation = function(rule){
+        console.log(rule)
+
+        var ruleBlock = library.clone("wrapper")
+        ruleBlock.appendChild(createDomStringRepresentation(rule.selectorText))
+        for(var i = 0; i < rule.style.length; i++){
+            ruleBlock.appendChild(createDomCssKeyValPair(rule, i))
+        }
+    }
+
     var createDomCssRepresentation = function(ele){
-        var clone = ele.cloneNode()
-        var eleComputeStyles = window.getComputedStyle(ele)
-        var cloneComputeStyles = window.getComputedStyle(clone)
-
-        cssRules.forEach(function(rule){
-
+        var rules = getElementCssRules(ele)
+        var domRules = rules.map(function(rule){
+            return createDomCssRuleRepresentation(rule)
         })
 
-        return ele.style.cssText
+        var domRuleWrap = library.clone("wrapper")
+        return domRuleWrap
     }
 
 	var domView = library.clone("wrapper")
@@ -131,7 +156,7 @@
 			display: inline-block;
 		}
 		#mobile-debug .htmlContainer.open > .html-body {
-			padding-left: 1em;
+			margin-left: 1em;
 		}
 	`
 
