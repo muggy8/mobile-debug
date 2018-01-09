@@ -1,7 +1,7 @@
 	library.add(`
 		<div id="htmlContainer" class="data-div closed">
 			<div class="html-open"></div>
-			<div class="html-body">...</div>
+			<div class="html-body"></div>
 			<div class="html-close"></div>
 		</div>
 	`)
@@ -28,6 +28,9 @@
 			}
 			var childNodes = ele.childNodes
 			nodeRepresentation.querySelector(".html-open").innerText = oppeningTag
+			if (childNodes.length){
+				nodeRepresentation.querySelector(".html-body").innerText = "..."
+			}
 
 			var show = function(){
 				nodeRepresentation.className = nodeRepresentation.className.replace(" closed", "") + " open"
@@ -79,7 +82,7 @@
 	var cssView = library.clone("wrapper")
 	cssView.id = "css-view"
 
-    var sizeSlider = library.convert('<input type="range" min="0" max="100" step="1" style="width: 100%">')
+    var sizeSlider = library.convert('<input type="range" min="0" max="100" step="1" style="width: 100%; margin:0;">')
     sizeSlider.addEventListener("change", function(ev){
         domView.style.width = sizeSlider.value + "%"
         cssView.style.width = (100 - sizeSlider.value) + "%"
