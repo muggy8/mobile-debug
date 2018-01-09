@@ -10,7 +10,7 @@
 		</div>
 
 		<div id="keyVal">
-			<div class="key"></div>
+			<div class="key"></div>:
 			<div class="val"></div>
 		</div>
 
@@ -45,7 +45,7 @@
 
 			var createSubJsonGroup = function(key, data, props, protoFrom){
 				var returnNode = library.clone("keyVal")
-				returnNode.querySelector(".key").innerText = '"' + key + '": '
+				returnNode.querySelector(".key").innerText = '"' + key + '"'
 				returnNode.querySelector(".key").style.cursor = "pointer"
 				var subJsonBlock = createAppropriateRepresentation(data, props, protoFrom)
 				returnNode.querySelector(".val").appendChild(subJsonBlock)
