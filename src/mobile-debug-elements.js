@@ -76,6 +76,34 @@
 
 	}
 
+    var getElementCssRules = function(ele){
+        ele.matches = ele.matches || ele.webkitMatchesSelector || ele.mozMatchesSelector || el.msMatchesSelector || el.oMatchesSelector
+        var foundRules = []
+        for (var i = document.styleSheets.length; i > 0; !function(styleSheet){
+            var rules = styleSheet.rules || styleSheet.cssRules
+            if (!rules){ // the stylesheet api sometimes wont give us styles because of CROS 
+                return
+            }
+            for (var i = rules.length; i > 0; !function(rule){
+                if (ele.matches(rule.selectorText)){
+                    foundRules.push(rule)
+                }
+            }(rules[--i]));
+        }(document.styleSheets[--i]));
+        return foundRules
+    }
+    var createDomCssRepresentation = function(ele){
+        var clone = ele.cloneNode()
+        var eleComputeStyles = window.getComputedStyle(ele)
+        var cloneComputeStyles = window.getComputedStyle(clone)
+
+        cssRules.forEach(function(rule){
+
+        })
+
+        return ele.style.cssText
+    }
+
 	var domView = library.clone("wrapper")
 	domView.id = "dom-view"
 	domView.appendChild(createDomHtmlRepresentation(document.querySelector("html")))
@@ -89,8 +117,8 @@
     })
 
 	domDebugger.styles += `
-		#dom-view,
-		#css-view{
+		#mobile-debug #dom-view,
+		#mobile-debug #css-view {
 			border-style: solid;
 			border-width: 1px;
 			height: 360px;
