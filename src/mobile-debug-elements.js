@@ -195,6 +195,7 @@
 		#mobile-debug .open.highlight > .html-close,
 		#mobile-debug .closed.highlight {
 			background-color: skyblue;
+			display: inline;
 		}
 	`
 
