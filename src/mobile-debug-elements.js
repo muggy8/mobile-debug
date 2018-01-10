@@ -71,17 +71,9 @@
 					item.className = item.className.replace(" highlight", "")
 				})
 				nodeRepresentation.className += " highlight"
-
 			})
 
 			return nodeRepresentation
-
-			// debug and testing returns
-			return {
-				close: closingTag,
-				contents: ele.innerHTML,
-				open: oppeningTag
-			}
 		}
 		else if (ele instanceof Text){
 			systemLog = true;
@@ -93,7 +85,7 @@
     var getElementCssRules = function(ele){
         ele.matches = ele.matches || ele.webkitMatchesSelector || ele.mozMatchesSelector || el.msMatchesSelector || el.oMatchesSelector
         var foundRules = []
-        // loop over style sheets in reverse order
+        // loop over style sheets in reverse order to find relivant style rules
         for (var i = document.styleSheets.length; i > 0; !function(styleSheet){
             var rules = styleSheet.rules || styleSheet.cssRules
             if (!rules){ // the stylesheet api sometimes wont give us styles because of CROS
@@ -106,6 +98,13 @@
                 }
             }(rules[--i]));
         }(document.styleSheets[--i]));
+
+		// add to the first array item the "style=" attribute
+		foundRules.unshift({
+			selectorText: "style attribute",
+			style: ele.style
+		})
+
         return foundRules
     }
 
@@ -180,7 +179,7 @@
 		#mobile-debug #css-view {
 			border-style: solid;
 			border-width: 1px;
-			height: 360px;
+			height: 200px;
 			overflow: auto;
 			font-family: monospace;
             display: inline-block;

@@ -136,7 +136,7 @@
 		`#mobile-debug #mobile-console {
 			border-style: solid;
 			border-width: 1px;
-			max-height: 360px;
+			height: 200px;
 			overflow: auto;
 			font-family: monospace;
 		}
