@@ -4,7 +4,7 @@
 			<div class="html-body"></div>
 			<div class="html-close"></div>
 		</div>
-        <input id="underlineInput" style="border: none; border-bottom: solid 1px #CCC;">
+        <input id="underlineInput" style="border: none; border-bottom: solid 1px #CCC; text-align: center;">
 	`)
 
 	var createDomHtmlRepresentation = function(ele){
@@ -104,30 +104,51 @@
         domPair.keyInput.value = rule.style[ruleIndex]
         domPair.valInput.value = rule.style.getPropertyValue(rule.style[ruleIndex])
 
-        domPair.keyInput.addEventListener("change", console.log)
-        domPair.valInput.addEventListener("change", console.log)
+        domPair.keyInput.addEventListener("keyup", function(){
+            rule.style.removeProperty(rule.style[ruleIndex])
+            rule.style[ruleIndex] = domPair.keyInput.value
+            rule.style.setProperty(rule.style[ruleIndex], domPair.valInput.value)
+
+            if (rule.style.getPropertyValue(rule.style[ruleIndex]) !== domPair.valInput.value && !domPair.className.match(/\serr\s?/)) {
+                domPair.className += " err"
+                domPair.keyInput.style.color = domPair.valInput.style.color = "red"
+            }
+            else {
+                domPair.className = domPair.className.replace(" err", "")
+                domPair.keyInput.style.color = domPair.valInput.style.color = "black"
+            }
+        })
+
+        domPair.valInput.addEventListener("keyup", function(){
+            rule.style.setProperty(rule.style[ruleIndex], domPair.valInput.value)
+        })
         return domPair
     }
 
     var createDomCssRuleRepresentation = function(rule){
-        console.log(rule)
-
         var ruleBlock = library.clone("wrapper")
         ruleBlock.appendChild(createDomStringRepresentation(rule.selectorText))
+        var jsonLikeBlock = library.clone("jsonDisplay")
+        ruleBlock.appendChild(jsonLikeBlock)
         for(var i = 0; i < rule.style.length; i++){
-            ruleBlock.appendChild(createDomCssKeyValPair(rule, i))
+            jsonLikeBlock.querySelector(".properties").appendChild(createDomCssKeyValPair(rule, i))
         }
+        return ruleBlock
     }
 
     var createDomCssRepresentation = function(ele){
         var rules = getElementCssRules(ele)
-        var domRules = rules.map(function(rule){
-            return createDomCssRuleRepresentation(rule)
+        var domRuleWrap = library.clone("wrapper")
+        rules.forEach(function(rule){
+            domRuleWrap.appendChild(createDomCssRuleRepresentation(rule))
+            domRuleWrap.appendChild(document.createElement("hr"))
         })
 
-        var domRuleWrap = library.clone("wrapper")
         return domRuleWrap
     }
+
+    // to test
+    // document.querySelector("#css-view").appendChild(createDomCssRepresentation(document.querySelector(".data-div")))
 
 	var domView = library.clone("wrapper")
 	domView.id = "dom-view"
