@@ -60,6 +60,20 @@
 				ev.stopPropagation()
 				nodeRepresentation.dblclickAction()
 			})
+			
+			nodeRepresentation.addEventListener("click", function(ev){
+				ev.stopPropagation()
+				
+				cssView.innerHTML = ""
+				cssView.appendChild(createDomCssRepresentation(ele))
+				/*
+				console.log(domView.querySelectorAll(".highlight"))
+				Array.prototype.forEach.call(domView.querySelectorAll(".highlight"), function(item){
+					item.className = item.className.replace(" highlight")
+				})
+				nodeRepresentation.className += " highlight
+				*/
+			})
 
 			return nodeRepresentation
 
@@ -178,6 +192,9 @@
 		}
 		#mobile-debug .htmlContainer.open > .html-body {
 			margin-left: 1em;
+		}
+		#mobile-debug .highlight {
+			background-color: baby-blue;
 		}
 	`
 
