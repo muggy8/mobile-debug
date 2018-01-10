@@ -169,7 +169,7 @@
 	var cssView = library.clone("wrapper")
 	cssView.id = "css-view"
 
-    var sizeSlider = library.convert('<input type="range" min="0" max="100" step="1" style="width: 100%; margin:0;">')
+    var sizeSlider = library.convert('<input type="range" min="1" max="99" step="1" style="width: 100%; margin:0;">')
     sizeSlider.addEventListener("change", function(ev){
         domView.style.width = sizeSlider.value + "%"
         cssView.style.width = (100 - sizeSlider.value) + "%"
