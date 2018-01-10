@@ -68,10 +68,10 @@
 		enumerable: false,
 		configurable: false,
 		get: function(){
-			return stylesBlock.innerText
+			return stylesBlock.innerHTML
 		},
 		set: function(val){
-			stylesBlock.innerText = val
+			stylesBlock.innerHTML = val
 			return val
 		}
 	})
