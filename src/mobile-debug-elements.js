@@ -114,7 +114,7 @@
 		})
 	}
 
-    var createDomCssKeyValPair = function(rule, ruleIndex){
+    var createDomCssKeyValPair = function(rule, ruleIndex, resetView){
         var domPair = library.clone("keyVal")
         domPair.querySelector(".key").appendChild(domPair.keyInput = library.clone("underlineInput"))
         domPair.querySelector(".val").appendChild(domPair.valInput = library.clone("underlineInput"))
@@ -122,12 +122,17 @@
         domPair.keyInput.value = rule.style[ruleIndex]
         domPair.valInput.value = rule.style.getPropertyValue(rule.style[ruleIndex])
 
-        domPair.keyInput.addEventListener("keyup", function(){
-            rule.style.removeProperty(rule.style[ruleIndex])
-            rule.style[ruleIndex] = domPair.keyInput.value
-            rule.style.setProperty(rule.style[ruleIndex], domPair.valInput.value)
+		var keyValEventHandler = function(ev){
+			console.log(ev)
+			var styleProp = camelCase(domPair.keyInput.value)
+			if (typeof rule.style[styleProp] !== "undefined"){
+				//rule.style[ruleIndex] = domPair.keyInput.value
+				rule.style.removeProperty(rule.style[ruleIndex])
+				rule.style.setProperty(domPair.keyInput.value, domPair.valInput.value)
+				resetView()
+			}
 
-            if (rule.style.getPropertyValue(rule.style[ruleIndex]) !== domPair.valInput.value && !domPair.className.match(/\serr\s?/)) {
+            if (typeof rule.style[styleProp] === "undefined" || !rule.style[styleProp]) {
                 domPair.className += " err"
                 domPair.keyInput.style.color = domPair.valInput.style.color = "red"
             }
@@ -135,21 +140,24 @@
                 domPair.className = domPair.className.replace(" err", "")
                 domPair.keyInput.style.color = domPair.valInput.style.color = "black"
             }
-        })
+        }
 
-        domPair.valInput.addEventListener("keyup", function(){
-            rule.style.setProperty(rule.style[ruleIndex], domPair.valInput.value)
-        })
+        domPair.keyInput.addEventListener("keyup", keyValEventHandler)
+        domPair.valInput.addEventListener("keyup", keyValEventHandler)
+
         return domPair
     }
 
-    var createDomCssRuleRepresentation = function(rule){
+    var createDomCssRuleRepresentation = function(rule, ele){
         var ruleBlock = library.clone("wrapper")
         ruleBlock.appendChild(createDomStringRepresentation(rule.selectorText))
         var jsonLikeBlock = library.clone("jsonDisplay")
         ruleBlock.appendChild(jsonLikeBlock)
         for(var i = 0; i < rule.style.length; i++){
-            jsonLikeBlock.querySelector(".properties").appendChild(createDomCssKeyValPair(rule, i))
+            jsonLikeBlock.querySelector(".properties").appendChild(createDomCssKeyValPair(rule, i, function(){
+				cssView.innerHTML = ""
+				cssView.appendChild(createDomCssRepresentation(ele))
+			}))
         }
         return ruleBlock
     }
@@ -158,7 +166,7 @@
         var rules = getElementCssRules(ele)
         var domRuleWrap = library.clone("wrapper")
         rules.forEach(function(rule){
-            domRuleWrap.appendChild(createDomCssRuleRepresentation(rule))
+            domRuleWrap.appendChild(createDomCssRuleRepresentation(rule, ele))
             domRuleWrap.appendChild(document.createElement("hr"))
         })
 
