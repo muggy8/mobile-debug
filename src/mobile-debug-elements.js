@@ -108,6 +108,12 @@
         return foundRules
     }
 
+	var camelCase = function(str){
+		return str.replace(/^-/, '').replace(/-([a-z])/g, function (hyphenChar) {
+			return hyphenChar[1].toUpperCase()
+		})
+	}
+
     var createDomCssKeyValPair = function(rule, ruleIndex){
         var domPair = library.clone("keyVal")
         domPair.querySelector(".key").appendChild(domPair.keyInput = library.clone("underlineInput"))
