@@ -123,10 +123,28 @@
         domPair.valInput.value = rule.style.getPropertyValue(rule.style[ruleIndex])
 
 		var keyValEventHandler = function(ev){
-			console.log(ev)
+			if (
+				(ev.key == ":" && ev.target == domPair.keyInput) ||
+				(ev.data == ":" && ev.target == domPair.keyInput)
+			){
+				domPair.valInput.focus()
+				domPair.keyInput.value = domPair.keyInput.value.replace(/\:+$/, "")
+				ev.stopPropagation()
+				ev.preventDefault()
+				return
+			}
+
+			if (
+				!(
+					(ev.keyCode === 13 && ev.target === domPair.valInput) ||
+					(ev.key === ";" && ev.target === domPair.valInput) ||
+					(ev.data === ";" && ev.target === domPair.valInput)
+				)
+			){
+				return
+			}
 			var styleProp = camelCase(domPair.keyInput.value)
 			if (typeof rule.style[styleProp] !== "undefined"){
-				//rule.style[ruleIndex] = domPair.keyInput.value
 				rule.style.removeProperty(rule.style[ruleIndex])
 				rule.style.setProperty(domPair.keyInput.value, domPair.valInput.value)
 				resetView()
@@ -144,6 +162,8 @@
 
         domPair.keyInput.addEventListener("keyup", keyValEventHandler)
         domPair.valInput.addEventListener("keyup", keyValEventHandler)
+        domPair.keyInput.addEventListener("input", keyValEventHandler)
+        domPair.valInput.addEventListener("input", keyValEventHandler)
 
         return domPair
     }
