@@ -4,6 +4,7 @@
 			<div class="html-body"></div>
 			<div class="html-close"></div>
 		</div>
+
         <input id="underlineInput" style="border: none; border-bottom: solid 1px #CCC; text-align: center;">
 	`)
 
@@ -118,9 +119,14 @@
         var domPair = library.clone("keyVal")
         domPair.querySelector(".key").appendChild(domPair.keyInput = library.clone("underlineInput"))
         domPair.querySelector(".val").appendChild(domPair.valInput = library.clone("underlineInput"))
+		domPair.appendChild(domPair.deleteButton = library.convert("<button>X</button>"))
 
-        domPair.keyInput.value = rule.style[ruleIndex]
+        domPair.keyInput.value = rule.style[ruleIndex] || "New"
         domPair.valInput.value = rule.style.getPropertyValue(rule.style[ruleIndex])
+		domPair.deleteButton.addEventListener("click", function(){
+			rule.style.removeProperty(rule.style[ruleIndex])
+			resetView()
+		})
 
 		var keyValEventHandler = function(ev){
 			if (
@@ -173,12 +179,14 @@
         ruleBlock.appendChild(createDomStringRepresentation(rule.selectorText))
         var jsonLikeBlock = library.clone("jsonDisplay")
         ruleBlock.appendChild(jsonLikeBlock)
+		var rebuildCssRulesView = function(){
+			cssView.innerHTML = ""
+			cssView.appendChild(createDomCssRepresentation(ele))
+		}
         for(var i = 0; i < rule.style.length; i++){
-            jsonLikeBlock.querySelector(".properties").appendChild(createDomCssKeyValPair(rule, i, function(){
-				cssView.innerHTML = ""
-				cssView.appendChild(createDomCssRepresentation(ele))
-			}))
+            jsonLikeBlock.querySelector(".properties").appendChild(createDomCssKeyValPair(rule, i, rebuildCssRulesView))
         }
+		jsonLikeBlock.querySelector(".properties").appendChild(jsonLikeBlock.querySelector(".properties").appendChild(createDomCssKeyValPair(rule, rule.style.length, rebuildCssRulesView)))
         return ruleBlock
     }
 
