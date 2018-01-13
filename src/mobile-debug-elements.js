@@ -183,11 +183,10 @@
 			cssView.innerHTML = ""
 			cssView.appendChild(createDomCssRepresentation(ele))
 		}
-        for(var i = 0; i < rule.style.length; i++){
+        for(var i = 0; i <= rule.style.length; i++){
             jsonLikeBlock.querySelector(".properties").appendChild(createDomCssKeyValPair(rule, i, rebuildCssRulesView))
         }
-		jsonLikeBlock.querySelector(".properties").appendChild(jsonLikeBlock.querySelector(".properties").appendChild(createDomCssKeyValPair(rule, rule.style.length, rebuildCssRulesView)))
-        return ruleBlock
+		return ruleBlock
     }
 
     var createDomCssRepresentation = function(ele){
