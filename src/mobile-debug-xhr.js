@@ -12,7 +12,8 @@
 			var Identifier = args[0] + ":" + args[1]
 			var record = xhrHistory[Identifier] = {
 				method: args [0],
-				url: args[1]
+				url: args[1],
+				xhr: this
 			}
 			
 			if (args[2]){
@@ -22,5 +23,7 @@
 			if (args[3]){
 				record.password = args[4]
 			}
+			
+			xhrOpen.apply(this, args)
 		}
 	})
