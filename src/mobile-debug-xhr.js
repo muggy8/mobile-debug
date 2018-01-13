@@ -10,11 +10,9 @@
 		value: function(){
 			var args = Array.prototype.slice.call(arguments)
 			var Identifier = args[0] + ":" + args[1]
-			var record = xhrHistory[Identifier] = {
-				method: args [0],
-				url: args[1],
-				xhr: this
-			}
+			var record = xhrHistory[Identifier] = Object.create(this)
+			record.method = args[0]
+			record.url = args[1]
 			
 			if (args[2]){
 				record.username = args[3]
@@ -27,3 +25,4 @@
 			xhrOpen.apply(this, args)
 		}
 	})
+	
