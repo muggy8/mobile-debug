@@ -7,12 +7,29 @@
 		<script src="src/mobile-debug-xhr.js"></script>
 	</head>
 	<body>
-		<script src="https://unpkg.com/require_once"></script>
 		<script>
 			//automate some stuff
-			requireOnce([
-				"https://unpkg.com/statelessjs"
-			], function(a, b, c){})
+			var req = new XMLHttpRequest()
+			req.open("GET", "https://unpkg.com/require_once")
+			req.onload = function(){
+				console.log("loaded https://unpkg.com/require_once")
+			}
+			req.send()
+
+			var req2 = new XMLHttpRequest()
+			req2.open("GET", "https://unpkg.com/stateless")
+			req2.onload = function(){
+				console.log("loaded https://unpkg.com/stateless")
+			}
+			req2.send()
+
+			var vreq = req
+
+			console.log(req === req2)
+			console.log(req === vreq)
+			vreq = req2
+			console.log(req2 === req)
+			console.log(req2 === vreq)
 		</script>
 	</body>
 </html>
