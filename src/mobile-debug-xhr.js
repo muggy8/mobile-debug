@@ -28,6 +28,8 @@
 
 			xhrOpen.apply(this, args)
 			activeXhrs.push(record)
+
+			generateXhrListView && generateXhrListView()
 		}
 	})
 
@@ -92,3 +94,47 @@
 			})
 		}
 	})
+
+	var xhrModule = library.clone("wrapper")
+	var xhrList = library.clone("wrapper")
+	xhrList.id = "xhrList"
+	xhrDetails = library.clone("wrapper")
+	xhrDetails.id = "xhrDetails"
+	xhrModule.appendChild(xhrList)
+	xhrModule.appendChild(xhrDetails)
+
+	domDebugger.appendChild(domDebugger.xhr = xhrModule)
+
+	domDebugger.styles += `
+		#mobile-debug .xhr-list-item {
+			padding: 0.5em;
+			border-bottom: 1px solid #CCC;
+		}
+	`
+
+	var generateXhrListView = function(){
+		// clear all children first
+		Array.prototype.forEach.call(xhrList.children, function(item){
+			xhrList.removeChild(item)
+		})
+
+		for (var request in xhrHistory){
+			void function(label, xhrWrapper){
+				var xhrItem = createDomStringRepresentation(label)
+				xhrItem.addEventListener("click", function(){
+					Array.prototype.forEach.call(xhrDetails.children, function(item){
+						xhrList.removeChild(item)
+					})
+
+					console.log(createXhrDetailedView(xhrWrapper))
+				})
+
+				xhrList.appendChild(xhrItem)
+				xhrItem.className += " xhr-list-item"
+			}(request, xhrHistory[request])
+		}
+	}
+
+	var createXhrDetailedView = function(xhrWrapper){
+		console.log(xhrWrapper)
+	}
