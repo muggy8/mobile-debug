@@ -3,6 +3,7 @@
 	var protoXhr = XMLHttpRequest.prototype
 	var xhrOpen = protoXhr.open
 	var xhrSend = protoXhr.send
+	var xhrSetHeader = protoXhr.setRequestHeader
 
 	Object.defineProperty(protoXhr, "open", {
 		configurable: true,
@@ -27,6 +28,28 @@
 
 			xhrOpen.apply(this, args)
 			activeXhrs.push(record)
+		}
+	})
+
+	Object.defineProperty(protoXhr, "setRequestHeader", {
+		configurable: true,
+		enumerable: false,
+		writable: true,
+		value: function(header, value){
+			var currentXhr = this
+			var xhrWrapper
+			activeXhrs.forEach(function(item){
+				if (item.xhr === currentXhr){
+					xhrWrapper = item
+				}
+			})
+
+			if (xhrWrapper){
+				xhrWrapper.sentHeaders = xhrWrapper.sentHeaders || {}
+				xhrWrapper.sentHeaders[header] = value
+			}
+
+			xhrSetHeader.call(xhrWrapper.xhr, header, value)
 		}
 	})
 
@@ -57,6 +80,15 @@
 
 			currentXhr.addEventListener("loadend", function(){
 				xhrWrapper.responce = currentXhr.responseText
+				xhrWrapper.status = currentXhr.status
+				xhrWrapper.recievedHeaders = {}
+				currentXhr.getAllResponseHeaders().split("\n").forEach(function(row){
+					var headerSplit = row.split(": ")
+					if (headerSplit[0]){
+						xhrWrapper.recievedHeaders[headerSplit[0]] = headerSplit[1]
+					}
+				})
+
 			})
 		}
 	})

@@ -14,6 +14,8 @@
 			req.onload = function(){
 				console.log("loaded https://unpkg.com/require_once")
 			}
+			req.setRequestHeader("x-something", "abc123")
+			req.setRequestHeader("foo", "bar")
 			req.send()
 
 			var req2 = new XMLHttpRequest()
