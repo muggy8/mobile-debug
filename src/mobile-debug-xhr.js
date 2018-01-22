@@ -132,9 +132,11 @@
 	}
 
 	var createXhrDetailedView = function(xhrWrapper){
+		//clearElement(xhrDetails)
 		Array.prototype.forEach.call(xhrDetails.children, function(item){
-			xhrList.removeChild(item)
+			xhrDetails.removeChild(item)
 		})
+
 		console.log(xhrWrapper)
 
 		var resultsView = createDomStringRepresentation(xhrWrapper.responce)
@@ -163,7 +165,7 @@
 		responceButton.innerText = "Responce"
 		responceButton.addEventListener("click", function(){
 			xhrStatsView.forEach(function(item){
-				xhrDetails.removeChild(item)
+				item.parentNode == xhrDetails && xhrDetails.removeChild(item)
 			})
 			xhrDetails.appendChild(resultsView)
 		})
@@ -172,14 +174,14 @@
 		var statsButton = document.createElement("button")
 		statsButton.innerText = "Stats"
 		statsButton.addEventListener("click", function(){
-			xhrDetails.removeChild(resultsView)
+			resultsView.parentNode == xhrDetails && xhrDetails.appendChild(resultsView)
 			xhrStatsView.forEach(function(item){
 				xhrDetails.appendChild(item)
 			})
 		})
 
 		// append default view to the right div
-		xhrList.appendChild(responceButton)
-		xhrList.appendChild(statsButton)
+		xhrDetails.appendChild(responceButton)
+		xhrDetails.appendChild(statsButton)
 		xhrDetails.appendChild(resultsView)
 	}
