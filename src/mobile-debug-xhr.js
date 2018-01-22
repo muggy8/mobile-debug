@@ -182,7 +182,7 @@
 		var statsButton = document.createElement("button")
 		statsButton.innerText = "Stats"
 		statsButton.addEventListener("click", function(){
-			resultsView.parentNode == xhrDetails && xhrDetails.appendChild(resultsView)
+			resultsView.parentNode == xhrDetails && xhrDetails.removeChild(resultsView)
 			xhrStatsView.forEach(function(item){
 				xhrDetails.appendChild(item)
 			})
