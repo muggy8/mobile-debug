@@ -2,6 +2,17 @@
 	domDebugger.removeChild(domDebugger.inspector)
 	domDebugger.removeChild(domDebugger.xhr)
 
+	var calculateBodyExtention = function(){
+		document.body.style.removeProperty("padding-bottom")
+		var bodyStyles = window.getComputedStyle(document.body)
+		var currentBodyPaddingBot = parseFloat((bodyStyles.paddingBottom).replace("px", ""))
+
+		var debuggerStyles = window.getComputedStyle(domDebugger)
+		var currentDebuggerHeight = parseFloat((debuggerStyles.height).replace("px", ""))
+
+		document.body.style.setProperty("padding-bottom", (currentBodyPaddingBot + currentDebuggerHeight) + "px", "important")
+	}
+
 	var navigationDiv = library.clone("wrapper")
 	navigationDiv.id = "inspector-navigation"
 	domDebugger.appendChild(navigationDiv)
@@ -18,6 +29,7 @@
 			domDebugger.appendChild(domDebugger.console)
 			consoleTab.style.backgroundColor = "inherit"
 		}
+		calculateBodyExtention()
 	})
 	navigationDiv.appendChild(consoleTab)
 
@@ -33,6 +45,7 @@
 			domDebugger.appendChild(domDebugger.inspector)
 			elementsTab.style.backgroundColor = "inherit"
 		}
+		calculateBodyExtention()
 	})
 	navigationDiv.appendChild(elementsTab)
 
@@ -48,6 +61,7 @@
 			domDebugger.appendChild(domDebugger.xhr)
 			xhrTab.style.backgroundColor = "inherit"
 		}
+		calculateBodyExtention()
 	})
 	navigationDiv.appendChild(xhrTab)
 
@@ -63,5 +77,17 @@
 		#mobile-debug {
 			background-color: #EEEEEE;
 			padding: 0.25em;
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
 		}
 	`
+	if (document.readyState === "complete"){
+		document.body.appendChild(domDebugger)
+	}
+	document.addEventListener("readystatechange", function(){
+		if (document.readyState === "complete"){
+			calculateBodyExtention()
+		}
+	})
