@@ -122,10 +122,6 @@
 			void function(label, xhrWrapper){
 				var xhrItem = createDomStringRepresentation(label)
 				xhrItem.addEventListener("click", function(){
-					Array.prototype.forEach.call(xhrDetails.children, function(item){
-						xhrList.removeChild(item)
-					})
-
 					console.log(createXhrDetailedView(xhrWrapper))
 				})
 
@@ -136,5 +132,54 @@
 	}
 
 	var createXhrDetailedView = function(xhrWrapper){
+		Array.prototype.forEach.call(xhrDetails.children, function(item){
+			xhrList.removeChild(item)
+		})
 		console.log(xhrWrapper)
+
+		var resultsView = createDomStringRepresentation(xhrWrapper.responce)
+
+		// build the stats view objects to display the information
+		var xhrStatsView = []
+		xhrStatsView.push(createDomStringRepresentation("General"))
+		xhrStatsView.push(createDomJsonRepresentation({
+			method: xhrWrapper.method,
+			url: xhrWrapper.url,
+			status: xhrWrapper.status
+		}))
+		if (xhrWrapper.recievedHeaders){
+			xhrStatsView.push(document.createElement("hr"))
+			xhrStatsView.push(createDomStringRepresentation("Recieved Headers"))
+			xhrStatsView.push(createDomJsonRepresentation(xhrWrapper.recievedHeaders))
+		}
+		if (xhrWrapper.sentHeaders){
+			xhrStatsView.push(document.createElement("hr"))
+			xhrStatsView.push(createDomStringRepresentation("Sent Headers"))
+			xhrStatsView.push(createDomJsonRepresentation(xhrWrapper.sentHeaders))
+		}
+
+		// responce view toggle button
+		var responceButton = document.createElement("button")
+		responceButton.innerText = "Responce"
+		responceButton.addEventListener("click", function(){
+			xhrStatsView.forEach(function(item){
+				xhrDetails.removeChild(item)
+			})
+			xhrDetails.appendChild(resultsView)
+		})
+
+		// stats view toggle button
+		var statsButton = document.createElement("button")
+		statsButton.innerText = "Stats"
+		statsButton.addEventListener("click", function(){
+			xhrDetails.removeChild(resultsView)
+			xhrStatsView.forEach(function(item){
+				xhrDetails.appendChild(item)
+			})
+		})
+
+		// append default view to the right div
+		xhrList.appendChild(responceButton)
+		xhrList.appendChild(statsButton)
+		xhrDetails.appendChild(resultsView)
 	}
