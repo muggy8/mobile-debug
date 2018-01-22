@@ -110,6 +110,12 @@
 			padding: 0.5em;
 			border-bottom: 1px solid #CCC;
 		}
+		#mobile-debug #xhrList,
+		#mobile-debug #xhrDetails {
+			border: solid 1px #CCC;
+			height: 200px;
+			overflow: auto;
+		}
 	`
 
 	var generateXhrListView = function(){
@@ -132,12 +138,12 @@
 	}
 
 	var createXhrDetailedView = function(xhrWrapper){
-		//clearElement(xhrDetails)
-		Array.prototype.forEach.call(xhrDetails.children, function(item){
-			xhrDetails.removeChild(item)
-		})
+		console.log(xhrDetails.children.length)
+		var removalItem
+		while(removalItem = xhrDetails.children[0]){
+			xhrDetails.removeChild(removalItem)
+		}
 
-		console.log(xhrWrapper)
 
 		var resultsView = createDomStringRepresentation(xhrWrapper.responce)
 
@@ -149,11 +155,13 @@
 			url: xhrWrapper.url,
 			status: xhrWrapper.status
 		}))
+
 		if (xhrWrapper.recievedHeaders){
 			xhrStatsView.push(document.createElement("hr"))
 			xhrStatsView.push(createDomStringRepresentation("Recieved Headers"))
 			xhrStatsView.push(createDomJsonRepresentation(xhrWrapper.recievedHeaders))
 		}
+
 		if (xhrWrapper.sentHeaders){
 			xhrStatsView.push(document.createElement("hr"))
 			xhrStatsView.push(createDomStringRepresentation("Sent Headers"))
