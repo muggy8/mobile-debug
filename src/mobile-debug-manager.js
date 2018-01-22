@@ -16,48 +16,65 @@
 	var navigationDiv = library.clone("wrapper")
 	navigationDiv.id = "inspector-navigation"
 	domDebugger.appendChild(navigationDiv)
+	
+	var closeConsole = function(){
+		if (domDebugger.console.parentNode == domDebugger){
+			domDebugger.removeChild(domDebugger.console)
+			consoleTab.style.backgroundColor = ""
+			return true
+		}
+		return false
+	}
 
 	var consoleTab = library.clone("wrapper")
 	consoleTab.innerText = "Console"
 	consoleTab.className += " tab-header"
 	consoleTab.addEventListener("click", function(){
-		if (domDebugger.console.parentNode == domDebugger){
-			domDebugger.removeChild(domDebugger.console)
-			consoleTab.style.backgroundColor = ""
-		}
-		else {
+		
+		if (!closeConsole()) {
 			domDebugger.appendChild(domDebugger.console)
 			consoleTab.style.backgroundColor = "inherit"
 		}
 		calculateBodyExtention()
 	})
 	navigationDiv.appendChild(consoleTab)
+	
+	var closeElements = function(){
+		if (domDebugger.inspector.parentNode == domDebugger){
+			domDebugger.removeChild(domDebugger.inspector)
+			elementsTab.style.backgroundColor = ""
+			return true
+		}
+		return false
+	}
 
 	var elementsTab = library.clone("wrapper")
 	elementsTab.innerText = "Inspector"
 	elementsTab.className += " tab-header"
 	elementsTab.addEventListener("click", function(){
-		if (domDebugger.inspector.parentNode == domDebugger){
-			domDebugger.removeChild(domDebugger.inspector)
-			elementsTab.style.backgroundColor = ""
-		}
-		else {
+		if (!closeElements()){
 			domDebugger.appendChild(domDebugger.inspector)
 			elementsTab.style.backgroundColor = "inherit"
 		}
 		calculateBodyExtention()
 	})
 	navigationDiv.appendChild(elementsTab)
+	
+	var closeXhr = function(){
+		if (domDebugger.xhr.parentNode == domDebugger){
+			domDebugger.removeChild(domDebugger.xhr)
+			xhrTab.style.backgroundColor = ""
+			return true
+		}
+		return false
+	}
 
 	var xhrTab = library.clone("wrapper")
 	xhrTab.innerText = "XHR"
 	xhrTab.className += " tab-header"
 	xhrTab.addEventListener("click", function(){
-		if (domDebugger.xhr.parentNode == domDebugger){
-			domDebugger.removeChild(domDebugger.xhr)
-			xhrTab.style.backgroundColor = ""
-		}
-		else {
+		
+		if (!closeXhr()){
 			domDebugger.appendChild(domDebugger.xhr)
 			xhrTab.style.backgroundColor = "inherit"
 		}
