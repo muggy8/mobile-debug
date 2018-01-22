@@ -30,7 +30,8 @@
 	consoleTab.innerText = "Console"
 	consoleTab.className += " tab-header"
 	consoleTab.addEventListener("click", function(){
-		
+		closeXhr()
+		closeElements()
 		if (!closeConsole()) {
 			domDebugger.appendChild(domDebugger.console)
 			consoleTab.style.backgroundColor = "inherit"
@@ -52,6 +53,8 @@
 	elementsTab.innerText = "Inspector"
 	elementsTab.className += " tab-header"
 	elementsTab.addEventListener("click", function(){
+		closeXhr()
+		closeConsole()
 		if (!closeElements()){
 			domDebugger.appendChild(domDebugger.inspector)
 			elementsTab.style.backgroundColor = "inherit"
@@ -73,7 +76,8 @@
 	xhrTab.innerText = "XHR"
 	xhrTab.className += " tab-header"
 	xhrTab.addEventListener("click", function(){
-		
+		closeConsole()
+		closeElements()
 		if (!closeXhr()){
 			domDebugger.appendChild(domDebugger.xhr)
 			xhrTab.style.backgroundColor = "inherit"

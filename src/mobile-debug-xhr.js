@@ -113,7 +113,7 @@
 		#mobile-debug #xhrList,
 		#mobile-debug #xhrDetails {
 			border: solid 1px #CCC;
-			height: 200px;
+			height: 150px;
 			overflow: auto;
 		}
 	`
@@ -128,7 +128,7 @@
 			void function(label, xhrWrapper){
 				var xhrItem = createDomStringRepresentation(label)
 				xhrItem.addEventListener("click", function(){
-					console.log(createXhrDetailedView(xhrWrapper))
+					createXhrDetailedView(xhrWrapper)
 				})
 
 				xhrList.appendChild(xhrItem)
@@ -138,7 +138,6 @@
 	}
 
 	var createXhrDetailedView = function(xhrWrapper){
-		console.log(xhrDetails.children.length)
 		var removalItem
 		while(removalItem = xhrDetails.children[0]){
 			xhrDetails.removeChild(removalItem)
