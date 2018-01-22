@@ -243,5 +243,5 @@
 	var domElementInspector = library.clone("wrapper")
 	domElementInspector.appendChild(domView)
 	domElementInspector.appendChild(cssView)
-	domDebugger.appendChild(domElementInspector)
+	domDebugger.appendChild(domDebugger.inspector = domElementInspector)
     domElementInspector.appendChild(sizeSlider)
