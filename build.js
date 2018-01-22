@@ -36,7 +36,7 @@ new Promise(function(accept, reject){
 				})
 			}
 		})
-		
+
 	return Promise.all(getScriptPromises)
 }).then(function(scriptBodies){
 	var dist = fs.createWriteStream("dist/mobile-debug.js")
@@ -46,5 +46,5 @@ new Promise(function(accept, reject){
 			dist.write("\n// file " + file.src + "\n" + file.contents)
 		}
 	})
-	dist.write("})")
+	dist.write("})()")
 })

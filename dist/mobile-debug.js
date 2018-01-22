@@ -823,4 +823,4 @@
 		xhrDetails.appendChild(statsButton)
 		xhrDetails.appendChild(resultsView)
 	}
-})
+})()

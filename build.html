@@ -1,0 +1,34 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width">
+		<script src="dist/mobile-debug.js"></script>
+	</head>
+	<body>
+		<script>
+			//automate some stuff
+			var req = new XMLHttpRequest()
+			req.open("GET", "https://unpkg.com/require_once")
+			req.onload = function(){
+				console.log("loaded https://unpkg.com/require_once")
+			}
+			req.setRequestHeader("x-something", "abc123")
+			req.setRequestHeader("foo", "bar")
+			req.send()
+
+			var req2 = new XMLHttpRequest()
+			req2.open("GET", "https://unpkg.com/stateless")
+			req2.onload = function(){
+				console.log("loaded https://unpkg.com/stateless")
+			}
+			req2.send()
+
+			var vreq = req
+
+			console.log(req === req2)
+			console.log(req === vreq)
+			vreq = req2
+			console.log(req2 === req)
+			console.log(req2 === vreq)
+		</script>
+	</body>
+</html>
