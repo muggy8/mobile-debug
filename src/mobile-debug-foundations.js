@@ -95,4 +95,8 @@
 			border-color: inherit;
             box-sizing: border-box;
 		}
+		#mobile-debug input,
+		#mobile-debug textarea {
+			background-color: transparent;
+		}
 	`
