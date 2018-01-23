@@ -188,6 +188,8 @@
 			})
 
 			domConsole.appendChild(logBlock)
+			domConsole.scrollTop = domConsole.scrollHeight
+			
 			return logBlock
 		}
 	})
