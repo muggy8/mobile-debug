@@ -290,6 +290,8 @@
 			})
 
 			domConsole.appendChild(logBlock)
+			domConsole.scrollTop = domConsole.scrollHeight
+			
 			return logBlock
 		}
 	})
@@ -743,7 +745,7 @@
 		#mobile-debug #xhrList,
 		#mobile-debug #xhrDetails {
 			border: solid 1px #CCC;
-			height: 200px;
+			height: 150px;
 			overflow: auto;
 		}
 	`
@@ -758,7 +760,7 @@
 			void function(label, xhrWrapper){
 				var xhrItem = createDomStringRepresentation(label)
 				xhrItem.addEventListener("click", function(){
-					console.log(createXhrDetailedView(xhrWrapper))
+					createXhrDetailedView(xhrWrapper)
 				})
 
 				xhrList.appendChild(xhrItem)
@@ -768,7 +770,6 @@
 	}
 
 	var createXhrDetailedView = function(xhrWrapper){
-		console.log(xhrDetails.children.length)
 		var removalItem
 		while(removalItem = xhrDetails.children[0]){
 			xhrDetails.removeChild(removalItem)
@@ -796,6 +797,14 @@
 			xhrStatsView.push(document.createElement("hr"))
 			xhrStatsView.push(createDomStringRepresentation("Sent Headers"))
 			xhrStatsView.push(createDomJsonRepresentation(xhrWrapper.sentHeaders))
+		}
+		
+		if (xhrWrapper.body){
+			xhrStatsView.push(document.createElement("hr"))
+			xhrStatsView.push(createDomStringRepresentation("Payload"))
+			systemLog = true
+			xhrStatsView.push(createAppropriateRepresentation(xhrWrapper.body))
+			systemLog = false
 		}
 
 		// responce view toggle button
@@ -843,48 +852,69 @@
 	var navigationDiv = library.clone("wrapper")
 	navigationDiv.id = "inspector-navigation"
 	domDebugger.appendChild(navigationDiv)
+	
+	var closeConsole = function(){
+		if (domDebugger.console.parentNode == domDebugger){
+			domDebugger.removeChild(domDebugger.console)
+			consoleTab.style.backgroundColor = ""
+			return true
+		}
+		return false
+	}
 
 	var consoleTab = library.clone("wrapper")
 	consoleTab.innerText = "Console"
 	consoleTab.className += " tab-header"
 	consoleTab.addEventListener("click", function(){
-		if (domDebugger.console.parentNode == domDebugger){
-			domDebugger.removeChild(domDebugger.console)
-			consoleTab.style.backgroundColor = ""
-		}
-		else {
+		closeXhr()
+		closeElements()
+		if (!closeConsole()) {
 			domDebugger.appendChild(domDebugger.console)
 			consoleTab.style.backgroundColor = "inherit"
 		}
 		calculateBodyExtention()
 	})
 	navigationDiv.appendChild(consoleTab)
+	
+	var closeElements = function(){
+		if (domDebugger.inspector.parentNode == domDebugger){
+			domDebugger.removeChild(domDebugger.inspector)
+			elementsTab.style.backgroundColor = ""
+			return true
+		}
+		return false
+	}
 
 	var elementsTab = library.clone("wrapper")
 	elementsTab.innerText = "Inspector"
 	elementsTab.className += " tab-header"
 	elementsTab.addEventListener("click", function(){
-		if (domDebugger.inspector.parentNode == domDebugger){
-			domDebugger.removeChild(domDebugger.inspector)
-			elementsTab.style.backgroundColor = ""
-		}
-		else {
+		closeXhr()
+		closeConsole()
+		if (!closeElements()){
 			domDebugger.appendChild(domDebugger.inspector)
 			elementsTab.style.backgroundColor = "inherit"
 		}
 		calculateBodyExtention()
 	})
 	navigationDiv.appendChild(elementsTab)
+	
+	var closeXhr = function(){
+		if (domDebugger.xhr.parentNode == domDebugger){
+			domDebugger.removeChild(domDebugger.xhr)
+			xhrTab.style.backgroundColor = ""
+			return true
+		}
+		return false
+	}
 
 	var xhrTab = library.clone("wrapper")
 	xhrTab.innerText = "XHR"
 	xhrTab.className += " tab-header"
 	xhrTab.addEventListener("click", function(){
-		if (domDebugger.xhr.parentNode == domDebugger){
-			domDebugger.removeChild(domDebugger.xhr)
-			xhrTab.style.backgroundColor = ""
-		}
-		else {
+		closeConsole()
+		closeElements()
+		if (!closeXhr()){
 			domDebugger.appendChild(domDebugger.xhr)
 			xhrTab.style.backgroundColor = "inherit"
 		}
