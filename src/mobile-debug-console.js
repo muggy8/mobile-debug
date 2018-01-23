@@ -107,6 +107,12 @@
 			jsonRep.useBrackets("[]")
 			return jsonRep
 		}
+		else if (somedata instanceof HTMLElement){
+			var eleView = library.clone("wrapper")
+			eleView.appendChild(createDomHtmlRepresentation(somedata))
+			eleView.appendChild(createDomJsonRepresentation(somedata, props, protoFrom))
+			return eleView
+		}
 		else if (typeof somedata == "object"){
 			return createDomJsonRepresentation(somedata, props, protoFrom)
 		}
