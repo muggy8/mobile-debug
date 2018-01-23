@@ -166,6 +166,14 @@
 			xhrStatsView.push(createDomStringRepresentation("Sent Headers"))
 			xhrStatsView.push(createDomJsonRepresentation(xhrWrapper.sentHeaders))
 		}
+		
+		if (xhrWrapper.body){
+			xhrStatsView.push(document.createElement("hr"))
+			xhrStatsView.push(createDomStringRepresentation("Payload"))
+			systemLog = true
+			xhrStatsView.push(createAppropriateRepresentation(xhrWrapper.body))
+			systemLog = false
+		}
 
 		// responce view toggle button
 		var responceButton = document.createElement("button")
