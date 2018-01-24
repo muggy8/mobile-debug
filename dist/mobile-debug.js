@@ -354,7 +354,7 @@
 
 // file src/mobile-debug-elements.js
     templates.htmlContainer = `
-    <div class="htmlContainer data-div closed">
+    <div class="htmlContainer data-div state-closed">
         <div class="html-open"></div>
         <div class="html-body"></div>
         <div class="html-close"></div>
@@ -389,7 +389,7 @@
 			}
 
 			var show = function(){
-				nodeRepresentation.className = nodeRepresentation.className.replace(" closed", "") + " open"
+				nodeRepresentation.className = nodeRepresentation.className.replace(" state-closed", "") + " state-opened"
 
 				nodeRepresentation.querySelector(".html-body").innerHTML = ""
 				var appendTarget = nodeRepresentation.querySelector(".html-body")
@@ -402,7 +402,7 @@
 				nodeRepresentation.dblclickAction = hide
 			}
 			var hide = function(){
-				nodeRepresentation.className = nodeRepresentation.className.replace(" open", "") + " closed"
+				nodeRepresentation.className = nodeRepresentation.className.replace(" state-opened", "") + " state-closed"
 				nodeRepresentation.querySelector(".html-body").innerHTML = "..."
 
 				nodeRepresentation.dblclickAction = show
@@ -471,8 +471,8 @@
 
     var createDomCssKeyValPair = function(rule, ruleIndex, resetView){
         var domPair = templateToElement(templates.keyVal)
-        domPair.querySelector(".key").appendChild(domPair.keyInput = templateToElement(templates.underlineInput))
-        domPair.querySelector(".val").appendChild(domPair.valInput = templateToElement(templates.underlineInput))
+        domPair.querySelector(".pair-key").appendChild(domPair.keyInput = templateToElement(templates.underlineInput))
+        domPair.querySelector(".pair-val").appendChild(domPair.valInput = templateToElement(templates.underlineInput))
 		domPair.appendChild(domPair.deleteButton = templateToElement("<button>X</button>"))
 
         domPair.keyInput.value = rule.style[ruleIndex] || "New"
@@ -580,15 +580,15 @@
             display: inline-block;
             width: 50%;
 		}
-		#mobile-debug .htmlContainer.closed > * {
+		#mobile-debug .htmlContainer.state-closed > * {
 			display: inline-block;
 		}
-		#mobile-debug .htmlContainer.open > .html-body {
+		#mobile-debug .htmlContainer.state-opened > .html-body {
 			margin-left: 1em;
 		}
-		#mobile-debug .open.highlight > .html-open,
-		#mobile-debug .open.highlight > .html-close,
-		#mobile-debug .closed.highlight {
+		#mobile-debug .state-opened.highlight > .html-open,
+		#mobile-debug .state-opened.highlight > .html-close,
+		#mobile-debug .state-closed.highlight {
 			background-color: skyblue;
 			display: inline;
 		}

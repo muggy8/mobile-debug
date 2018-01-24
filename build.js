@@ -22,7 +22,7 @@ var randomInt = function(start, stop){
     var random = Math.round(-0.4999 + Math.random() * (startZeroEnd + 0.9998))
     return random + actualStart
 }
-var allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
+var allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$_"
 var generateId = function(length = 16){
     var id = allowedCharacters[randomInt(51)]
     for(var i = 1; i < length; i++){
