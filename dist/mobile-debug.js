@@ -264,19 +264,19 @@
 		#mobile-debug .jsonHidden {
 			cursor: pointer;
 		}
-		#mobile-debug .log,
-		#mobile-debug .err,
-		#mobile-debug .warn {
+		#mobile-debug .type-log,
+		#mobile-debug .type-err,
+		#mobile-debug .type-warn {
 			border-top: solid 1px #DDD;
 			padding: 0.25em 0.5em;
 		}
-		#mobile-debug .log {
+		#mobile-debug .type-log {
 			color: Black;
 		}
-		#mobile-debug .err {
+		#mobile-debug .type-err {
 			color: Red;
 		}
-		#mobile-debug .warn {
+		#mobile-debug .type-warn {
 			color: GoldenRod;
 		}
 		#mobile-debug .data-div {
@@ -293,7 +293,7 @@
 		writable: true,
 		value: function(){
 			var logBlock = library.clone("wrapper")
-			logBlock.className += " log"
+			logBlock.className += " type-log"
 
 			Array.prototype.forEach.call(arguments, function(item){
 				logBlock.appendChild(createAppropriateRepresentation(item))
@@ -301,7 +301,7 @@
 
 			domConsole.appendChild(logBlock)
 			domConsole.scrollTop = domConsole.scrollHeight
-			
+
 			return logBlock
 		}
 	})
@@ -339,7 +339,7 @@
 			}
 			catch (o3o){
 				systemLog = true
-				var logEle = domConsole.log("Error", o3o).className += " err"
+				var logEle = domConsole.log("Error", o3o).className += " type-err"
 			}
 			finally {
 				inputConsole.value = ""
@@ -358,7 +358,7 @@
 	var sourceLog = console.log
 	console.log = function(){
 		var inputs = Array.prototype.slice.call(arguments)
-		domConsole.log.apply(this, inputs).className += " log"
+		domConsole.log.apply(this, inputs).className += " type-log"
 		sourceLog.apply(console, inputs)
 	}
 
@@ -374,7 +374,7 @@
 	console.error = function(){
 		var inputs = Array.prototype.slice.call(arguments)
 		var errors = generateDomLog(inputs)
-		domConsole.log.apply(this, errors).className += " err"
+		domConsole.log.apply(this, errors).className += " type-err"
 		sourceErr.apply(console, inputs)
 	}
 
@@ -382,12 +382,12 @@
 	console.warn = function(){
 		var inputs = Array.prototype.slice.call(arguments)
 		var errors = generateDomLog(inputs)
-		domConsole.log.apply(this, errors).className += " warn"
+		domConsole.log.apply(this, errors).className += " type-warn"
 		sourceWarn.apply(console, inputs)
 	}
 
 	window.addEventListener("error", function(ev){
-		domConsole.log(ev.message + "\nError in file: " + ev.fileName	+ " on line " + ev.lineno + ":" + ev.colno).className += " err"
+		domConsole.log(ev.message + "\nError in file: " + ev.fileName	+ " on line " + ev.lineno + ":" + ev.colno).className += " type-err"
 	})
 
 // file src/mobile-debug-elements.js
