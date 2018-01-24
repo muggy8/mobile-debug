@@ -54,8 +54,8 @@ new Promise(function(accept, reject){
 	var minified = UglifyJS.minify(scriptWhole, {
 		ecma: 5
 	})
-	
-	var manuallyCleanCode = minified.code.replace(/\\n|\\t/gi, "")
+
+	var manuallyCleanCode = minified.code.replace(/\\n|\\t|\s{2,}/gi, "")
 
 	fs.writeFile("dist/mobile-debug.min.js", manuallyCleanCode, function(err){
 		err && console.log(err)

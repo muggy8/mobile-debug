@@ -1,5 +1,5 @@
 	var converter = document.createElement("div")
-	var library = peak = Object.create({
+	var library = Object.create({
 		add: function(nameOrEle, ele){
 			var name
 			if (ele){
