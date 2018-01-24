@@ -29,6 +29,7 @@
     },
     "homepage": "https://github.com/muggy8/mobile-debug#readme",
     "devDependencies": {
+        "clean-css": "^4.1.9",
         "uglify-es": "^3.3.8"
     },
     "dependencies": {}
