@@ -1,5 +1,11 @@
 const fs = require("fs")
 const UglifyJS = require("uglify-es")
+const CleanCSS = require('clean-css')
+const minifier = new CleanCSS({
+	compatibility: 'ie9,-properties.merging',
+	returnPromise: false
+})
+const minifyCss = minifier.minify.bind(minifier)
 
 // this is the build script for writing
 new Promise(function(accept, reject){
@@ -56,6 +62,9 @@ new Promise(function(accept, reject){
 	})
 
 	var manuallyCleanCode = minified.code.replace(/\\n|\\t|\s{2,}/gi, "")
+	manuallyCleanCode = manuallyCleanCode.replace(/(styles\+=")([^"]+)/g, function(match, styleEquals, css){
+		return styleEquals + minifyCss(css).styles
+	})
 
 	fs.writeFile("dist/mobile-debug.min.js", manuallyCleanCode, function(err){
 		err && console.log(err)
