@@ -1,12 +1,11 @@
-	library.add(`
-		<div id="htmlContainer" class="data-div closed">
-			<div class="html-open"></div>
-			<div class="html-body"></div>
-			<div class="html-close"></div>
-		</div>
+    templates.htmlContainer = `
+    <div class="htmlContainer data-div closed">
+        <div class="html-open"></div>
+        <div class="html-body"></div>
+        <div class="html-close"></div>
+    </div>`
 
-        <input id="underlineInput" style="border: none; border-bottom: solid 1px #CCC; text-align: center;">
-	`)
+    templates.underlineInput = `<input class="underlineInput" style="border: none; border-bottom: solid 1px #CCC; text-align: center;">`
 
 	var createDomHtmlRepresentation = function(ele){
 		if (!ele){
@@ -16,7 +15,7 @@
 		if (ele instanceof HTMLElement){
 			var clone = ele.cloneNode()
 			var nodeText = clone.outerHTML
-			var nodeRepresentation = library.clone("htmlContainer")
+			var nodeRepresentation = templateToElement(templates.htmlContainer)
 			var closingTagMatch = nodeText.match(/<\/[^>]+>/)
 			var oppeningTag
 			if (closingTagMatch){
@@ -117,9 +116,9 @@
 
     var createDomCssKeyValPair = function(rule, ruleIndex, resetView){
         var domPair = templateToElement(templates.keyVal)
-        domPair.querySelector(".key").appendChild(domPair.keyInput = library.clone("underlineInput"))
-        domPair.querySelector(".val").appendChild(domPair.valInput = library.clone("underlineInput"))
-		domPair.appendChild(domPair.deleteButton = library.convert("<button>X</button>"))
+        domPair.querySelector(".key").appendChild(domPair.keyInput = templateToElement(templates.underlineInput))
+        domPair.querySelector(".val").appendChild(domPair.valInput = templateToElement(templates.underlineInput))
+		domPair.appendChild(domPair.deleteButton = templateToElement("<button>X</button>"))
 
         domPair.keyInput.value = rule.style[ruleIndex] || "New"
         domPair.valInput.value = rule.style.getPropertyValue(rule.style[ruleIndex])
@@ -209,7 +208,7 @@
 	var cssView = templateToElement(templates.wrapper)
 	cssView.id = "css-view"
 
-    var sizeSlider = library.convert('<input type="range" min="1" max="99" step="1" style="width: 100%; margin:0;">')
+    var sizeSlider = templateToElement('<input type="range" min="1" max="99" step="1" style="width: 100%; margin:0;">')
     sizeSlider.addEventListener("change", function(ev){
         domView.style.width = sizeSlider.value + "%"
         cssView.style.width = (100 - sizeSlider.value) + "%"

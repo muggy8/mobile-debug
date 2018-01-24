@@ -1,34 +1,36 @@
-	library.add(`
-		<div id="jsonDisplay" class="data-div">
-			<div class="starting-brace">{</div>
-			<div class="properties"></div>
-			<div class="ending-brace">}</div>
-		</div>
+    templates.jsonDisplay = `
+    <div class="jsonDisplay data-div">
+        <div class="starting-brace">{</div>
+        <div class="properties"></div>
+        <div class="ending-brace">}</div>
+    </div>`
 
-		<div id="jsonHidden" class="data-div">
-			<div class="json-placeholder">{...}</div>
-		</div>
+    templates.jsonHidden = `
+    <div class="jsonHidden data-div">
+        <div class="json-placeholder">{...}</div>
+    </div>`
 
-		<div id="keyVal">
-			<div class="key"></div>:
-			<div class="val"></div>
-		</div>
+    templates.keyVal = `
+    <div class="keyVal">
+        <div class="key"></div>:
+        <div class="val"></div>
+    </div>`
 
-		<div id="otherData" class="data-div">
-			<pre style="margin: 0"></pre>
-		</div>`
-	)
+    templates.otherData = `
+    <div class="otherData data-div">
+        <pre style="margin: 0"></pre>
+    </div>`
 
 	var createDomStringRepresentation = function(text){
-		var returnNode = library.clone("otherData").querySelector("pre")
+		var returnNode = templateToElement(templates.otherData).querySelector("pre")
 		returnNode.innerText = text
 		return returnNode
 	}
 
 	var createDomJsonRepresentation = function(theJson, props, findProtoFrom){
-		var jsonBlock = library.clone("wrapper")
+		var jsonBlock = templateToElement(templates.wrapper)
 
-		var hidden = library.clone("jsonHidden")
+		var hidden = templateToElement(templates.jsonHidden)
 		hidden.addEventListener("dblclick", function(ev){
 			ev.stopPropagation()
 			// take the hidden element out and replace it with the snown element instead
@@ -44,7 +46,7 @@
 			props = props || Object.getOwnPropertyNames(theJson)
 
 			var createSubJsonGroup = function(key, data, props, protoFrom){
-				var returnNode = library.clone("keyVal")
+				var returnNode = templateToElement(templates.keyVal)
 				returnNode.querySelector(".key").innerText = '"' + key + '"'
 				returnNode.querySelector(".key").style.cursor = "pointer"
 				var subJsonBlock = createAppropriateRepresentation(data, props, protoFrom)
@@ -73,7 +75,7 @@
 			}
 		})
 
-		var shown = library.clone("jsonDisplay")
+		var shown = templateToElement(templates.jsonDisplay)
 		shown.addEventListener("dblclick", function(ev){
 			ev.stopPropagation()
 			shown.parentNode ? shown.parentNode.removeChild(shown) : false
@@ -108,7 +110,7 @@
 			return jsonRep
 		}
 		else if (somedata instanceof HTMLElement){
-			var eleView = library.clone("wrapper")
+			var eleView = templateToElement(templates.wrapper)
 			eleView.appendChild(createDomHtmlRepresentation(somedata))
 			eleView.appendChild(createDomJsonRepresentation(somedata, props, protoFrom))
 			return eleView
@@ -158,19 +160,19 @@
 		#mobile-debug .jsonHidden {
 			cursor: pointer;
 		}
-		#mobile-debug .log,
-		#mobile-debug .err,
-		#mobile-debug .warn {
+		#mobile-debug .type-log,
+		#mobile-debug .type-err,
+		#mobile-debug .type-warn {
 			border-top: solid 1px #DDD;
 			padding: 0.25em 0.5em;
 		}
-		#mobile-debug .log {
+		#mobile-debug .type-log {
 			color: Black;
 		}
-		#mobile-debug .err {
+		#mobile-debug .type-err {
 			color: Red;
 		}
-		#mobile-debug .warn {
+		#mobile-debug .type-warn {
 			color: GoldenRod;
 		}
 		#mobile-debug .data-div {
@@ -178,7 +180,7 @@
             white-space: nowrap;
 		}`
 
-	var domConsole = library.clone("wrapper")
+	var domConsole = templateToElement(templates.wrapper)
 	domConsole.id = "mobile-console"
 
 	Object.defineProperty(domConsole, "log", {
@@ -186,8 +188,8 @@
 		configurable: true,
 		writable: true,
 		value: function(){
-			var logBlock = library.clone("wrapper")
-			logBlock.className += " log"
+			var logBlock = templateToElement(templates.wrapper)
+			logBlock.className += " type-log"
 
 			Array.prototype.forEach.call(arguments, function(item){
 				logBlock.appendChild(createAppropriateRepresentation(item))
@@ -195,12 +197,12 @@
 
 			domConsole.appendChild(logBlock)
 			domConsole.scrollTop = domConsole.scrollHeight
-			
+
 			return logBlock
 		}
 	})
 
-	var inputConsole = library.convert(
+	var inputConsole = templateToElement(
 		`<div>
 			<textarea></textarea>
 			<button>execute</button>
@@ -233,7 +235,7 @@
 			}
 			catch (o3o){
 				systemLog = true
-				var logEle = domConsole.log("Error", o3o).className += " err"
+				var logEle = domConsole.log("Error", o3o).className += " type-err"
 			}
 			finally {
 				inputConsole.value = ""
@@ -243,7 +245,7 @@
 
 	inputConsole.querySelector("button").addEventListener("click", inputConsole.execute)
 
-	var consoleModule = library.clone("wrapper")
+	var consoleModule = templateToElement(templates.wrapper)
 	consoleModule.appendChild(domConsole)
 	consoleModule.appendChild(inputConsole)
 
@@ -252,7 +254,7 @@
 	var sourceLog = console.log
 	console.log = function(){
 		var inputs = Array.prototype.slice.call(arguments)
-		domConsole.log.apply(this, inputs).className += " log"
+		domConsole.log.apply(this, inputs).className += " type-log"
 		sourceLog.apply(console, inputs)
 	}
 
@@ -268,7 +270,7 @@
 	console.error = function(){
 		var inputs = Array.prototype.slice.call(arguments)
 		var errors = generateDomLog(inputs)
-		domConsole.log.apply(this, errors).className += " err"
+		domConsole.log.apply(this, errors).className += " type-err"
 		sourceErr.apply(console, inputs)
 	}
 
@@ -276,10 +278,10 @@
 	console.warn = function(){
 		var inputs = Array.prototype.slice.call(arguments)
 		var errors = generateDomLog(inputs)
-		domConsole.log.apply(this, errors).className += " warn"
+		domConsole.log.apply(this, errors).className += " type-warn"
 		sourceWarn.apply(console, inputs)
 	}
 
 	window.addEventListener("error", function(ev){
-		domConsole.log(ev.message + "\nError in file: " + ev.fileName	+ " on line " + ev.lineno + ":" + ev.colno).className += " err"
+		domConsole.log(ev.message + "\nError in file: " + ev.fileName	+ " on line " + ev.lineno + ":" + ev.colno).className += " type-err"
 	})
