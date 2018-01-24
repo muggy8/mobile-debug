@@ -1,4 +1,5 @@
 const fs = require("fs")
+const UglifyJS = require("uglify-es")
 
 // this is the build script for writing
 new Promise(function(accept, reject){
@@ -40,11 +41,24 @@ new Promise(function(accept, reject){
 	return Promise.all(getScriptPromises)
 }).then(function(scriptBodies){
 	var dist = fs.createWriteStream("dist/mobile-debug.js")
-	dist.write("(function(){")
+	var scriptWhole = "(function(){"
 	scriptBodies.forEach(function(file){
 		if (file){
-			dist.write("\n// file " + file.src + "\n" + file.contents)
+			scriptWhole += "\n// file " + file.src + "\n" + file.contents
 		}
 	})
-	dist.write("})()")
+	scriptWhole += "})()"
+
+	dist.write(scriptWhole)
+
+	var minified = UglifyJS.minify(scriptWhole, {
+		warnings: true,
+		ecma: 5
+	})
+	fs.writeFile("dist/mobile-debug.min.js", minified.code, function(err){
+		console.log(err)
+	})
+	//console.log(minified.code)
+}).catch(function(err){
+	console.log(err)
 })
