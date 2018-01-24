@@ -63,6 +63,8 @@ new Promise(function(accept, reject){
 
 	var manuallyCleanCode = minified.code.replace(/\\n|\\t|\s{2,}/gi, "")
 	manuallyCleanCode = manuallyCleanCode.replace(/(styles\+=")([^"]+)/g, function(match, styleEquals, css){
+		// todo: add mangle CSS ID and class name logic here
+
 		return styleEquals + minifyCss(css).styles
 	})
 
