@@ -27,5 +27,9 @@
     "bugs": {
         "url": "https://github.com/muggy8/mobile-debug/issues"
     },
-    "homepage": "https://github.com/muggy8/mobile-debug#readme"
+    "homepage": "https://github.com/muggy8/mobile-debug#readme",
+    "devDependencies": {
+        "babel-preset-env": "^1.6.1",
+        "uglify-js": "^3.3.8"
+    }
 }
