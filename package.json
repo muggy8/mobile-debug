@@ -29,6 +29,7 @@
     },
     "homepage": "https://github.com/muggy8/mobile-debug#readme",
     "devDependencies": {
+        "babel-core": "^6.26.0",
         "babel-preset-env": "^1.6.1",
         "uglify-js": "^3.3.8"
     }
