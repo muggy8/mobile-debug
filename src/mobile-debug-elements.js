@@ -116,7 +116,7 @@
 	}
 
     var createDomCssKeyValPair = function(rule, ruleIndex, resetView){
-        var domPair = library.clone("keyVal")
+        var domPair = templateToElement(templates.keyVal)
         domPair.querySelector(".key").appendChild(domPair.keyInput = library.clone("underlineInput"))
         domPair.querySelector(".val").appendChild(domPair.valInput = library.clone("underlineInput"))
 		domPair.appendChild(domPair.deleteButton = library.convert("<button>X</button>"))
@@ -175,9 +175,9 @@
     }
 
     var createDomCssRuleRepresentation = function(rule, ele){
-        var ruleBlock = library.clone("wrapper")
+        var ruleBlock = templateToElement(templates.wrapper)
         ruleBlock.appendChild(createDomStringRepresentation(rule.selectorText))
-        var jsonLikeBlock = library.clone("jsonDisplay")
+        var jsonLikeBlock = templateToElement(templates.jsonDisplay)
         ruleBlock.appendChild(jsonLikeBlock)
 		var rebuildCssRulesView = function(){
 			cssView.innerHTML = ""
@@ -191,7 +191,7 @@
 
     var createDomCssRepresentation = function(ele){
         var rules = getElementCssRules(ele)
-        var domRuleWrap = library.clone("wrapper")
+        var domRuleWrap = templateToElement(templates.wrapper)
         rules.forEach(function(rule){
             domRuleWrap.appendChild(createDomCssRuleRepresentation(rule, ele))
             domRuleWrap.appendChild(document.createElement("hr"))
@@ -203,10 +203,10 @@
     // to test
     // document.querySelector("#css-view").appendChild(createDomCssRepresentation(document.querySelector(".data-div")))
 
-	var domView = library.clone("wrapper")
+	var domView = templateToElement(templates.wrapper)
 	domView.id = "dom-view"
 	domView.appendChild(createDomHtmlRepresentation(document.querySelector("html")))
-	var cssView = library.clone("wrapper")
+	var cssView = templateToElement(templates.wrapper)
 	cssView.id = "css-view"
 
     var sizeSlider = library.convert('<input type="range" min="1" max="99" step="1" style="width: 100%; margin:0;">')
@@ -240,7 +240,7 @@
 		}
 	`
 
-	var domElementInspector = library.clone("wrapper")
+	var domElementInspector = templateToElement(templates.wrapper)
 	domElementInspector.appendChild(domView)
 	domElementInspector.appendChild(cssView)
 	domDebugger.appendChild(domDebugger.inspector = domElementInspector)

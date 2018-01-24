@@ -95,10 +95,10 @@
 		}
 	})
 
-	var xhrModule = library.clone("wrapper")
-	var xhrList = library.clone("wrapper")
+	var xhrModule = templateToElement(templates.wrapper)
+	var xhrList = templateToElement(templates.wrapper)
 	xhrList.id = "xhrList"
-	xhrDetails = library.clone("wrapper")
+	xhrDetails = templateToElement(templates.wrapper)
 	xhrDetails.id = "xhrDetails"
 	xhrModule.appendChild(xhrList)
 	xhrModule.appendChild(xhrDetails)
@@ -166,7 +166,7 @@
 			xhrStatsView.push(createDomStringRepresentation("Sent Headers"))
 			xhrStatsView.push(createDomJsonRepresentation(xhrWrapper.sentHeaders))
 		}
-		
+
 		if (xhrWrapper.body){
 			xhrStatsView.push(document.createElement("hr"))
 			xhrStatsView.push(createDomStringRepresentation("Payload"))

@@ -57,11 +57,20 @@
 		}
 	})
 
-	library.add(`<div id="wrapper"></div>`)
+    var templates = {}
+    var templateToElement = function(string){
+        converter.innerHTML = string
+        if (converter.children.length){
+            return converter.children[0]
+        }
+    }
 
-	var domDebugger = library.clone("wrapper")
+	library.add(`<div id="wrapper"></div>`)
+    templates.wrapper = `<div class="wrapper"></div>`
+
+	var domDebugger = templateToElement(templates.wrapper)
 	domDebugger.id = "mobile-debug"
-	var stylesBlock = library.convert(`<style></style>`)
+	var stylesBlock = templateToElement(`<style></style>`)
 	domDebugger.appendChild(stylesBlock)
 
 	Object.defineProperty(domDebugger, "styles", {
