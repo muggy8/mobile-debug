@@ -52,11 +52,13 @@ new Promise(function(accept, reject){
 	dist.write(scriptWhole)
 
 	var minified = UglifyJS.minify(scriptWhole, {
-		warnings: true,
 		ecma: 5
 	})
-	fs.writeFile("dist/mobile-debug.min.js", minified.code, function(err){
-		console.log(err)
+	
+	var manuallyCleanCode = minified.code.replace(/\\n|\\t/gi, "")
+
+	fs.writeFile("dist/mobile-debug.min.js", manuallyCleanCode, function(err){
+		err && console.log(err)
 	})
 	//console.log(minified.code)
 }).catch(function(err){
