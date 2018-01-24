@@ -183,7 +183,7 @@
 			cssView.appendChild(createDomCssRepresentation(ele))
 		}
         for(var i = 0; i <= rule.style.length; i++){
-            jsonLikeBlock.querySelector(".properties").appendChild(createDomCssKeyValPair(rule, i, rebuildCssRulesView))
+            jsonLikeBlock.querySelector(".json-properties").appendChild(createDomCssKeyValPair(rule, i, rebuildCssRulesView))
         }
 		return ruleBlock
     }

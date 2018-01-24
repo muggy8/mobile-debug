@@ -1,7 +1,7 @@
     templates.jsonDisplay = `
     <div class="jsonDisplay data-div">
         <div class="starting-brace">{</div>
-        <div class="properties"></div>
+        <div class="json-properties"></div>
         <div class="ending-brace">}</div>
     </div>`
 
@@ -12,8 +12,8 @@
 
     templates.keyVal = `
     <div class="keyVal">
-        <div class="key"></div>:
-        <div class="val"></div>
+        <div class="pair-key"></div>:
+        <div class="pair-val"></div>
     </div>`
 
     templates.otherData = `
@@ -38,7 +38,7 @@
 			jsonBlock.appendChild(shown)
 
 			// if the element that's gonna replace this one already has children then skip the rest cuz the rest of the code generates the children
-			if (shown.querySelector(".properties").children.length > 0){
+			if (shown.querySelector(".json-properties").children.length > 0){
 				return
 			}
 
@@ -65,13 +65,13 @@
 				return item !== "__proto__"
 			}).forEach(function(item){
 				var keyValDomPair = createSubJsonGroup(item, theJson[item])
-				shown.querySelector(".properties").appendChild(keyValDomPair)
+				shown.querySelector(".json-properties").appendChild(keyValDomPair)
 			})
 
 			var inheritedFrom = Object.getPrototypeOf(findProtoFrom || theJson)
 			if (inheritedFrom){
 				var keyValDomPair = createSubJsonGroup("__proto__" , theJson, Object.getOwnPropertyNames(inheritedFrom), inheritedFrom)
-				shown.querySelector(".properties").appendChild(keyValDomPair)
+				shown.querySelector(".json-properties").appendChild(keyValDomPair)
 			}
 		})
 
@@ -148,13 +148,13 @@
 			overflow: auto;
 			font-family: monospace;
 		}
-		#mobile-debug .jsonDisplay .properties {
+		#mobile-debug .jsonDisplay .json-properties {
 			margin-left: 1em;
 		}
-		#mobile-debug .jsonDisplay .properties .keyVal {
+		#mobile-debug .jsonDisplay .json-properties .keyVal {
 			display: flex
 		}
-		#mobile-debug .jsonDisplay .properties .keyVal .val {
+		#mobile-debug .jsonDisplay .json-properties .keyVal .pair-val {
 			flex-grow: 1;
 		}
 		#mobile-debug .jsonHidden {
@@ -183,24 +183,19 @@
 	var domConsole = templateToElement(templates.wrapper)
 	domConsole.id = "mobile-console"
 
-	Object.defineProperty(domConsole, "log", {
-		enumerable: true,
-		configurable: true,
-		writable: true,
-		value: function(){
-			var logBlock = templateToElement(templates.wrapper)
-			logBlock.className += " type-log"
+    var domConsoleLog = function(){
+		var logBlock = templateToElement(templates.wrapper)
+		logBlock.className += " type-log"
 
-			Array.prototype.forEach.call(arguments, function(item){
-				logBlock.appendChild(createAppropriateRepresentation(item))
-			})
+		Array.prototype.forEach.call(arguments, function(item){
+			logBlock.appendChild(createAppropriateRepresentation(item))
+		})
 
-			domConsole.appendChild(logBlock)
-			domConsole.scrollTop = domConsole.scrollHeight
+		domConsole.appendChild(logBlock)
+		domConsole.scrollTop = domConsole.scrollHeight
 
-			return logBlock
-		}
-	})
+		return logBlock
+	}
 
 	var inputConsole = templateToElement(
 		`<div>
@@ -209,41 +204,55 @@
 		</div>`
 	)
 
-	inputConsole.querySelector("textarea").style.width = "100%"
+    var inputTextArea = inputConsole.querySelector("textarea")
+	inputTextArea.style.width = "100%"
 
-	Object.defineProperty(inputConsole, "value", {
-		enumerable: true,
-		configurable: true,
-		get: function(){
-			return inputConsole.querySelector("textarea").value
-		},
-		set: function(val){
-			inputConsole.querySelector("textarea").value = val
-			return val
-		}
-	})
+	// Object.defineProperty(inputConsole, "value", {
+	// 	enumerable: true,
+	// 	configurable: true,
+	// 	get: function(){
+	// 		return inputConsole.querySelector("textarea").value
+	// 	},
+	// 	set: function(val){
+	// 		inputConsole.querySelector("textarea").value = val
+	// 		return val
+	// 	}
+	// })
+    //
+	// Object.defineProperty(inputConsole, "execute", {
+	// 	enumerable: true,
+	// 	configurable: true,
+	// 	writable: true,
+	// 	value: function(){
+	// 		systemLog = true // disable quotest around string for this log
+	// 		domConsoleLog("Input:\n" + inputConsole.value)
+	// 		try {
+	// 			domConsoleLog(eval.call(this, inputConsole.value))
+	// 		}
+	// 		catch (o3o){
+	// 			systemLog = true
+	// 			var logEle = domConsoleLog("Error", o3o).className += " type-err"
+	// 		}
+	// 		finally {
+	// 			inputConsole.value = ""
+	// 		}
+	// 	}
+	// })
 
-	Object.defineProperty(inputConsole, "execute", {
-		enumerable: true,
-		configurable: true,
-		writable: true,
-		value: function(){
-			systemLog = true // disable quotest around string for this log
-			domConsole.log("Input:\n" + inputConsole.value)
-			try {
-				domConsole.log(eval.call(this, inputConsole.value))
-			}
-			catch (o3o){
-				systemLog = true
-				var logEle = domConsole.log("Error", o3o).className += " type-err"
-			}
-			finally {
-				inputConsole.value = ""
-			}
-		}
-	})
-
-	inputConsole.querySelector("button").addEventListener("click", inputConsole.execute)
+	inputConsole.querySelector("button").addEventListener("click", function(){
+        systemLog = true // disable quotest around string for this log
+        domConsoleLog("Input:\n" + inputTextArea.value)
+        try {
+            domConsoleLog(eval.call(this, inputTextArea.value))
+        }
+        catch (o3o){
+            systemLog = true
+            var logEle = domConsoleLog("Error", o3o).className += " type-err"
+        }
+        finally {
+            inputTextArea.value = ""
+        }
+    })
 
 	var consoleModule = templateToElement(templates.wrapper)
 	consoleModule.appendChild(domConsole)
@@ -254,7 +263,7 @@
 	var sourceLog = console.log
 	console.log = function(){
 		var inputs = Array.prototype.slice.call(arguments)
-		domConsole.log.apply(this, inputs).className += " type-log"
+		domConsoleLog.apply(this, inputs).className += " type-log"
 		sourceLog.apply(console, inputs)
 	}
 
@@ -270,7 +279,7 @@
 	console.error = function(){
 		var inputs = Array.prototype.slice.call(arguments)
 		var errors = generateDomLog(inputs)
-		domConsole.log.apply(this, errors).className += " type-err"
+		domConsoleLog.apply(this, errors).className += " type-err"
 		sourceErr.apply(console, inputs)
 	}
 
@@ -278,10 +287,10 @@
 	console.warn = function(){
 		var inputs = Array.prototype.slice.call(arguments)
 		var errors = generateDomLog(inputs)
-		domConsole.log.apply(this, errors).className += " type-warn"
+		domConsoleLog.apply(this, errors).className += " type-warn"
 		sourceWarn.apply(console, inputs)
 	}
 
 	window.addEventListener("error", function(ev){
-		domConsole.log(ev.message + "\nError in file: " + ev.fileName	+ " on line " + ev.lineno + ":" + ev.colno).className += " type-err"
+		domConsoleLog(ev.message + "\nError in file: " + ev.fileName	+ " on line " + ev.lineno + ":" + ev.colno).className += " type-err"
 	})
