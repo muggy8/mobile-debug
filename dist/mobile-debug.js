@@ -1,69 +1,20 @@
 (function(){
 // file src/mobile-debug-foundations.js
 	var converter = document.createElement("div")
-	var library = Object.create({
-		add: function(nameOrEle, ele){
-			var name
-			if (ele){
-				name = nameOrEle
-			}
-			else {
-				ele = nameOrEle
-			}
-			name = ele.id || name // always take the id of the item over it's given name
 
-			if (typeof ele == "string"){
-				converter.innerHTML = ele
-				Array.prototype.forEach.call(converter.children, function(child){
-					library.add(child)
-				})
-			}
+    var templates = {}
+    var templateToElement = function(string){
+        converter.innerHTML = string
+        if (converter.children.length){
+            return converter.children[0]
+        }
+    }
 
-			// we only do this if we have a name and it's not already in use
-			else if (name && !library[name]){
-				// first thing's first, we move the element's id into it's class if it has one
-				if (ele.id){
-					var className = ele.className
-					ele.className = ele.id
-					if (className){
-						ele.className += " " + className
-					}
-					ele.removeAttribute("id")
-				}
+    templates.wrapper = `<div class="wrapper"></div>`
 
-				Object.defineProperty(library, name, {
-					enumerable: false,
-					configurable: false,
-					writable: false,
-					value: ele.cloneNode(true)
-				})
-			}
-			else {
-				console.warn("no name declared for element or the name is already in use")
-			}
-			return library
-		},
-		clone: function(name){
-			if (library[name]){
-				return library[name].cloneNode(true)
-			}
-			else {
-				console.warn(name + " not found")
-			}
-		},
-		convert: function(string){
-			converter.innerHTML = string
-			if (converter.children.length){
-				return converter.children[0]
-			}
-		}
-	})
-
-	library.add(`<div id="wrapper"></div>`)
-
-	var domDebugger = library.clone("wrapper")
+	var domDebugger = templateToElement(templates.wrapper)
 	domDebugger.id = "mobile-debug"
-	var stylesBlock = library.convert(`<style></style>`)
+	var stylesBlock = templateToElement(`<style></style>`)
 	domDebugger.appendChild(stylesBlock)
 
 	Object.defineProperty(domDebugger, "styles", {
@@ -104,37 +55,39 @@
 	`
 
 // file src/mobile-debug-console.js
-	library.add(`
-		<div id="jsonDisplay" class="data-div">
-			<div class="starting-brace">{</div>
-			<div class="properties"></div>
-			<div class="ending-brace">}</div>
-		</div>
+    templates.jsonDisplay = `
+    <div class="jsonDisplay data-div">
+        <div class="starting-brace">{</div>
+        <div class="properties"></div>
+        <div class="ending-brace">}</div>
+    </div>`
 
-		<div id="jsonHidden" class="data-div">
-			<div class="json-placeholder">{...}</div>
-		</div>
+    templates.jsonHidden = `
+    <div class="jsonHidden data-div">
+        <div class="json-placeholder">{...}</div>
+    </div>`
 
-		<div id="keyVal">
-			<div class="key"></div>:
-			<div class="val"></div>
-		</div>
+    templates.keyVal = `
+    <div class="keyVal">
+        <div class="key"></div>:
+        <div class="val"></div>
+    </div>`
 
-		<div id="otherData" class="data-div">
-			<pre style="margin: 0"></pre>
-		</div>`
-	)
+    templates.otherData = `
+    <div class="otherData data-div">
+        <pre style="margin: 0"></pre>
+    </div>`
 
 	var createDomStringRepresentation = function(text){
-		var returnNode = library.clone("otherData").querySelector("pre")
+		var returnNode = templateToElement(templates.otherData).querySelector("pre")
 		returnNode.innerText = text
 		return returnNode
 	}
 
 	var createDomJsonRepresentation = function(theJson, props, findProtoFrom){
-		var jsonBlock = library.clone("wrapper")
+		var jsonBlock = templateToElement(templates.wrapper)
 
-		var hidden = library.clone("jsonHidden")
+		var hidden = templateToElement(templates.jsonHidden)
 		hidden.addEventListener("dblclick", function(ev){
 			ev.stopPropagation()
 			// take the hidden element out and replace it with the snown element instead
@@ -150,7 +103,7 @@
 			props = props || Object.getOwnPropertyNames(theJson)
 
 			var createSubJsonGroup = function(key, data, props, protoFrom){
-				var returnNode = library.clone("keyVal")
+				var returnNode = templateToElement(templates.keyVal)
 				returnNode.querySelector(".key").innerText = '"' + key + '"'
 				returnNode.querySelector(".key").style.cursor = "pointer"
 				var subJsonBlock = createAppropriateRepresentation(data, props, protoFrom)
@@ -179,7 +132,7 @@
 			}
 		})
 
-		var shown = library.clone("jsonDisplay")
+		var shown = templateToElement(templates.jsonDisplay)
 		shown.addEventListener("dblclick", function(ev){
 			ev.stopPropagation()
 			shown.parentNode ? shown.parentNode.removeChild(shown) : false
@@ -214,7 +167,7 @@
 			return jsonRep
 		}
 		else if (somedata instanceof HTMLElement){
-			var eleView = library.clone("wrapper")
+			var eleView = templateToElement(templates.wrapper)
 			eleView.appendChild(createDomHtmlRepresentation(somedata))
 			eleView.appendChild(createDomJsonRepresentation(somedata, props, protoFrom))
 			return eleView
@@ -284,7 +237,7 @@
             white-space: nowrap;
 		}`
 
-	var domConsole = library.clone("wrapper")
+	var domConsole = templateToElement(templates.wrapper)
 	domConsole.id = "mobile-console"
 
 	Object.defineProperty(domConsole, "log", {
@@ -292,7 +245,7 @@
 		configurable: true,
 		writable: true,
 		value: function(){
-			var logBlock = library.clone("wrapper")
+			var logBlock = templateToElement(templates.wrapper)
 			logBlock.className += " type-log"
 
 			Array.prototype.forEach.call(arguments, function(item){
@@ -306,7 +259,7 @@
 		}
 	})
 
-	var inputConsole = library.convert(
+	var inputConsole = templateToElement(
 		`<div>
 			<textarea></textarea>
 			<button>execute</button>
@@ -349,7 +302,7 @@
 
 	inputConsole.querySelector("button").addEventListener("click", inputConsole.execute)
 
-	var consoleModule = library.clone("wrapper")
+	var consoleModule = templateToElement(templates.wrapper)
 	consoleModule.appendChild(domConsole)
 	consoleModule.appendChild(inputConsole)
 
@@ -391,15 +344,14 @@
 	})
 
 // file src/mobile-debug-elements.js
-	library.add(`
-		<div id="htmlContainer" class="data-div closed">
-			<div class="html-open"></div>
-			<div class="html-body"></div>
-			<div class="html-close"></div>
-		</div>
+    templates.htmlContainer = `
+    <div class="htmlContainer data-div closed">
+        <div class="html-open"></div>
+        <div class="html-body"></div>
+        <div class="html-close"></div>
+    </div>`
 
-        <input id="underlineInput" style="border: none; border-bottom: solid 1px #CCC; text-align: center;">
-	`)
+    templates.underlineInput = `<input class="underlineInput" style="border: none; border-bottom: solid 1px #CCC; text-align: center;">`
 
 	var createDomHtmlRepresentation = function(ele){
 		if (!ele){
@@ -409,7 +361,7 @@
 		if (ele instanceof HTMLElement){
 			var clone = ele.cloneNode()
 			var nodeText = clone.outerHTML
-			var nodeRepresentation = library.clone("htmlContainer")
+			var nodeRepresentation = templateToElement(templates.htmlContainer)
 			var closingTagMatch = nodeText.match(/<\/[^>]+>/)
 			var oppeningTag
 			if (closingTagMatch){
@@ -509,10 +461,10 @@
 	}
 
     var createDomCssKeyValPair = function(rule, ruleIndex, resetView){
-        var domPair = library.clone("keyVal")
-        domPair.querySelector(".key").appendChild(domPair.keyInput = library.clone("underlineInput"))
-        domPair.querySelector(".val").appendChild(domPair.valInput = library.clone("underlineInput"))
-		domPair.appendChild(domPair.deleteButton = library.convert("<button>X</button>"))
+        var domPair = templateToElement(templates.keyVal)
+        domPair.querySelector(".key").appendChild(domPair.keyInput = templateToElement(templates.underlineInput))
+        domPair.querySelector(".val").appendChild(domPair.valInput = templateToElement(templates.underlineInput))
+		domPair.appendChild(domPair.deleteButton = templateToElement("<button>X</button>"))
 
         domPair.keyInput.value = rule.style[ruleIndex] || "New"
         domPair.valInput.value = rule.style.getPropertyValue(rule.style[ruleIndex])
@@ -568,9 +520,9 @@
     }
 
     var createDomCssRuleRepresentation = function(rule, ele){
-        var ruleBlock = library.clone("wrapper")
+        var ruleBlock = templateToElement(templates.wrapper)
         ruleBlock.appendChild(createDomStringRepresentation(rule.selectorText))
-        var jsonLikeBlock = library.clone("jsonDisplay")
+        var jsonLikeBlock = templateToElement(templates.jsonDisplay)
         ruleBlock.appendChild(jsonLikeBlock)
 		var rebuildCssRulesView = function(){
 			cssView.innerHTML = ""
@@ -584,7 +536,7 @@
 
     var createDomCssRepresentation = function(ele){
         var rules = getElementCssRules(ele)
-        var domRuleWrap = library.clone("wrapper")
+        var domRuleWrap = templateToElement(templates.wrapper)
         rules.forEach(function(rule){
             domRuleWrap.appendChild(createDomCssRuleRepresentation(rule, ele))
             domRuleWrap.appendChild(document.createElement("hr"))
@@ -596,13 +548,13 @@
     // to test
     // document.querySelector("#css-view").appendChild(createDomCssRepresentation(document.querySelector(".data-div")))
 
-	var domView = library.clone("wrapper")
+	var domView = templateToElement(templates.wrapper)
 	domView.id = "dom-view"
 	domView.appendChild(createDomHtmlRepresentation(document.querySelector("html")))
-	var cssView = library.clone("wrapper")
+	var cssView = templateToElement(templates.wrapper)
 	cssView.id = "css-view"
 
-    var sizeSlider = library.convert('<input type="range" min="1" max="99" step="1" style="width: 100%; margin:0;">')
+    var sizeSlider = templateToElement('<input type="range" min="1" max="99" step="1" style="width: 100%; margin:0;">')
     sizeSlider.addEventListener("change", function(ev){
         domView.style.width = sizeSlider.value + "%"
         cssView.style.width = (100 - sizeSlider.value) + "%"
@@ -633,7 +585,7 @@
 		}
 	`
 
-	var domElementInspector = library.clone("wrapper")
+	var domElementInspector = templateToElement(templates.wrapper)
 	domElementInspector.appendChild(domView)
 	domElementInspector.appendChild(cssView)
 	domDebugger.appendChild(domDebugger.inspector = domElementInspector)
@@ -737,10 +689,10 @@
 		}
 	})
 
-	var xhrModule = library.clone("wrapper")
-	var xhrList = library.clone("wrapper")
+	var xhrModule = templateToElement(templates.wrapper)
+	var xhrList = templateToElement(templates.wrapper)
 	xhrList.id = "xhrList"
-	xhrDetails = library.clone("wrapper")
+	xhrDetails = templateToElement(templates.wrapper)
 	xhrDetails.id = "xhrDetails"
 	xhrModule.appendChild(xhrList)
 	xhrModule.appendChild(xhrDetails)
@@ -808,7 +760,7 @@
 			xhrStatsView.push(createDomStringRepresentation("Sent Headers"))
 			xhrStatsView.push(createDomJsonRepresentation(xhrWrapper.sentHeaders))
 		}
-		
+
 		if (xhrWrapper.body){
 			xhrStatsView.push(document.createElement("hr"))
 			xhrStatsView.push(createDomStringRepresentation("Payload"))
@@ -859,10 +811,10 @@
 		document.body.style.setProperty("padding-bottom", (currentBodyPaddingBot + currentDebuggerHeight) + "px", "important")
 	}
 
-	var navigationDiv = library.clone("wrapper")
+	var navigationDiv = templateToElement(templates.wrapper)
 	navigationDiv.id = "inspector-navigation"
 	domDebugger.appendChild(navigationDiv)
-	
+
 	var closeConsole = function(){
 		if (domDebugger.console.parentNode == domDebugger){
 			domDebugger.removeChild(domDebugger.console)
@@ -872,7 +824,7 @@
 		return false
 	}
 
-	var consoleTab = library.clone("wrapper")
+	var consoleTab = templateToElement(templates.wrapper)
 	consoleTab.innerText = "Console"
 	consoleTab.className += " tab-header"
 	consoleTab.addEventListener("click", function(){
@@ -885,7 +837,7 @@
 		calculateBodyExtention()
 	})
 	navigationDiv.appendChild(consoleTab)
-	
+
 	var closeElements = function(){
 		if (domDebugger.inspector.parentNode == domDebugger){
 			domDebugger.removeChild(domDebugger.inspector)
@@ -895,7 +847,7 @@
 		return false
 	}
 
-	var elementsTab = library.clone("wrapper")
+	var elementsTab = templateToElement(templates.wrapper)
 	elementsTab.innerText = "Inspector"
 	elementsTab.className += " tab-header"
 	elementsTab.addEventListener("click", function(){
@@ -908,7 +860,7 @@
 		calculateBodyExtention()
 	})
 	navigationDiv.appendChild(elementsTab)
-	
+
 	var closeXhr = function(){
 		if (domDebugger.xhr.parentNode == domDebugger){
 			domDebugger.removeChild(domDebugger.xhr)
@@ -918,7 +870,7 @@
 		return false
 	}
 
-	var xhrTab = library.clone("wrapper")
+	var xhrTab = templateToElement(templates.wrapper)
 	xhrTab.innerText = "XHR"
 	xhrTab.className += " tab-header"
 	xhrTab.addEventListener("click", function(){
