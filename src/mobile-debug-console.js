@@ -47,11 +47,11 @@
 
 			var createSubJsonGroup = function(key, data, props, protoFrom){
 				var returnNode = templateToElement(templates.keyVal)
-				returnNode.querySelector(".key").innerText = '"' + key + '"'
-				returnNode.querySelector(".key").style.cursor = "pointer"
+				returnNode.querySelector(".pair-key").innerText = '"' + key + '"'
+				returnNode.querySelector(".pair-key").style.cursor = "pointer"
 				var subJsonBlock = createAppropriateRepresentation(data, props, protoFrom)
-				returnNode.querySelector(".val").appendChild(subJsonBlock)
-				returnNode.querySelector(".key").addEventListener("dblclick", function(ev){
+				returnNode.querySelector(".pair-val").appendChild(subJsonBlock)
+				returnNode.querySelector(".pair-key").addEventListener("dblclick", function(ev){
 					ev.stopPropagation()
 
 					var target = subJsonBlock.querySelector(".data-div")
