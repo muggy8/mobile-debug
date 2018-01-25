@@ -156,11 +156,11 @@
 			}
 
             if (typeof rule.style[styleProp] === "undefined" || !rule.style[styleProp]) {
-                domPair.className += " err"
+                domPair.className += " type-err"
                 domPair.keyInput.style.color = domPair.valInput.style.color = "red"
             }
             else {
-                domPair.className = domPair.className.replace(" err", "")
+                domPair.className = domPair.className.replace(" type-err", "")
                 domPair.keyInput.style.color = domPair.valInput.style.color = "black"
             }
         }
