@@ -91,6 +91,7 @@ new Promise(function(accept, reject){
 
     // we now begin manually cleaning the code by minifying the CSS that are inline but the real goal is to extract all the ID and class names so we can replace them with random strings
     // the reason we do this is because the editor exists in the same realm as any user's window / document / context so we can mangle the CSS class names and stuff to help prevent any user CSS from the page the user is working on from leaking over to the editor or vice versa
+    var mangleIdClassLegth = 6
     var mangleIdClassMap = {}
 	var manuallyCleanCode = minified.code.replace(/\\n|\\t|\s{2,}/gi, "")
 	manuallyCleanCode = manuallyCleanCode.replace(/(styles\+=")([^"]+)/g, function(match, styleEquals, css){
@@ -99,12 +100,26 @@ new Promise(function(accept, reject){
         var selectorsOnly = css.replace(/\{[^}]*\}/g, "")
 
         selectorsOnly.replace(/([#\.>\s])([^#.{\s,>]+)/g, function(matched, type, classOrId){
-        	( type == "#" || type == "." ) && (mangleIdClassMap[classOrId] = generateId(6))
+        	( type == "#" || type == "." ) && (mangleIdClassMap[classOrId] = generateId(mangleIdClassLegth))
         })
 		return styleEquals + minifyCss(css).styles
 	})
+	
+	manuallyCleanCode
+		.replace(/\w\.id=["']([^"']+)["']/g, function(matched, idName){
+			mangleIdClassMap[idName] = generateId(mangleIdClassLegth)
+			return matched
+		})
+		.replace(/class=["']([^"']+)/g, function(matched, classNames){
+			classNames = classNames.split(" ")
+			classNames.forEach(function(cls){
+				if (cls){
+					mangleIdClassMap[cls] = generateId(mangleIdClassLegth)
+				}
+			})
+		})
 
-    //console.log(mangleIdClassMap)
+    console.log(mangleIdClassMap)
 
     for(var replaceTarget in mangleIdClassMap){
         var replaceWith = mangleIdClassMap[replaceTarget]
