@@ -47,4 +47,4 @@ node build
 
 ## Current State
 
-The core feature of the projects are complete and can be used in various web based environment to edit CSS, explore Dom and evaluate code.
+The core feature of the projects are complete and can be used in various web based environment to edit CSS, explore Dom and evaluate code. There are still a lot of bugs that are to be hammered out and some strange behaviors and minor features that still needs to be built but in general, this is good enough to be used for the main purpose it was created for.
