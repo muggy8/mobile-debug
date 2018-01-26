@@ -1,5 +1,10 @@
 # About
 
+![Console View](https://imgur.com/fzjaNpC)
+![Inspector View 1](https://imgur.com/eJCz0px)
+![Inspector View 2](https://imgur.com/0VSeXNi)
+![XHR View](https://imgur.com/RMLMIgh)
+
 This project is a current Work-in-Progress for a fire-bug style debugger for debugging web application on mobile devices. The current goal of this project is to create a debugger that is rendered in DOM and included with a single javascript file and allows you to view and edit CSS rules, evaluate JS code and view XMLHttpRequests. As these things are the most basic aspects of creating and debugging a web app
 
 ## Why
