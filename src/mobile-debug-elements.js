@@ -1,12 +1,11 @@
-	library.add(`
-		<div id="htmlContainer" class="data-div closed">
-			<div class="html-open"></div>
-			<div class="html-body"></div>
-			<div class="html-close"></div>
-		</div>
+    templates.htmlContainer = `
+    <div class="htmlContainer data-div state-closed">
+        <div class="html-open"></div>
+        <div class="html-body"></div>
+        <div class="html-close"></div>
+    </div>`
 
-        <input id="underlineInput" style="border: none; border-bottom: solid 1px #CCC; text-align: center;">
-	`)
+    templates.underlineInput = `<input class="underlineInput" style="border: none; border-bottom: solid 1px #CCC; text-align: center;">`
 
 	var createDomHtmlRepresentation = function(ele){
 		if (!ele){
@@ -16,7 +15,7 @@
 		if (ele instanceof HTMLElement){
 			var clone = ele.cloneNode()
 			var nodeText = clone.outerHTML
-			var nodeRepresentation = library.clone("htmlContainer")
+			var nodeRepresentation = templateToElement(templates.htmlContainer)
 			var closingTagMatch = nodeText.match(/<\/[^>]+>/)
 			var oppeningTag
 			if (closingTagMatch){
@@ -35,7 +34,7 @@
 			}
 
 			var show = function(){
-				nodeRepresentation.className = nodeRepresentation.className.replace(" closed", "") + " open"
+				nodeRepresentation.className = nodeRepresentation.className.replace(" state-closed", "") + " state-opened"
 
 				nodeRepresentation.querySelector(".html-body").innerHTML = ""
 				var appendTarget = nodeRepresentation.querySelector(".html-body")
@@ -48,7 +47,7 @@
 				nodeRepresentation.dblclickAction = hide
 			}
 			var hide = function(){
-				nodeRepresentation.className = nodeRepresentation.className.replace(" open", "") + " closed"
+				nodeRepresentation.className = nodeRepresentation.className.replace(" state-opened", "") + " state-closed"
 				nodeRepresentation.querySelector(".html-body").innerHTML = "..."
 
 				nodeRepresentation.dblclickAction = show
@@ -116,10 +115,10 @@
 	}
 
     var createDomCssKeyValPair = function(rule, ruleIndex, resetView){
-        var domPair = library.clone("keyVal")
-        domPair.querySelector(".key").appendChild(domPair.keyInput = library.clone("underlineInput"))
-        domPair.querySelector(".val").appendChild(domPair.valInput = library.clone("underlineInput"))
-		domPair.appendChild(domPair.deleteButton = library.convert("<button>X</button>"))
+        var domPair = templateToElement(templates.keyVal)
+        domPair.querySelector(".pair-key").appendChild(domPair.keyInput = templateToElement(templates.underlineInput))
+        domPair.querySelector(".pair-val").appendChild(domPair.valInput = templateToElement(templates.underlineInput))
+		domPair.appendChild(domPair.deleteButton = templateToElement("<button>X</button>"))
 
         domPair.keyInput.value = rule.style[ruleIndex] || "New"
         domPair.valInput.value = rule.style.getPropertyValue(rule.style[ruleIndex])
@@ -157,11 +156,11 @@
 			}
 
             if (typeof rule.style[styleProp] === "undefined" || !rule.style[styleProp]) {
-                domPair.className += " err"
+                domPair.className += " type-err"
                 domPair.keyInput.style.color = domPair.valInput.style.color = "red"
             }
             else {
-                domPair.className = domPair.className.replace(" err", "")
+                domPair.className = domPair.className.replace(" type-err", "")
                 domPair.keyInput.style.color = domPair.valInput.style.color = "black"
             }
         }
@@ -175,23 +174,23 @@
     }
 
     var createDomCssRuleRepresentation = function(rule, ele){
-        var ruleBlock = library.clone("wrapper")
+        var ruleBlock = templateToElement(templates.wrapper)
         ruleBlock.appendChild(createDomStringRepresentation(rule.selectorText))
-        var jsonLikeBlock = library.clone("jsonDisplay")
+        var jsonLikeBlock = templateToElement(templates.jsonDisplay)
         ruleBlock.appendChild(jsonLikeBlock)
 		var rebuildCssRulesView = function(){
 			cssView.innerHTML = ""
 			cssView.appendChild(createDomCssRepresentation(ele))
 		}
         for(var i = 0; i <= rule.style.length; i++){
-            jsonLikeBlock.querySelector(".properties").appendChild(createDomCssKeyValPair(rule, i, rebuildCssRulesView))
+            jsonLikeBlock.querySelector(".json-properties").appendChild(createDomCssKeyValPair(rule, i, rebuildCssRulesView))
         }
 		return ruleBlock
     }
 
     var createDomCssRepresentation = function(ele){
         var rules = getElementCssRules(ele)
-        var domRuleWrap = library.clone("wrapper")
+        var domRuleWrap = templateToElement(templates.wrapper)
         rules.forEach(function(rule){
             domRuleWrap.appendChild(createDomCssRuleRepresentation(rule, ele))
             domRuleWrap.appendChild(document.createElement("hr"))
@@ -203,13 +202,13 @@
     // to test
     // document.querySelector("#css-view").appendChild(createDomCssRepresentation(document.querySelector(".data-div")))
 
-	var domView = library.clone("wrapper")
+	var domView = templateToElement(templates.wrapper)
 	domView.id = "dom-view"
 	domView.appendChild(createDomHtmlRepresentation(document.querySelector("html")))
-	var cssView = library.clone("wrapper")
+	var cssView = templateToElement(templates.wrapper)
 	cssView.id = "css-view"
 
-    var sizeSlider = library.convert('<input type="range" min="1" max="99" step="1" style="width: 100%; margin:0;">')
+    var sizeSlider = templateToElement('<input type="range" min="1" max="99" step="1" style="width: 100%; margin:0;">')
     sizeSlider.addEventListener("change", function(ev){
         domView.style.width = sizeSlider.value + "%"
         cssView.style.width = (100 - sizeSlider.value) + "%"
@@ -226,21 +225,21 @@
             display: inline-block;
             width: 50%;
 		}
-		#mobile-debug .htmlContainer.closed > * {
+		#mobile-debug .htmlContainer.state-closed > * {
 			display: inline-block;
 		}
-		#mobile-debug .htmlContainer.open > .html-body {
+		#mobile-debug .htmlContainer.state-opened > .html-body {
 			margin-left: 1em;
 		}
-		#mobile-debug .open.highlight > .html-open,
-		#mobile-debug .open.highlight > .html-close,
-		#mobile-debug .closed.highlight {
+		#mobile-debug .state-opened.highlight > .html-open,
+		#mobile-debug .state-opened.highlight > .html-close,
+		#mobile-debug .state-closed.highlight {
 			background-color: skyblue;
 			display: inline;
 		}
 	`
 
-	var domElementInspector = library.clone("wrapper")
+	var domElementInspector = templateToElement(templates.wrapper)
 	domElementInspector.appendChild(domView)
 	domElementInspector.appendChild(cssView)
 	domDebugger.appendChild(domDebugger.inspector = domElementInspector)

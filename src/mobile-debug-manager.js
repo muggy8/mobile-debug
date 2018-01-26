@@ -13,10 +13,10 @@
 		document.body.style.setProperty("padding-bottom", (currentBodyPaddingBot + currentDebuggerHeight) + "px", "important")
 	}
 
-	var navigationDiv = library.clone("wrapper")
+	var navigationDiv = templateToElement(templates.wrapper)
 	navigationDiv.id = "inspector-navigation"
 	domDebugger.appendChild(navigationDiv)
-	
+
 	var closeConsole = function(){
 		if (domDebugger.console.parentNode == domDebugger){
 			domDebugger.removeChild(domDebugger.console)
@@ -26,7 +26,7 @@
 		return false
 	}
 
-	var consoleTab = library.clone("wrapper")
+	var consoleTab = templateToElement(templates.wrapper)
 	consoleTab.innerText = "Console"
 	consoleTab.className += " tab-header"
 	consoleTab.addEventListener("click", function(){
@@ -39,7 +39,7 @@
 		calculateBodyExtention()
 	})
 	navigationDiv.appendChild(consoleTab)
-	
+
 	var closeElements = function(){
 		if (domDebugger.inspector.parentNode == domDebugger){
 			domDebugger.removeChild(domDebugger.inspector)
@@ -49,7 +49,7 @@
 		return false
 	}
 
-	var elementsTab = library.clone("wrapper")
+	var elementsTab = templateToElement(templates.wrapper)
 	elementsTab.innerText = "Inspector"
 	elementsTab.className += " tab-header"
 	elementsTab.addEventListener("click", function(){
@@ -62,7 +62,7 @@
 		calculateBodyExtention()
 	})
 	navigationDiv.appendChild(elementsTab)
-	
+
 	var closeXhr = function(){
 		if (domDebugger.xhr.parentNode == domDebugger){
 			domDebugger.removeChild(domDebugger.xhr)
@@ -72,7 +72,7 @@
 		return false
 	}
 
-	var xhrTab = library.clone("wrapper")
+	var xhrTab = templateToElement(templates.wrapper)
 	xhrTab.innerText = "XHR"
 	xhrTab.className += " tab-header"
 	xhrTab.addEventListener("click", function(){
