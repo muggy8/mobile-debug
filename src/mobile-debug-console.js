@@ -200,7 +200,8 @@
 	var inputConsole = templateToElement(
 		`<div>
 			<textarea></textarea>
-			<button>execute</button>
+			<button class="exec-btn">execute</button>
+			<button class="clear-btn">clear</button>
 		</div>`
 	)
 
@@ -239,11 +240,14 @@
 	// 	}
 	// })
 
-	inputConsole.querySelector("button").addEventListener("click", function(){
+	inputConsole.querySelector(".exec-btn").addEventListener("click", function(){
         systemLog = true // disable quotest around string for this log
-        domConsoleLog("Input:\n" + inputTextArea.value)
+        var execInput = inputTextArea.value
+        domConsoleLog("Input:\n" + inputTextArea.value).addEventListener("click", function(){
+        	inputTextArea.value = execInput
+		})
         try {
-            domConsoleLog(eval.call(this, inputTextArea.value))
+            domConsoleLog(eval.call(this, execInput))
         }
         catch (o3o){
             systemLog = true
@@ -252,6 +256,10 @@
         finally {
             inputTextArea.value = ""
         }
+    })
+    
+    inputConsole.querySelector(".clear-btn").addEventListener("click", function(){
+    	inputTextArea.value = ""
     })
 
 	var consoleModule = templateToElement(templates.wrapper)
