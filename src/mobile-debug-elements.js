@@ -230,8 +230,8 @@
             }
         }
 
-        attachEvent(domPair.keyInput, "keyup", keyValEventHandler)
-        attachEvent(domPair.valInput, "keyup", keyValEventHandler)
+        attachEvent(domPair.keyInput, keyUp, keyValEventHandler)
+        attachEvent(domPair.valInput, keyUp, keyValEventHandler)
         attachEvent(domPair.keyInput, "input", keyValEventHandler)
         attachEvent(domPair.valInput, "input", keyValEventHandler)
 
