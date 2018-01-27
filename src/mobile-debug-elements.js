@@ -73,7 +73,7 @@
 				})
 				nodeRepresentation.className += " highlight"
 
-				currentHighligher && currentHighligher.parentNode.removeChild(currentHighligher)
+				currentHighligher && currentHighligher.unlink()
 				currentHighligher = highlightBox(ele)
 			})
 
@@ -95,6 +95,7 @@
 		var marginStyles = marginBox.style
 		var borderStyles = borderBox.style
 		var paddingStyles = paddingBox.style
+		var elePos = ele.getBoundingClientRect()
 
 		marginStyles.borderStyle = borderStyles.borderStyle = paddingStyles.borderStyle = "solid"
 		marginStyles.position = "absolute"
@@ -125,9 +126,23 @@
 		marginStyles.borderLeftWidth = eleStyles.marginLeft
 		marginStyles.borderRightWidth = eleStyles.marginRight
 
-		document.body.insertBefore(marginBox, domDebugger)
+		marginStyles.top = (elePos.top - parseFloat(eleStyles.marginTop.replace("px", ""))) + "px"
+		marginStyles.left = (elePos.left - parseFloat(eleStyles.marginLeft.replace("px", ""))) + "px"
+
 		marginBox.appendChild(borderBox)
 		borderBox.appendChild(paddingBox)
+
+		marginBox.unlink = function(){
+			marginBox.parentNode && marginBox.parentNode.removeChild(marginBox)
+		}
+
+		marginBox.relink = function(){
+			document.body.insertBefore(marginBox, domDebugger)
+		}
+
+		marginBox.addEventListener("click", marginBox.unlink)
+
+		marginBox.relink()
 
 		return marginBox
 	}
