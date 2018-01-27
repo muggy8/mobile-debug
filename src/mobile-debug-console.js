@@ -31,7 +31,7 @@
 		var jsonBlock = templateToElement(templates.wrapper)
 
 		var hidden = templateToElement(templates.jsonHidden)
-		attachEvent(hidden, "dblclick", function(ev){
+		attachEvent(hidden, doubleClick, function(ev){
 			ev.stopPropagation()
 			// take the hidden element out and replace it with the snown element instead
 			hidden.parentNode ? hidden.parentNode.removeChild(hidden) : false
@@ -51,12 +51,12 @@
 				qs(returnNode, ".pair-key").style.cursor = "pointer"
 				var subJsonBlock = createAppropriateRepresentation(data, props, protoFrom)
 				append(qs(returnNode, ".pair-val"), subJsonBlock)
-				attachEvent(qs(returnNode, ".pair-key"), "dblclick", function(ev){
+				attachEvent(qs(returnNode, ".pair-key"), doubleClick, function(ev){
 					ev.stopPropagation()
 
 					var target = qs(subJsonBlock, ".data-div")
 					var clickEvent = document.createEvent("MouseEvents")
-					clickEvent.initEvent("dblclick", true, true)
+					clickEvent.initEvent(doubleClick, true, true)
 					target && target.dispatchEvent(clickEvent)
 				})
 				return returnNode
@@ -76,7 +76,7 @@
 		})
 
 		var shown = templateToElement(templates.jsonDisplay)
-		attachEvent(shown, "dblclick", function(ev){
+		attachEvent(shown, doubleClick, function(ev){
 			ev.stopPropagation()
 			shown.parentNode ? shown.parentNode.removeChild(shown) : false
 			append(jsonBlock, hidden)

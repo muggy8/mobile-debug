@@ -57,7 +57,7 @@
 			// it is default hidden show show on double click for default
 			nodeRepresentation.dblclickAction = show
 
-			attachEvent(nodeRepresentation, "dblclick", function(ev){
+			attachEvent(nodeRepresentation, doubleClick, function(ev){
 				ev.stopPropagation()
 				nodeRepresentation.dblclickAction()
 			})
