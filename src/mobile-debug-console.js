@@ -22,7 +22,7 @@
     </div>`
 
 	var createDomStringRepresentation = function(text){
-		var returnNode = templateToElement(templates.otherData).querySelector("pre")
+		var returnNode = qs(templateToElement(templates.otherData),"pre")
 		returnNode.innerText = text
 		return returnNode
 	}
