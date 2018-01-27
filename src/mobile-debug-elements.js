@@ -39,7 +39,7 @@
 
 				qs(nodeRepresentation, ".html-body").innerHTML = ""
 				var appendTarget = qs(nodeRepresentation, ".html-body")
-				Array.prototype.map.call(childNodes, function(item){
+				protoMap(childNodes, function(item){
 					return createDomHtmlRepresentation(item)
 				}).forEach(function(item){
 					append(appendTarget, item)
