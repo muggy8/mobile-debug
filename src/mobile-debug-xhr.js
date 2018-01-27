@@ -10,7 +10,7 @@
 		enumerable: false,
 		writable: true,
 		value: function(){
-			var args = Array.prototype.slice.call(arguments)
+			var args = protoSlice(arguments)
 			var Identifier = args[0] + ":" + args[1]
 			var record = xhrHistory[Identifier] = {
 				method: args[0],

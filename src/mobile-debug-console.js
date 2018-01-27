@@ -233,7 +233,7 @@
 
 	var sourceLog = console.log
 	console.log = function(){
-		var inputs = Array.prototype.slice.call(arguments)
+		var inputs = protoSlice(arguments)
 		domConsoleLog.apply(this, inputs).className += " type-log"
 		sourceLog.apply(console, inputs)
 	}
@@ -248,7 +248,7 @@
 
 	var sourceErr = console.error
 	console.error = function(){
-		var inputs = Array.prototype.slice.call(arguments)
+		var inputs = protoSlice(arguments)
 		var errors = generateDomLog(inputs)
 		domConsoleLog.apply(this, errors).className += " type-err"
 		sourceErr.apply(console, inputs)
@@ -256,7 +256,7 @@
 
 	var sourceWarn = console.warn
 	console.warn = function(){
-		var inputs = Array.prototype.slice.call(arguments)
+		var inputs = protoSlice(arguments)
 		var errors = generateDomLog(inputs)
 		domConsoleLog.apply(this, errors).className += " type-warn"
 		sourceWarn.apply(console, inputs)
