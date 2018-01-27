@@ -22,23 +22,23 @@
 			if (closingTagMatch){
 				var closingTag = closingTagMatch[0]
 				oppeningTag = nodeText.replace(closingTag, "")
-				nodeRepresentation.querySelector(".html-close").innerText = closingTag
-				nodeRepresentation.querySelector(".html-body").innerText = "..."
+				qs(nodeRepresentation, ".html-close").innerText = closingTag
+				qs(nodeRepresentation, ".html-body").innerText = "..."
 			}
 			else {
 				oppeningTag = nodeText
 			}
 			var childNodes = ele.childNodes
-			nodeRepresentation.querySelector(".html-open").innerText = oppeningTag
+			qs(nodeRepresentation, ".html-open").innerText = oppeningTag
 			if (childNodes.length){
-				nodeRepresentation.querySelector(".html-body").innerText = "..."
+				qs(nodeRepresentation, ".html-body").innerText = "..."
 			}
 
 			var show = function(){
 				nodeRepresentation.className = nodeRepresentation.className.replace(" state-closed", "") + " state-opened"
 
-				nodeRepresentation.querySelector(".html-body").innerHTML = ""
-				var appendTarget = nodeRepresentation.querySelector(".html-body")
+				qs(nodeRepresentation, ".html-body").innerHTML = ""
+				var appendTarget = qs(nodeRepresentation, ".html-body")
 				Array.prototype.map.call(childNodes, function(item){
 					return createDomHtmlRepresentation(item)
 				}).forEach(function(item){
@@ -49,7 +49,7 @@
 			}
 			var hide = function(){
 				nodeRepresentation.className = nodeRepresentation.className.replace(" state-opened", "") + " state-closed"
-				nodeRepresentation.querySelector(".html-body").innerHTML = "..."
+				qs(nodeRepresentation, ".html-body").innerHTML = "..."
 
 				nodeRepresentation.dblclickAction = show
 			}
@@ -68,7 +68,7 @@
 				cssView.innerHTML = ""
 				append(cssView, createDomCssRepresentation(ele))
 
-				Array.prototype.forEach.call(domView.querySelectorAll(".highlight"), function(item){
+				Array.prototype.forEach.call(qs(domView, ".highlight"), function(item){
 					item.className = item.className.replace(" highlight", "")
 				})
 				nodeRepresentation.className += " highlight"
@@ -181,8 +181,8 @@
 
     var createDomCssKeyValPair = function(rule, ruleIndex, resetView){
         var domPair = templateToElement(templates.keyVal)
-        append(domPair.querySelector(".pair-key"), domPair.keyInput = templateToElement(templates.underlineInput))
-        append(domPair.querySelector(".pair-val"), domPair.valInput = templateToElement(templates.underlineInput))
+        append(qs(domPair, ".pair-key"), domPair.keyInput = templateToElement(templates.underlineInput))
+        append(qs(domPair, ".pair-val"), domPair.valInput = templateToElement(templates.underlineInput))
 		append(domPair, domPair.deleteButton = templateToElement("<button>X</button>"))
 
         domPair.keyInput.value = rule.style[ruleIndex] || "New"
@@ -248,7 +248,7 @@
 			append(cssView, createDomCssRepresentation(ele))
 		}
         for(var i = 0; i <= rule.style.length; i++){
-            append(jsonLikeBlock.querySelector(".json-properties"), createDomCssKeyValPair(rule, i, rebuildCssRulesView))
+            append(qs(jsonLikeBlock, ".json-properties"), createDomCssKeyValPair(rule, i, rebuildCssRulesView))
         }
 		return ruleBlock
     }
@@ -266,7 +266,7 @@
 
 	var domView = templateToElement(templates.wrapper)
 	domView.id = "dom-view"
-	append(domView, createDomHtmlRepresentation(document.querySelector("html")))
+	append(domView, createDomHtmlRepresentation(qs(document, "html")))
 	var cssView = templateToElement(templates.wrapper)
 	cssView.id = "css-view"
 

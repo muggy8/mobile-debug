@@ -38,7 +38,7 @@
 			append(jsonBlock, shown)
 
 			// if the element that's gonna replace this one already has children then skip the rest cuz the rest of the code generates the children
-			if (shown.querySelector(".json-properties").children.length > 0){
+			if (qs(shown, ".json-properties").children.length > 0){
 				return
 			}
 
@@ -47,14 +47,14 @@
 
 			var createSubJsonGroup = function(key, data, props, protoFrom){
 				var returnNode = templateToElement(templates.keyVal)
-				returnNode.querySelector(".pair-key").innerText = '"' + key + '"'
-				returnNode.querySelector(".pair-key").style.cursor = "pointer"
+				qs(returnNode, ".pair-key").innerText = '"' + key + '"'
+				qs(returnNode, ".pair-key").style.cursor = "pointer"
 				var subJsonBlock = createAppropriateRepresentation(data, props, protoFrom)
-				append(returnNode.querySelector(".pair-val"), subJsonBlock)
-				attachEvent(returnNode.querySelector(".pair-key"), "dblclick", function(ev){
+				append(qs(returnNode, ".pair-val"), subJsonBlock)
+				attachEvent(qs(returnNode, ".pair-key"), "dblclick", function(ev){
 					ev.stopPropagation()
 
-					var target = subJsonBlock.querySelector(".data-div")
+					var target = qs(subJsonBlock, ".data-div")
 					var clickEvent = document.createEvent("MouseEvents")
 					clickEvent.initEvent("dblclick", true, true)
 					target && target.dispatchEvent(clickEvent)
@@ -65,13 +65,13 @@
 				return item !== "__proto__"
 			}).forEach(function(item){
 				var keyValDomPair = createSubJsonGroup(item, theJson[item])
-				append(shown.querySelector(".json-properties"), keyValDomPair)
+				append(qs(shown, ".json-properties"), keyValDomPair)
 			})
 
 			var inheritedFrom = Object.getPrototypeOf(findProtoFrom || theJson)
 			if (inheritedFrom){
 				var keyValDomPair = createSubJsonGroup("__proto__" , theJson, Object.getOwnPropertyNames(inheritedFrom), inheritedFrom)
-				append(shown.querySelector(".json-properties"), keyValDomPair)
+				append(qs(shown, ".json-properties"), keyValDomPair)
 			}
 		})
 
@@ -84,9 +84,9 @@
 
 		append(jsonBlock, hidden)
 		jsonBlock.useBrackets = function(bracket){
-			shown.querySelector(".starting-brace").innerText = bracket[0]
-			shown.querySelector(".ending-brace").innerText = bracket[1]
-			var textContainer = hidden.querySelector(".json-placeholder")
+			qs(shown, ".starting-brace").innerText = bracket[0]
+			qs(shown, ".ending-brace").innerText = bracket[1]
+			var textContainer = qs(hidden, ".json-placeholder")
 			textContainer.innerText = textContainer.innerText
 				.replace("{", bracket[0])
 				.replace("}", bracket[1])
@@ -200,10 +200,10 @@
 		</div>`
 	)
 
-    var inputTextArea = inputConsole.querySelector("textarea")
+    var inputTextArea = qs(inputConsole, "textarea")
 	inputTextArea.style.width = "100%"
 
-	attachEvent(inputConsole.querySelector(".exec-btn"), "click", function(){
+	attachEvent(qs(inputConsole, ".exec-btn"), "click", function(){
         systemLog = true // disable quotest around string for this log
         var execInput = inputTextArea.value
         attachEvent(domConsoleLog("Input:\n" + inputTextArea.value), "click", function(){
@@ -221,7 +221,7 @@
         }
     })
     
-    attachEvent(inputConsole.querySelector(".clear-btn"), "click", function(){
+    attachEvent(qs(inputConsole, ".clear-btn"), "click", function(){
     	inputTextArea.value = ""
     })
 
