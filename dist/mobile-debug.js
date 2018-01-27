@@ -54,6 +54,39 @@
 		}
 	`
 
+	// declare some globals so we can use them later and we can save space in the minified versions
+	var append = function(parent, child){
+		parent.appendChild(child)
+	}
+	var attachEvent = function(ele, ev, handler){
+		ele.addEventListener(ev, handler)
+	}
+	var qs = function(ele_selector, selector){
+		if (!selector){
+			selector = ele_selector
+			ele_selector = document
+		}
+		return ele_selector.querySelector(selector)
+	}
+	var protoSlice = function(source, start, end){
+		return source && Array.prototype.slice.call(source, start, end)
+	}
+	var protoForEach = function(source, callback){
+		return source && Array.prototype.forEach.call(source, callback)
+	}
+	var protoMap = function(source, callback){
+		return source && Array.prototype.map.call(source, callback)
+	}
+	var protoReduce = function(source, callback, start){
+		return source && Array.prototype.reduce.call(source, callback, start)
+	}
+	var stringReplace = function(str, replaceTarget, replaceWith){
+		return str.replace(replaceTarget, replaceWith)
+	}
+	var click = "click"
+	var doubleClick = "dblclick"
+	var keyUp = "keyup"
+
 // file src/mobile-debug-console.js
     templates.jsonDisplay = `
     <div class="jsonDisplay data-div">
@@ -88,14 +121,14 @@
 		var jsonBlock = templateToElement(templates.wrapper)
 
 		var hidden = templateToElement(templates.jsonHidden)
-		hidden.addEventListener("dblclick", function(ev){
+		attachEvent(hidden, doubleClick, function(ev){
 			ev.stopPropagation()
 			// take the hidden element out and replace it with the snown element instead
 			hidden.parentNode ? hidden.parentNode.removeChild(hidden) : false
-			jsonBlock.appendChild(shown)
+			append(jsonBlock, shown)
 
 			// if the element that's gonna replace this one already has children then skip the rest cuz the rest of the code generates the children
-			if (shown.querySelector(".json-properties").children.length > 0){
+			if (qs(shown, ".json-properties").children.length > 0){
 				return
 			}
 
@@ -104,16 +137,16 @@
 
 			var createSubJsonGroup = function(key, data, props, protoFrom){
 				var returnNode = templateToElement(templates.keyVal)
-				returnNode.querySelector(".pair-key").innerText = '"' + key + '"'
-				returnNode.querySelector(".pair-key").style.cursor = "pointer"
+				qs(returnNode, ".pair-key").innerText = '"' + key + '"'
+				qs(returnNode, ".pair-key").style.cursor = "pointer"
 				var subJsonBlock = createAppropriateRepresentation(data, props, protoFrom)
-				returnNode.querySelector(".pair-val").appendChild(subJsonBlock)
-				returnNode.querySelector(".pair-key").addEventListener("dblclick", function(ev){
+				append(qs(returnNode, ".pair-val"), subJsonBlock)
+				attachEvent(qs(returnNode, ".pair-key"), doubleClick, function(ev){
 					ev.stopPropagation()
 
-					var target = subJsonBlock.querySelector(".data-div")
+					var target = qs(subJsonBlock, ".data-div")
 					var clickEvent = document.createEvent("MouseEvents")
-					clickEvent.initEvent("dblclick", true, true)
+					clickEvent.initEvent(doubleClick, true, true)
 					target && target.dispatchEvent(clickEvent)
 				})
 				return returnNode
@@ -122,37 +155,32 @@
 				return item !== "__proto__"
 			}).forEach(function(item){
 				var keyValDomPair = createSubJsonGroup(item, theJson[item])
-				shown.querySelector(".json-properties").appendChild(keyValDomPair)
+				append(qs(shown, ".json-properties"), keyValDomPair)
 			})
 
 			var inheritedFrom = Object.getPrototypeOf(findProtoFrom || theJson)
 			if (inheritedFrom){
 				var keyValDomPair = createSubJsonGroup("__proto__" , theJson, Object.getOwnPropertyNames(inheritedFrom), inheritedFrom)
-				shown.querySelector(".json-properties").appendChild(keyValDomPair)
+				append(qs(shown, ".json-properties"), keyValDomPair)
 			}
 		})
 
 		var shown = templateToElement(templates.jsonDisplay)
-		shown.addEventListener("dblclick", function(ev){
+		attachEvent(shown, doubleClick, function(ev){
 			ev.stopPropagation()
 			shown.parentNode ? shown.parentNode.removeChild(shown) : false
-			jsonBlock.appendChild(hidden)
+			append(jsonBlock, hidden)
 		})
 
-		jsonBlock.appendChild(hidden)
-		Object.defineProperty(jsonBlock, "useBrackets", {
-			enumerable: true,
-			configurable: true,
-			writable: false,
-			value: function(bracket){
-				shown.querySelector(".starting-brace").innerText = bracket[0]
-				shown.querySelector(".ending-brace").innerText = bracket[1]
-				var textContainer = hidden.querySelector(".json-placeholder")
-				textContainer.innerText = textContainer.innerText
-					.replace("{", bracket[0])
-					.replace("}", bracket[1])
-			}
-		})
+		append(jsonBlock, hidden)
+		jsonBlock.useBrackets = function(bracket){
+			qs(shown, ".starting-brace").innerText = bracket[0]
+			qs(shown, ".ending-brace").innerText = bracket[1]
+			var textContainer = qs(hidden, ".json-placeholder")
+			textContainer.innerText = textContainer.innerText
+				.replace("{", bracket[0])
+				.replace("}", bracket[1])
+		}
 		return jsonBlock
 	}
 
@@ -168,8 +196,8 @@
 		}
 		else if (somedata instanceof HTMLElement){
 			var eleView = templateToElement(templates.wrapper)
-			eleView.appendChild(createDomHtmlRepresentation(somedata))
-			eleView.appendChild(createDomJsonRepresentation(somedata, props, protoFrom))
+			append(eleView, createDomHtmlRepresentation(somedata))
+			append(eleView, createDomJsonRepresentation(somedata, props, protoFrom))
 			return eleView
 		}
 		else if (typeof somedata == "object"){
@@ -181,7 +209,7 @@
 				return createDomStringRepresentation(somedata)
 			}
 			else {
-				return createDomStringRepresentation('"' + somedata.replace(/\"/g, '\\"') + '"')
+				return createDomStringRepresentation('"' + stringReplace(somedata, /\"/g, '\\"') + '"')
 			}
 		}
 		else if (typeof somedata == "function" || typeof somedata == "number"){
@@ -245,10 +273,10 @@
 		logBlock.className += " type-log"
 
 		Array.prototype.forEach.call(arguments, function(item){
-			logBlock.appendChild(createAppropriateRepresentation(item))
+			append(logBlock, createAppropriateRepresentation(item))
 		})
 
-		domConsole.appendChild(logBlock)
+		append(domConsole, logBlock)
 		domConsole.scrollTop = domConsole.scrollHeight
 
 		return logBlock
@@ -262,45 +290,13 @@
 		</div>`
 	)
 
-    var inputTextArea = inputConsole.querySelector("textarea")
+    var inputTextArea = qs(inputConsole, "textarea")
 	inputTextArea.style.width = "100%"
 
-	// Object.defineProperty(inputConsole, "value", {
-	// 	enumerable: true,
-	// 	configurable: true,
-	// 	get: function(){
-	// 		return inputConsole.querySelector("textarea").value
-	// 	},
-	// 	set: function(val){
-	// 		inputConsole.querySelector("textarea").value = val
-	// 		return val
-	// 	}
-	// })
-    //
-	// Object.defineProperty(inputConsole, "execute", {
-	// 	enumerable: true,
-	// 	configurable: true,
-	// 	writable: true,
-	// 	value: function(){
-	// 		systemLog = true // disable quotest around string for this log
-	// 		domConsoleLog("Input:\n" + inputConsole.value)
-	// 		try {
-	// 			domConsoleLog(eval.call(this, inputConsole.value))
-	// 		}
-	// 		catch (o3o){
-	// 			systemLog = true
-	// 			var logEle = domConsoleLog("Error", o3o).className += " type-err"
-	// 		}
-	// 		finally {
-	// 			inputConsole.value = ""
-	// 		}
-	// 	}
-	// })
-
-	inputConsole.querySelector(".exec-btn").addEventListener("click", function(){
+	attachEvent(qs(inputConsole, ".exec-btn"), click, function(){
         systemLog = true // disable quotest around string for this log
         var execInput = inputTextArea.value
-        domConsoleLog("Input:\n" + inputTextArea.value).addEventListener("click", function(){
+        attachEvent(domConsoleLog("Input:\n" + inputTextArea.value), click, function(){
         	inputTextArea.value = execInput
 		})
         try {
@@ -315,19 +311,19 @@
         }
     })
     
-    inputConsole.querySelector(".clear-btn").addEventListener("click", function(){
+    attachEvent(qs(inputConsole, ".clear-btn"), click, function(){
     	inputTextArea.value = ""
     })
 
 	var consoleModule = templateToElement(templates.wrapper)
-	consoleModule.appendChild(domConsole)
-	consoleModule.appendChild(inputConsole)
+	append(consoleModule, domConsole)
+	append(consoleModule, inputConsole)
 
-	domDebugger.appendChild(domDebugger.console = consoleModule)
+	append(domDebugger, domDebugger.console = consoleModule)
 
 	var sourceLog = console.log
 	console.log = function(){
-		var inputs = Array.prototype.slice.call(arguments)
+		var inputs = protoSlice(arguments)
 		domConsoleLog.apply(this, inputs).className += " type-log"
 		sourceLog.apply(console, inputs)
 	}
@@ -342,7 +338,7 @@
 
 	var sourceErr = console.error
 	console.error = function(){
-		var inputs = Array.prototype.slice.call(arguments)
+		var inputs = protoSlice(arguments)
 		var errors = generateDomLog(inputs)
 		domConsoleLog.apply(this, errors).className += " type-err"
 		sourceErr.apply(console, inputs)
@@ -350,13 +346,13 @@
 
 	var sourceWarn = console.warn
 	console.warn = function(){
-		var inputs = Array.prototype.slice.call(arguments)
+		var inputs = protoSlice(arguments)
 		var errors = generateDomLog(inputs)
 		domConsoleLog.apply(this, errors).className += " type-warn"
 		sourceWarn.apply(console, inputs)
 	}
 
-	window.addEventListener("error", function(ev){
+	attachEvent(window, "error", function(ev){
 		domConsoleLog(ev.message + "\nError in file: " + ev.fileName	+ " on line " + ev.lineno + ":" + ev.colno).className += " type-err"
 	})
 
@@ -384,35 +380,35 @@
 			var oppeningTag
 			if (closingTagMatch){
 				var closingTag = closingTagMatch[0]
-				oppeningTag = nodeText.replace(closingTag, "")
-				nodeRepresentation.querySelector(".html-close").innerText = closingTag
-				nodeRepresentation.querySelector(".html-body").innerText = "..."
+				oppeningTag = stringReplace(nodeText, closingTag, "")
+				qs(nodeRepresentation, ".html-close").innerText = closingTag
+				qs(nodeRepresentation, ".html-body").innerText = "..."
 			}
 			else {
 				oppeningTag = nodeText
 			}
 			var childNodes = ele.childNodes
-			nodeRepresentation.querySelector(".html-open").innerText = oppeningTag
+			qs(nodeRepresentation, ".html-open").innerText = oppeningTag
 			if (childNodes.length){
-				nodeRepresentation.querySelector(".html-body").innerText = "..."
+				qs(nodeRepresentation, ".html-body").innerText = "..."
 			}
 
 			var show = function(){
-				nodeRepresentation.className = nodeRepresentation.className.replace(" state-closed", "") + " state-opened"
+				nodeRepresentation.className = stringReplace(nodeRepresentation.className, " state-closed", "") + " state-opened"
 
-				nodeRepresentation.querySelector(".html-body").innerHTML = ""
-				var appendTarget = nodeRepresentation.querySelector(".html-body")
-				Array.prototype.map.call(childNodes, function(item){
+				qs(nodeRepresentation, ".html-body").innerHTML = ""
+				var appendTarget = qs(nodeRepresentation, ".html-body")
+				protoMap(childNodes, function(item){
 					return createDomHtmlRepresentation(item)
 				}).forEach(function(item){
-					appendTarget.appendChild(item)
+					append(appendTarget, item)
 				})
 
 				nodeRepresentation.dblclickAction = hide
 			}
 			var hide = function(){
-				nodeRepresentation.className = nodeRepresentation.className.replace(" state-opened", "") + " state-closed"
-				nodeRepresentation.querySelector(".html-body").innerHTML = "..."
+				nodeRepresentation.className = stringReplace(nodeRepresentation.className, " state-opened", "") + " state-closed"
+				qs(nodeRepresentation, ".html-body").innerHTML = "..."
 
 				nodeRepresentation.dblclickAction = show
 			}
@@ -420,19 +416,19 @@
 			// it is default hidden show show on double click for default
 			nodeRepresentation.dblclickAction = show
 
-			nodeRepresentation.addEventListener("dblclick", function(ev){
+			attachEvent(nodeRepresentation, doubleClick, function(ev){
 				ev.stopPropagation()
 				nodeRepresentation.dblclickAction()
 			})
 
-			nodeRepresentation.addEventListener("click", function(ev){
+			attachEvent(nodeRepresentation, click, function(ev){
 				ev.stopPropagation()
 
 				cssView.innerHTML = ""
-				cssView.appendChild(createDomCssRepresentation(ele))
+				append(cssView, createDomCssRepresentation(ele))
 
-				Array.prototype.forEach.call(domView.querySelectorAll(".highlight"), function(item){
-					item.className = item.className.replace(" highlight", "")
+				protoForEach(domView.querySelectorAll(".highlight"), function(item){
+					item.className = stringReplace(item.className, " highlight", "")
 				})
 				nodeRepresentation.className += " highlight"
 
@@ -489,11 +485,11 @@
 		marginStyles.borderLeftWidth = eleStyles.marginLeft
 		marginStyles.borderRightWidth = eleStyles.marginRight
 
-		marginStyles.top = (elePos.top - parseFloat(eleStyles.marginTop.replace("px", ""))) + "px"
-		marginStyles.left = (elePos.left - parseFloat(eleStyles.marginLeft.replace("px", ""))) + "px"
+		marginStyles.top = (elePos.top - parseFloat(stringReplace(eleStyles.marginTop, "px", ""))) + "px"
+		marginStyles.left = (elePos.left - parseFloat(stringReplace(eleStyles.marginLeft, "px", ""))) + "px"
 
-		marginBox.appendChild(borderBox)
-		borderBox.appendChild(paddingBox)
+		append(marginBox, borderBox)
+		append(borderBox, paddingBox)
 
 		marginBox.unlink = function(){
 			marginBox.parentNode && marginBox.parentNode.removeChild(marginBox)
@@ -503,7 +499,7 @@
 			document.body.insertBefore(marginBox, domDebugger)
 		}
 
-		marginBox.addEventListener("click", marginBox.unlink)
+		attachEvent(marginBox, click, marginBox.unlink)
 
 		marginBox.relink()
 
@@ -544,13 +540,13 @@
 
     var createDomCssKeyValPair = function(rule, ruleIndex, resetView){
         var domPair = templateToElement(templates.keyVal)
-        domPair.querySelector(".pair-key").appendChild(domPair.keyInput = templateToElement(templates.underlineInput))
-        domPair.querySelector(".pair-val").appendChild(domPair.valInput = templateToElement(templates.underlineInput))
-		domPair.appendChild(domPair.deleteButton = templateToElement("<button>X</button>"))
+        append(qs(domPair, ".pair-key"), domPair.keyInput = templateToElement(templates.underlineInput))
+        append(qs(domPair, ".pair-val"), domPair.valInput = templateToElement(templates.underlineInput))
+		append(domPair, domPair.deleteButton = templateToElement("<button>X</button>"))
 
         domPair.keyInput.value = rule.style[ruleIndex] || "New"
         domPair.valInput.value = rule.style.getPropertyValue(rule.style[ruleIndex])
-		domPair.deleteButton.addEventListener("click", function(){
+		attachEvent(domPair.deleteButton, click, function(){
 			rule.style.removeProperty(rule.style[ruleIndex])
 			resetView()
 		})
@@ -561,7 +557,7 @@
 				(ev.data == ":" && ev.target == domPair.keyInput)
 			){
 				domPair.valInput.focus()
-				domPair.keyInput.value = domPair.keyInput.value.replace(/\:+$/, "")
+				domPair.keyInput.value = stringReplace(domPair.keyInput.value, /\:+$/, "")
 				ev.stopPropagation()
 				ev.preventDefault()
 				return
@@ -588,30 +584,30 @@
                 domPair.keyInput.style.color = domPair.valInput.style.color = "red"
             }
             else {
-                domPair.className = domPair.className.replace(" type-err", "")
+                domPair.className = stringReplace(domPair.className, " type-err", "")
                 domPair.keyInput.style.color = domPair.valInput.style.color = "black"
             }
         }
 
-        domPair.keyInput.addEventListener("keyup", keyValEventHandler)
-        domPair.valInput.addEventListener("keyup", keyValEventHandler)
-        domPair.keyInput.addEventListener("input", keyValEventHandler)
-        domPair.valInput.addEventListener("input", keyValEventHandler)
+        attachEvent(domPair.keyInput, keyUp, keyValEventHandler)
+        attachEvent(domPair.valInput, keyUp, keyValEventHandler)
+        attachEvent(domPair.keyInput, "input", keyValEventHandler)
+        attachEvent(domPair.valInput, "input", keyValEventHandler)
 
         return domPair
     }
 
     var createDomCssRuleRepresentation = function(rule, ele){
         var ruleBlock = templateToElement(templates.wrapper)
-        ruleBlock.appendChild(createDomStringRepresentation(rule.selectorText))
+        append(ruleBlock, createDomStringRepresentation(rule.selectorText))
         var jsonLikeBlock = templateToElement(templates.jsonDisplay)
-        ruleBlock.appendChild(jsonLikeBlock)
+        append(ruleBlock, jsonLikeBlock)
 		var rebuildCssRulesView = function(){
 			cssView.innerHTML = ""
-			cssView.appendChild(createDomCssRepresentation(ele))
+			append(cssView, createDomCssRepresentation(ele))
 		}
         for(var i = 0; i <= rule.style.length; i++){
-            jsonLikeBlock.querySelector(".json-properties").appendChild(createDomCssKeyValPair(rule, i, rebuildCssRulesView))
+            append(qs(jsonLikeBlock, ".json-properties"), createDomCssKeyValPair(rule, i, rebuildCssRulesView))
         }
 		return ruleBlock
     }
@@ -620,24 +616,21 @@
         var rules = getElementCssRules(ele)
         var domRuleWrap = templateToElement(templates.wrapper)
         rules.forEach(function(rule){
-            domRuleWrap.appendChild(createDomCssRuleRepresentation(rule, ele))
-            domRuleWrap.appendChild(document.createElement("hr"))
+            append(domRuleWrap, createDomCssRuleRepresentation(rule, ele))
+            append(domRuleWrap, document.createElement("hr"))
         })
 
         return domRuleWrap
     }
 
-    // to test
-    // document.querySelector("#css-view").appendChild(createDomCssRepresentation(document.querySelector(".data-div")))
-
 	var domView = templateToElement(templates.wrapper)
 	domView.id = "dom-view"
-	domView.appendChild(createDomHtmlRepresentation(document.querySelector("html")))
+	append(domView, createDomHtmlRepresentation(qs(document, "html")))
 	var cssView = templateToElement(templates.wrapper)
 	cssView.id = "css-view"
 
     var sizeSlider = templateToElement('<input type="range" min="1" max="99" step="1" style="width: 100%; margin:0;">')
-    sizeSlider.addEventListener("change", function(ev){
+    attachEvent(sizeSlider, "change", function(ev){
         domView.style.width = sizeSlider.value + "%"
         cssView.style.width = (100 - sizeSlider.value) + "%"
     })
@@ -668,10 +661,10 @@
 	`
 
 	var domElementInspector = templateToElement(templates.wrapper)
-	domElementInspector.appendChild(domView)
-	domElementInspector.appendChild(cssView)
-	domDebugger.appendChild(domDebugger.inspector = domElementInspector)
-    domElementInspector.appendChild(sizeSlider)
+	append(domElementInspector, domView)
+	append(domElementInspector, cssView)
+	append(domDebugger, domDebugger.inspector = domElementInspector)
+    append(domElementInspector, sizeSlider)
 
 // file src/mobile-debug-xhr.js
 	var xhrHistory = {}
@@ -686,7 +679,7 @@
 		enumerable: false,
 		writable: true,
 		value: function(){
-			var args = Array.prototype.slice.call(arguments)
+			var args = protoSlice(arguments)
 			var Identifier = args[0] + ":" + args[1]
 			var record = xhrHistory[Identifier] = {
 				method: args[0],
@@ -756,7 +749,7 @@
 				xhrWrapper.body = body
 			}
 
-			currentXhr.addEventListener("loadend", function(){
+			attachEvent(currentXhr, "loadend", function(){
 				xhrWrapper.responce = currentXhr.responseText
 				xhrWrapper.status = currentXhr.status
 				xhrWrapper.recievedHeaders = {}
@@ -776,10 +769,10 @@
 	xhrList.id = "xhrList"
 	xhrDetails = templateToElement(templates.wrapper)
 	xhrDetails.id = "xhrDetails"
-	xhrModule.appendChild(xhrList)
-	xhrModule.appendChild(xhrDetails)
+	append(xhrModule, xhrList)
+	append(xhrModule, xhrDetails)
 
-	domDebugger.appendChild(domDebugger.xhr = xhrModule)
+	append(domDebugger, domDebugger.xhr = xhrModule)
 
 	domDebugger.styles += `
 		#mobile-debug .xhr-list-item {
@@ -803,11 +796,11 @@
 		for (var request in xhrHistory){
 			void function(label, xhrWrapper){
 				var xhrItem = createDomStringRepresentation(label)
-				xhrItem.addEventListener("click", function(){
+				attachEvent(xhrItem, click, function(){
 					createXhrDetailedView(xhrWrapper)
 				})
 
-				xhrList.appendChild(xhrItem)
+				append(xhrList, xhrItem)
 				xhrItem.className += " xhr-list-item"
 			}(request, xhrHistory[request])
 		}
@@ -854,27 +847,27 @@
 		// responce view toggle button
 		var responceButton = document.createElement("button")
 		responceButton.innerText = "Responce"
-		responceButton.addEventListener("click", function(){
+		attachEvent(responceButton, click, function(){
 			xhrStatsView.forEach(function(item){
 				item.parentNode == xhrDetails && xhrDetails.removeChild(item)
 			})
-			xhrDetails.appendChild(resultsView)
+			append(xhrDetails, resultsView)
 		})
 
 		// stats view toggle button
 		var statsButton = document.createElement("button")
 		statsButton.innerText = "Stats"
-		statsButton.addEventListener("click", function(){
+		attachEvent(statsButton, click, function(){
 			resultsView.parentNode == xhrDetails && xhrDetails.removeChild(resultsView)
 			xhrStatsView.forEach(function(item){
-				xhrDetails.appendChild(item)
+				append(xhrDetails, item)
 			})
 		})
 
 		// append default view to the right div
-		xhrDetails.appendChild(responceButton)
-		xhrDetails.appendChild(statsButton)
-		xhrDetails.appendChild(resultsView)
+		append(xhrDetails, responceButton)
+		append(xhrDetails, statsButton)
+		append(xhrDetails, resultsView)
 	}
 
 // file src/mobile-debug-manager.js
@@ -885,17 +878,17 @@
 	var calculateBodyExtention = function(){
 		document.body.style.removeProperty("padding-bottom")
 		var bodyStyles = window.getComputedStyle(document.body)
-		var currentBodyPaddingBot = parseFloat((bodyStyles.paddingBottom).replace("px", ""))
+		var currentBodyPaddingBot = parseFloat(stringReplace(bodyStyles.paddingBottom, "px", ""))
 
 		var debuggerStyles = window.getComputedStyle(domDebugger)
-		var currentDebuggerHeight = parseFloat((debuggerStyles.height).replace("px", ""))
+		var currentDebuggerHeight = parseFloat(stringReplace(debuggerStyles.height, "px", ""))
 
 		document.body.style.setProperty("padding-bottom", (currentBodyPaddingBot + currentDebuggerHeight) + "px", "important")
 	}
 
 	var navigationDiv = templateToElement(templates.wrapper)
 	navigationDiv.id = "inspector-navigation"
-	domDebugger.appendChild(navigationDiv)
+	append(domDebugger, navigationDiv)
 
 	var closeConsole = function(){
 		if (domDebugger.console.parentNode == domDebugger){
@@ -909,16 +902,16 @@
 	var consoleTab = templateToElement(templates.wrapper)
 	consoleTab.innerText = "Console"
 	consoleTab.className += " tab-header"
-	consoleTab.addEventListener("click", function(){
+	attachEvent(consoleTab, click, function(){
 		closeXhr()
 		closeElements()
 		if (!closeConsole()) {
-			domDebugger.appendChild(domDebugger.console)
+			append(domDebugger, domDebugger.console)
 			consoleTab.style.backgroundColor = "inherit"
 		}
 		calculateBodyExtention()
 	})
-	navigationDiv.appendChild(consoleTab)
+	append(navigationDiv, consoleTab)
 
 	var closeElements = function(){
 		if (domDebugger.inspector.parentNode == domDebugger){
@@ -932,16 +925,16 @@
 	var elementsTab = templateToElement(templates.wrapper)
 	elementsTab.innerText = "Inspector"
 	elementsTab.className += " tab-header"
-	elementsTab.addEventListener("click", function(){
+	attachEvent(elementsTab, click, function(){
 		closeXhr()
 		closeConsole()
 		if (!closeElements()){
-			domDebugger.appendChild(domDebugger.inspector)
+			append(domDebugger, domDebugger.inspector)
 			elementsTab.style.backgroundColor = "inherit"
 		}
 		calculateBodyExtention()
 	})
-	navigationDiv.appendChild(elementsTab)
+	append(navigationDiv, elementsTab)
 
 	var closeXhr = function(){
 		if (domDebugger.xhr.parentNode == domDebugger){
@@ -955,16 +948,16 @@
 	var xhrTab = templateToElement(templates.wrapper)
 	xhrTab.innerText = "XHR"
 	xhrTab.className += " tab-header"
-	xhrTab.addEventListener("click", function(){
+	attachEvent(xhrTab, click, function(){
 		closeConsole()
 		closeElements()
 		if (!closeXhr()){
-			domDebugger.appendChild(domDebugger.xhr)
+			append(domDebugger, domDebugger.xhr)
 			xhrTab.style.backgroundColor = "inherit"
 		}
 		calculateBodyExtention()
 	})
-	navigationDiv.appendChild(xhrTab)
+	append(navigationDiv, xhrTab)
 
 	domDebugger.styles += `
 		#mobile-debug .tab-header {
@@ -985,9 +978,9 @@
 		}
 	`
 	if (document.readyState === "complete"){
-		document.body.appendChild(domDebugger)
+		append(document.body, domDebugger)
 	}
-	document.addEventListener("readystatechange", function(){
+	attachEvent(document, "readystatechange", function(){
 		if (document.readyState === "complete"){
 			calculateBodyExtention()
 		}
