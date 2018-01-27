@@ -68,7 +68,7 @@
 				cssView.innerHTML = ""
 				append(cssView, createDomCssRepresentation(ele))
 
-				Array.prototype.forEach.call(qs(domView, ".highlight"), function(item){
+				protoForEach(qs(domView, ".highlight"), function(item){
 					item.className = item.className.replace(" highlight", "")
 				})
 				nodeRepresentation.className += " highlight"

@@ -67,16 +67,16 @@
 		return ele_selector.querySelector(selector)
 	}
 	var protoSlice = function(source, start, end){
-		return Array.prototype.slice.call(source, start, end)
+		return source && Array.prototype.slice.call(source, start, end)
 	}
 	var protoForEach = function(source, callback){
-		return Array.prototype.forEach.call(source, callback)
+		return source && Array.prototype.forEach.call(source, callback)
 	}
-	var protoMap = function(cource, callback){
-		return Array.prototype.map.call(source, callback)
+	var protoMap = function(source, callback){
+		return source && Array.prototype.map.call(source, callback)
 	}
-	var protoReduce = function(cource, callback, start){
-		return Array.prototype.reduce.call(source, callback, start)
+	var protoReduce = function(source, callback, start){
+		return source && Array.prototype.reduce.call(source, callback, start)
 	}
 	var stringReplace = function(str, replaceTarget, replaceWith){
 		return str.replace(replaceTarget, replaceWith)
