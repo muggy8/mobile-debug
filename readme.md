@@ -1,5 +1,22 @@
 # About
 
+<table>
+	<tr>
+		<td>
+			<img src="https://i.imgur.com/fzjaNpC.png">
+		</td>
+		<td>
+			<img src="https://i.imgur.com/eJCz0px.png">
+		</td>
+		<td>
+			<img src="https://i.imgur.com/0VSeXNi.png">
+		</td>
+		<td>
+			<img src="https://i.imgur.com/RMLMIgh.png">
+		</td>
+	</tr>
+</table>
+
 This project is a current Work-in-Progress for a fire-bug style debugger for debugging web application on mobile devices. The current goal of this project is to create a debugger that is rendered in DOM and included with a single javascript file and allows you to view and edit CSS rules, evaluate JS code and view XMLHttpRequests. As these things are the most basic aspects of creating and debugging a web app
 
 ## Why
@@ -19,7 +36,7 @@ You can also just insert it via javascript like
 
 The goal is to create a self contained script that you add wherever you want in your html file and after the script loads, all subsequent javascript outputs/activity will be also captured by the in dom debugger.
 
-The console that this script generates lives in the DOM of the docmument that it is debugging meaning styles in the debugger may leak to global elements and vice versa. to metigate this, all class names and ids of html elements and their selectors are scrambled on build to protect external elements from recieving any of these styles. in the rare case that there is a styling conflict, feel free to re-build the project and that should rescramble the class names and ids again to hopefully not conflict. 
+The console that this script generates lives in the DOM of the document that it is debugging meaning styles in the debugger may leak to global elements and vice versa. to mitigate this, all class names and ids of html elements and their selectors are scrambled on build to protect external elements from receiving any of these styles. in the rare case that there is a styling conflict, feel free to re-build the project and that should re-scramble the class names and ids again to hopefully not conflict.
 ```
 cd /path/to/project/dependency/folder
 git clone https://github.com/muggy8/mobile-debug.git
@@ -30,4 +47,4 @@ node build
 
 ## Current State
 
-The core feature of the projects are complete and can be used in various web based enviromente to edit CSS, explore Dom and evaluate code. 
+The core feature of the projects are complete and can be used in various web based environment to edit CSS, explore Dom and evaluate code. There are still a lot of bugs that are to be hammered out and some strange behaviors and minor features that still needs to be built but in general, this is good enough to be used for the main purpose it was created for.
