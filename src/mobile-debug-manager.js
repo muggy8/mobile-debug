@@ -15,7 +15,7 @@
 
 	var navigationDiv = templateToElement(templates.wrapper)
 	navigationDiv.id = "inspector-navigation"
-	domDebugger.appendChild(navigationDiv)
+	append(domDebugger, navigationDiv)
 
 	var closeConsole = function(){
 		if (domDebugger.console.parentNode == domDebugger){
@@ -33,12 +33,12 @@
 		closeXhr()
 		closeElements()
 		if (!closeConsole()) {
-			domDebugger.appendChild(domDebugger.console)
+			append(domDebugger, domDebugger.console)
 			consoleTab.style.backgroundColor = "inherit"
 		}
 		calculateBodyExtention()
 	})
-	navigationDiv.appendChild(consoleTab)
+	append(navigationDiv, consoleTab)
 
 	var closeElements = function(){
 		if (domDebugger.inspector.parentNode == domDebugger){
@@ -56,12 +56,12 @@
 		closeXhr()
 		closeConsole()
 		if (!closeElements()){
-			domDebugger.appendChild(domDebugger.inspector)
+			append(domDebugger, domDebugger.inspector)
 			elementsTab.style.backgroundColor = "inherit"
 		}
 		calculateBodyExtention()
 	})
-	navigationDiv.appendChild(elementsTab)
+	append(navigationDiv, elementsTab)
 
 	var closeXhr = function(){
 		if (domDebugger.xhr.parentNode == domDebugger){
@@ -79,12 +79,12 @@
 		closeConsole()
 		closeElements()
 		if (!closeXhr()){
-			domDebugger.appendChild(domDebugger.xhr)
+			append(domDebugger, domDebugger.xhr)
 			xhrTab.style.backgroundColor = "inherit"
 		}
 		calculateBodyExtention()
 	})
-	navigationDiv.appendChild(xhrTab)
+	append(navigationDiv, xhrTab)
 
 	domDebugger.styles += `
 		#mobile-debug .tab-header {
@@ -105,7 +105,7 @@
 		}
 	`
 	if (document.readyState === "complete"){
-		document.body.appendChild(domDebugger)
+		append(document.body, domDebugger)
 	}
 	document.addEventListener("readystatechange", function(){
 		if (document.readyState === "complete"){

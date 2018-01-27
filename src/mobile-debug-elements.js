@@ -42,7 +42,7 @@
 				Array.prototype.map.call(childNodes, function(item){
 					return createDomHtmlRepresentation(item)
 				}).forEach(function(item){
-					appendTarget.appendChild(item)
+					append(appendTarget, item)
 				})
 
 				nodeRepresentation.dblclickAction = hide
@@ -66,7 +66,7 @@
 				ev.stopPropagation()
 
 				cssView.innerHTML = ""
-				cssView.appendChild(createDomCssRepresentation(ele))
+				append(cssView, createDomCssRepresentation(ele))
 
 				Array.prototype.forEach.call(domView.querySelectorAll(".highlight"), function(item){
 					item.className = item.className.replace(" highlight", "")
@@ -129,8 +129,8 @@
 		marginStyles.top = (elePos.top - parseFloat(eleStyles.marginTop.replace("px", ""))) + "px"
 		marginStyles.left = (elePos.left - parseFloat(eleStyles.marginLeft.replace("px", ""))) + "px"
 
-		marginBox.appendChild(borderBox)
-		borderBox.appendChild(paddingBox)
+		append(marginBox, borderBox)
+		append(borderBox, paddingBox)
 
 		marginBox.unlink = function(){
 			marginBox.parentNode && marginBox.parentNode.removeChild(marginBox)
@@ -181,9 +181,9 @@
 
     var createDomCssKeyValPair = function(rule, ruleIndex, resetView){
         var domPair = templateToElement(templates.keyVal)
-        domPair.querySelector(".pair-key").appendChild(domPair.keyInput = templateToElement(templates.underlineInput))
-        domPair.querySelector(".pair-val").appendChild(domPair.valInput = templateToElement(templates.underlineInput))
-		domPair.appendChild(domPair.deleteButton = templateToElement("<button>X</button>"))
+        append(domPair.querySelector(".pair-key"), domPair.keyInput = templateToElement(templates.underlineInput))
+        append(domPair.querySelector(".pair-val"), domPair.valInput = templateToElement(templates.underlineInput))
+		append(domPair, domPair.deleteButton = templateToElement("<button>X</button>"))
 
         domPair.keyInput.value = rule.style[ruleIndex] || "New"
         domPair.valInput.value = rule.style.getPropertyValue(rule.style[ruleIndex])
@@ -240,15 +240,15 @@
 
     var createDomCssRuleRepresentation = function(rule, ele){
         var ruleBlock = templateToElement(templates.wrapper)
-        ruleBlock.appendChild(createDomStringRepresentation(rule.selectorText))
+        append(ruleBlock, createDomStringRepresentation(rule.selectorText))
         var jsonLikeBlock = templateToElement(templates.jsonDisplay)
-        ruleBlock.appendChild(jsonLikeBlock)
+        append(ruleBlock, jsonLikeBlock)
 		var rebuildCssRulesView = function(){
 			cssView.innerHTML = ""
-			cssView.appendChild(createDomCssRepresentation(ele))
+			append(cssView, createDomCssRepresentation(ele))
 		}
         for(var i = 0; i <= rule.style.length; i++){
-            jsonLikeBlock.querySelector(".json-properties").appendChild(createDomCssKeyValPair(rule, i, rebuildCssRulesView))
+            append(jsonLikeBlock.querySelector(".json-properties"), createDomCssKeyValPair(rule, i, rebuildCssRulesView))
         }
 		return ruleBlock
     }
@@ -257,19 +257,16 @@
         var rules = getElementCssRules(ele)
         var domRuleWrap = templateToElement(templates.wrapper)
         rules.forEach(function(rule){
-            domRuleWrap.appendChild(createDomCssRuleRepresentation(rule, ele))
-            domRuleWrap.appendChild(document.createElement("hr"))
+            append(domRuleWrap, createDomCssRuleRepresentation(rule, ele))
+            append(domRuleWrap, document.createElement("hr"))
         })
 
         return domRuleWrap
     }
 
-    // to test
-    // document.querySelector("#css-view").appendChild(createDomCssRepresentation(document.querySelector(".data-div")))
-
 	var domView = templateToElement(templates.wrapper)
 	domView.id = "dom-view"
-	domView.appendChild(createDomHtmlRepresentation(document.querySelector("html")))
+	append(domView, createDomHtmlRepresentation(document.querySelector("html")))
 	var cssView = templateToElement(templates.wrapper)
 	cssView.id = "css-view"
 
@@ -305,7 +302,7 @@
 	`
 
 	var domElementInspector = templateToElement(templates.wrapper)
-	domElementInspector.appendChild(domView)
-	domElementInspector.appendChild(cssView)
-	domDebugger.appendChild(domDebugger.inspector = domElementInspector)
-    domElementInspector.appendChild(sizeSlider)
+	append(domElementInspector, domView)
+	append(domElementInspector, cssView)
+	append(domDebugger, domDebugger.inspector = domElementInspector)
+    append(domElementInspector, sizeSlider)

@@ -35,7 +35,7 @@
 			ev.stopPropagation()
 			// take the hidden element out and replace it with the snown element instead
 			hidden.parentNode ? hidden.parentNode.removeChild(hidden) : false
-			jsonBlock.appendChild(shown)
+			append(jsonBlock, shown)
 
 			// if the element that's gonna replace this one already has children then skip the rest cuz the rest of the code generates the children
 			if (shown.querySelector(".json-properties").children.length > 0){
@@ -50,7 +50,7 @@
 				returnNode.querySelector(".pair-key").innerText = '"' + key + '"'
 				returnNode.querySelector(".pair-key").style.cursor = "pointer"
 				var subJsonBlock = createAppropriateRepresentation(data, props, protoFrom)
-				returnNode.querySelector(".pair-val").appendChild(subJsonBlock)
+				append(returnNode.querySelector(".pair-val"), subJsonBlock)
 				returnNode.querySelector(".pair-key").addEventListener("dblclick", function(ev){
 					ev.stopPropagation()
 
@@ -65,13 +65,13 @@
 				return item !== "__proto__"
 			}).forEach(function(item){
 				var keyValDomPair = createSubJsonGroup(item, theJson[item])
-				shown.querySelector(".json-properties").appendChild(keyValDomPair)
+				append(shown.querySelector(".json-properties"), keyValDomPair)
 			})
 
 			var inheritedFrom = Object.getPrototypeOf(findProtoFrom || theJson)
 			if (inheritedFrom){
 				var keyValDomPair = createSubJsonGroup("__proto__" , theJson, Object.getOwnPropertyNames(inheritedFrom), inheritedFrom)
-				shown.querySelector(".json-properties").appendChild(keyValDomPair)
+				append(shown.querySelector(".json-properties"), keyValDomPair)
 			}
 		})
 
@@ -79,23 +79,18 @@
 		shown.addEventListener("dblclick", function(ev){
 			ev.stopPropagation()
 			shown.parentNode ? shown.parentNode.removeChild(shown) : false
-			jsonBlock.appendChild(hidden)
+			append(jsonBlock, hidden)
 		})
 
-		jsonBlock.appendChild(hidden)
-		Object.defineProperty(jsonBlock, "useBrackets", {
-			enumerable: true,
-			configurable: true,
-			writable: false,
-			value: function(bracket){
-				shown.querySelector(".starting-brace").innerText = bracket[0]
-				shown.querySelector(".ending-brace").innerText = bracket[1]
-				var textContainer = hidden.querySelector(".json-placeholder")
-				textContainer.innerText = textContainer.innerText
-					.replace("{", bracket[0])
-					.replace("}", bracket[1])
-			}
-		})
+		append(jsonBlock, hidden)
+		jsonBlock.useBrackets = function(bracket){
+			shown.querySelector(".starting-brace").innerText = bracket[0]
+			shown.querySelector(".ending-brace").innerText = bracket[1]
+			var textContainer = hidden.querySelector(".json-placeholder")
+			textContainer.innerText = textContainer.innerText
+				.replace("{", bracket[0])
+				.replace("}", bracket[1])
+		}
 		return jsonBlock
 	}
 
@@ -111,8 +106,8 @@
 		}
 		else if (somedata instanceof HTMLElement){
 			var eleView = templateToElement(templates.wrapper)
-			eleView.appendChild(createDomHtmlRepresentation(somedata))
-			eleView.appendChild(createDomJsonRepresentation(somedata, props, protoFrom))
+			append(eleView, createDomHtmlRepresentation(somedata))
+			append(eleView, createDomJsonRepresentation(somedata, props, protoFrom))
 			return eleView
 		}
 		else if (typeof somedata == "object"){
@@ -188,10 +183,10 @@
 		logBlock.className += " type-log"
 
 		Array.prototype.forEach.call(arguments, function(item){
-			logBlock.appendChild(createAppropriateRepresentation(item))
+			append(logBlock, createAppropriateRepresentation(item))
 		})
 
-		domConsole.appendChild(logBlock)
+		append(domConsole, logBlock)
 		domConsole.scrollTop = domConsole.scrollHeight
 
 		return logBlock
@@ -207,38 +202,6 @@
 
     var inputTextArea = inputConsole.querySelector("textarea")
 	inputTextArea.style.width = "100%"
-
-	// Object.defineProperty(inputConsole, "value", {
-	// 	enumerable: true,
-	// 	configurable: true,
-	// 	get: function(){
-	// 		return inputConsole.querySelector("textarea").value
-	// 	},
-	// 	set: function(val){
-	// 		inputConsole.querySelector("textarea").value = val
-	// 		return val
-	// 	}
-	// })
-    //
-	// Object.defineProperty(inputConsole, "execute", {
-	// 	enumerable: true,
-	// 	configurable: true,
-	// 	writable: true,
-	// 	value: function(){
-	// 		systemLog = true // disable quotest around string for this log
-	// 		domConsoleLog("Input:\n" + inputConsole.value)
-	// 		try {
-	// 			domConsoleLog(eval.call(this, inputConsole.value))
-	// 		}
-	// 		catch (o3o){
-	// 			systemLog = true
-	// 			var logEle = domConsoleLog("Error", o3o).className += " type-err"
-	// 		}
-	// 		finally {
-	// 			inputConsole.value = ""
-	// 		}
-	// 	}
-	// })
 
 	inputConsole.querySelector(".exec-btn").addEventListener("click", function(){
         systemLog = true // disable quotest around string for this log
@@ -263,10 +226,10 @@
     })
 
 	var consoleModule = templateToElement(templates.wrapper)
-	consoleModule.appendChild(domConsole)
-	consoleModule.appendChild(inputConsole)
+	append(consoleModule, domConsole)
+	append(consoleModule, inputConsole)
 
-	domDebugger.appendChild(domDebugger.console = consoleModule)
+	append(domDebugger, domDebugger.console = consoleModule)
 
 	var sourceLog = console.log
 	console.log = function(){

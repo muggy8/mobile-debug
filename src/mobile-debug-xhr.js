@@ -100,10 +100,10 @@
 	xhrList.id = "xhrList"
 	xhrDetails = templateToElement(templates.wrapper)
 	xhrDetails.id = "xhrDetails"
-	xhrModule.appendChild(xhrList)
-	xhrModule.appendChild(xhrDetails)
+	append(xhrModule, xhrList)
+	append(xhrModule, xhrDetails)
 
-	domDebugger.appendChild(domDebugger.xhr = xhrModule)
+	append(domDebugger, domDebugger.xhr = xhrModule)
 
 	domDebugger.styles += `
 		#mobile-debug .xhr-list-item {
@@ -131,7 +131,7 @@
 					createXhrDetailedView(xhrWrapper)
 				})
 
-				xhrList.appendChild(xhrItem)
+				append(xhrList, xhrItem)
 				xhrItem.className += " xhr-list-item"
 			}(request, xhrHistory[request])
 		}
@@ -182,7 +182,7 @@
 			xhrStatsView.forEach(function(item){
 				item.parentNode == xhrDetails && xhrDetails.removeChild(item)
 			})
-			xhrDetails.appendChild(resultsView)
+			append(xhrDetails, resultsView)
 		})
 
 		// stats view toggle button
@@ -191,12 +191,12 @@
 		statsButton.addEventListener("click", function(){
 			resultsView.parentNode == xhrDetails && xhrDetails.removeChild(resultsView)
 			xhrStatsView.forEach(function(item){
-				xhrDetails.appendChild(item)
+				append(xhrDetails, item)
 			})
 		})
 
 		// append default view to the right div
-		xhrDetails.appendChild(responceButton)
-		xhrDetails.appendChild(statsButton)
-		xhrDetails.appendChild(resultsView)
+		append(xhrDetails, responceButton)
+		append(xhrDetails, statsButton)
+		append(xhrDetails, resultsView)
 	}

@@ -51,3 +51,36 @@
 			background-color: transparent;
 		}
 	`
+
+	// declare some globals so we can use them later and we can save space in the minified versions
+	var append = function(parent, child){
+		parent.appendChild(child)
+	}
+	var attachEvent = function(ele, ev, handler){
+		ele.addEventListener(ev, handler)
+	}
+	var qs = function(ele_selector, selector){
+		if (!selector){
+			selector = ele_selector
+			ele_selector = document
+		}
+		return ele_selector.querySelector(selector)
+	}
+	var protoSlice = function(source, start, end){
+		return Array.prototype.slice.call(source, start, end)
+	}
+	var protoForEach = function(source, callback){
+		return Array.prototype.forEach.call(source, callback)
+	}
+	var protoMap = function(cource, callback){
+		return Array.prototype.map.call(source, callback)
+	}
+	var protoReduce = function(cource, callback, start){
+		return Array.prototype.reduce.call(source, callback, start)
+	}
+	var stringReplace = function(str, replaceTarget, replaceWith){
+		return str.replace(replaceTarget, replaceWith)
+	}
+	var click = "click"
+	var doubleClick = "dblclick"
+	var keyUp = "keyup"
