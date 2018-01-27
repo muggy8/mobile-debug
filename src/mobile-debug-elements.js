@@ -21,7 +21,7 @@
 			var oppeningTag
 			if (closingTagMatch){
 				var closingTag = closingTagMatch[0]
-				oppeningTag = nodeText.replace(closingTag, "")
+				oppeningTag = stringReplace(nodeText, closingTag, "")
 				qs(nodeRepresentation, ".html-close").innerText = closingTag
 				qs(nodeRepresentation, ".html-body").innerText = "..."
 			}
@@ -35,7 +35,7 @@
 			}
 
 			var show = function(){
-				nodeRepresentation.className = nodeRepresentation.className.replace(" state-closed", "") + " state-opened"
+				nodeRepresentation.className = stringReplace(nodeRepresentation.className, " state-closed", "") + " state-opened"
 
 				qs(nodeRepresentation, ".html-body").innerHTML = ""
 				var appendTarget = qs(nodeRepresentation, ".html-body")
@@ -48,7 +48,7 @@
 				nodeRepresentation.dblclickAction = hide
 			}
 			var hide = function(){
-				nodeRepresentation.className = nodeRepresentation.className.replace(" state-opened", "") + " state-closed"
+				nodeRepresentation.className = stringReplace(nodeRepresentation.className, " state-opened", "") + " state-closed"
 				qs(nodeRepresentation, ".html-body").innerHTML = "..."
 
 				nodeRepresentation.dblclickAction = show
@@ -69,7 +69,7 @@
 				append(cssView, createDomCssRepresentation(ele))
 
 				protoForEach(qs(domView, ".highlight"), function(item){
-					item.className = item.className.replace(" highlight", "")
+					item.className = stringReplace(item.className, " highlight", "")
 				})
 				nodeRepresentation.className += " highlight"
 
@@ -126,8 +126,8 @@
 		marginStyles.borderLeftWidth = eleStyles.marginLeft
 		marginStyles.borderRightWidth = eleStyles.marginRight
 
-		marginStyles.top = (elePos.top - parseFloat(eleStyles.marginTop.replace("px", ""))) + "px"
-		marginStyles.left = (elePos.left - parseFloat(eleStyles.marginLeft.replace("px", ""))) + "px"
+		marginStyles.top = (elePos.top - parseFloat(stringReplace(eleStyles.marginTop, "px", ""))) + "px"
+		marginStyles.left = (elePos.left - parseFloat(stringReplace(eleStyles.marginLeft, "px", ""))) + "px"
 
 		append(marginBox, borderBox)
 		append(borderBox, paddingBox)
@@ -198,7 +198,7 @@
 				(ev.data == ":" && ev.target == domPair.keyInput)
 			){
 				domPair.valInput.focus()
-				domPair.keyInput.value = domPair.keyInput.value.replace(/\:+$/, "")
+				domPair.keyInput.value = stringReplace(domPair.keyInput.value, /\:+$/, "")
 				ev.stopPropagation()
 				ev.preventDefault()
 				return
@@ -225,7 +225,7 @@
                 domPair.keyInput.style.color = domPair.valInput.style.color = "red"
             }
             else {
-                domPair.className = domPair.className.replace(" type-err", "")
+                domPair.className = stringReplace(domPair.className, " type-err", "")
                 domPair.keyInput.style.color = domPair.valInput.style.color = "black"
             }
         }

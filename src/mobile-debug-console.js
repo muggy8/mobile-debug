@@ -119,7 +119,7 @@
 				return createDomStringRepresentation(somedata)
 			}
 			else {
-				return createDomStringRepresentation('"' + somedata.replace(/\"/g, '\\"') + '"')
+				return createDomStringRepresentation('"' + stringReplace(somedata, /\"/g, '\\"') + '"')
 			}
 		}
 		else if (typeof somedata == "function" || typeof somedata == "number"){

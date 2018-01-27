@@ -5,10 +5,10 @@
 	var calculateBodyExtention = function(){
 		document.body.style.removeProperty("padding-bottom")
 		var bodyStyles = window.getComputedStyle(document.body)
-		var currentBodyPaddingBot = parseFloat((bodyStyles.paddingBottom).replace("px", ""))
+		var currentBodyPaddingBot = parseFloat(stringReplace(bodyStyles.paddingBottom, "px", ""))
 
 		var debuggerStyles = window.getComputedStyle(domDebugger)
-		var currentDebuggerHeight = parseFloat((debuggerStyles.height).replace("px", ""))
+		var currentDebuggerHeight = parseFloat(stringReplace(debuggerStyles.height, "px", ""))
 
 		document.body.style.setProperty("padding-bottom", (currentBodyPaddingBot + currentDebuggerHeight) + "px", "important")
 	}
