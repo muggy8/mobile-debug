@@ -29,7 +29,7 @@
 	var consoleTab = templateToElement(templates.wrapper)
 	consoleTab.innerText = "Console"
 	consoleTab.className += " tab-header"
-	attachEvent(consoleTab, "click", function(){
+	attachEvent(consoleTab, click, function(){
 		closeXhr()
 		closeElements()
 		if (!closeConsole()) {
@@ -52,7 +52,7 @@
 	var elementsTab = templateToElement(templates.wrapper)
 	elementsTab.innerText = "Inspector"
 	elementsTab.className += " tab-header"
-	attachEvent(elementsTab, "click", function(){
+	attachEvent(elementsTab, click, function(){
 		closeXhr()
 		closeConsole()
 		if (!closeElements()){
@@ -75,7 +75,7 @@
 	var xhrTab = templateToElement(templates.wrapper)
 	xhrTab.innerText = "XHR"
 	xhrTab.className += " tab-header"
-	attachEvent(xhrTab, "click", function(){
+	attachEvent(xhrTab, click, function(){
 		closeConsole()
 		closeElements()
 		if (!closeXhr()){

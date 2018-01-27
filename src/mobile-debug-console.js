@@ -203,10 +203,10 @@
     var inputTextArea = qs(inputConsole, "textarea")
 	inputTextArea.style.width = "100%"
 
-	attachEvent(qs(inputConsole, ".exec-btn"), "click", function(){
+	attachEvent(qs(inputConsole, ".exec-btn"), click, function(){
         systemLog = true // disable quotest around string for this log
         var execInput = inputTextArea.value
-        attachEvent(domConsoleLog("Input:\n" + inputTextArea.value), "click", function(){
+        attachEvent(domConsoleLog("Input:\n" + inputTextArea.value), click, function(){
         	inputTextArea.value = execInput
 		})
         try {
@@ -221,7 +221,7 @@
         }
     })
     
-    attachEvent(qs(inputConsole, ".clear-btn"), "click", function(){
+    attachEvent(qs(inputConsole, ".clear-btn"), click, function(){
     	inputTextArea.value = ""
     })
 

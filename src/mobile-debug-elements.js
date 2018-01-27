@@ -62,7 +62,7 @@
 				nodeRepresentation.dblclickAction()
 			})
 
-			attachEvent(nodeRepresentation, "click", function(ev){
+			attachEvent(nodeRepresentation, click, function(ev){
 				ev.stopPropagation()
 
 				cssView.innerHTML = ""
@@ -140,7 +140,7 @@
 			document.body.insertBefore(marginBox, domDebugger)
 		}
 
-		attachEvent(marginBox, "click", marginBox.unlink)
+		attachEvent(marginBox, click, marginBox.unlink)
 
 		marginBox.relink()
 
@@ -187,7 +187,7 @@
 
         domPair.keyInput.value = rule.style[ruleIndex] || "New"
         domPair.valInput.value = rule.style.getPropertyValue(rule.style[ruleIndex])
-		attachEvent(domPair.deleteButton, "click", function(){
+		attachEvent(domPair.deleteButton, click, function(){
 			rule.style.removeProperty(rule.style[ruleIndex])
 			resetView()
 		})

@@ -127,7 +127,7 @@
 		for (var request in xhrHistory){
 			void function(label, xhrWrapper){
 				var xhrItem = createDomStringRepresentation(label)
-				attachEvent(xhrItem, "click", function(){
+				attachEvent(xhrItem, click, function(){
 					createXhrDetailedView(xhrWrapper)
 				})
 
@@ -178,7 +178,7 @@
 		// responce view toggle button
 		var responceButton = document.createElement("button")
 		responceButton.innerText = "Responce"
-		attachEvent(responceButton, "click", function(){
+		attachEvent(responceButton, click, function(){
 			xhrStatsView.forEach(function(item){
 				item.parentNode == xhrDetails && xhrDetails.removeChild(item)
 			})
@@ -188,7 +188,7 @@
 		// stats view toggle button
 		var statsButton = document.createElement("button")
 		statsButton.innerText = "Stats"
-		attachEvent(statsButton, "click", function(){
+		attachEvent(statsButton, click, function(){
 			resultsView.parentNode == xhrDetails && xhrDetails.removeChild(resultsView)
 			xhrStatsView.forEach(function(item){
 				append(xhrDetails, item)
