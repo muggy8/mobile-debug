@@ -71,6 +71,8 @@
 					item.className = item.className.replace(" highlight", "")
 				})
 				nodeRepresentation.className += " highlight"
+				
+				highlightBox(ele)
 			})
 
 			return nodeRepresentation
@@ -79,7 +81,16 @@
 			systemLog = true;
 			return createDomStringRepresentation(ele.nodeValue)
 		}
+		
+	}
 
+	var highlightBox = function(ele){
+		var marginBox = templateToElement(templates.wrapper)
+		var borderBox = templateToElement(templates.wrapper)
+		var paddingBox = templateToElement(templates.wrapper)
+		
+		var eleStyle = window.getComputedStyle(ele)
+		
 	}
 
     var getElementCssRules = function(ele){
