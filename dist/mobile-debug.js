@@ -257,7 +257,8 @@
 	var inputConsole = templateToElement(
 		`<div>
 			<textarea></textarea>
-			<button>execute</button>
+			<button class="exec-btn">execute</button>
+			<button class="clear-btn">clear</button>
 		</div>`
 	)
 
@@ -296,11 +297,14 @@
 	// 	}
 	// })
 
-	inputConsole.querySelector("button").addEventListener("click", function(){
+	inputConsole.querySelector(".exec-btn").addEventListener("click", function(){
         systemLog = true // disable quotest around string for this log
-        domConsoleLog("Input:\n" + inputTextArea.value)
+        var execInput = inputTextArea.value
+        domConsoleLog("Input:\n" + inputTextArea.value).addEventListener("click", function(){
+        	inputTextArea.value = execInput
+		})
         try {
-            domConsoleLog(eval.call(this, inputTextArea.value))
+            domConsoleLog(eval.call(this, execInput))
         }
         catch (o3o){
             systemLog = true
@@ -309,6 +313,10 @@
         finally {
             inputTextArea.value = ""
         }
+    })
+    
+    inputConsole.querySelector(".clear-btn").addEventListener("click", function(){
+    	inputTextArea.value = ""
     })
 
 	var consoleModule = templateToElement(templates.wrapper)
@@ -362,6 +370,7 @@
 
     templates.underlineInput = `<input class="underlineInput" style="border: none; border-bottom: solid 1px #CCC; text-align: center;">`
 
+	var currentHighligher
 	var createDomHtmlRepresentation = function(ele){
 		if (!ele){
 			return
@@ -426,6 +435,9 @@
 					item.className = item.className.replace(" highlight", "")
 				})
 				nodeRepresentation.className += " highlight"
+
+				currentHighligher && currentHighligher.unlink()
+				currentHighligher = highlightBox(ele)
 			})
 
 			return nodeRepresentation
@@ -435,6 +447,67 @@
 			return createDomStringRepresentation(ele.nodeValue)
 		}
 
+	}
+
+	var highlightBox = function(ele){
+		var marginBox = templateToElement(templates.wrapper)
+		var borderBox = templateToElement(templates.wrapper)
+		var paddingBox = templateToElement(templates.wrapper)
+
+		var eleStyle = window.getComputedStyle(ele)
+		var marginStyles = marginBox.style
+		var borderStyles = borderBox.style
+		var paddingStyles = paddingBox.style
+		var elePos = ele.getBoundingClientRect()
+
+		marginStyles.borderStyle = borderStyles.borderStyle = paddingStyles.borderStyle = "solid"
+		marginStyles.position = "absolute"
+		marginStyles.borderColor = "rgba(252, 160, 50, 0.5)"
+		borderStyles.borderColor = "rgba(252, 252, 50, 0.5)"
+		paddingStyles.borderColor = "rgba(100, 252, 50, 0.5)"
+		paddingStyles.backgroundColor = "rgba(50, 160, 252, 0.5)"
+		paddingStyles.boxSizing = borderStyles.boxSizing = "border-box"
+
+		var eleStyles = window.getComputedStyle(ele)
+
+		borderStyles.borderTopWidth = eleStyles.borderTopWidth
+		borderStyles.borderBottomWidth = eleStyles.borderBottomWidth
+		borderStyles.borderLeftWidth = eleStyles.borderLeftWidth
+		borderStyles.borderRightWidth = eleStyles.borderRightWidth
+		borderStyles.width = ele.offsetWidth + "px"
+		borderStyles.height = ele.offsetHeight + "px"
+
+		paddingStyles.borderTopWidth = eleStyles.paddingTop
+		paddingStyles.borderBottomWidth = eleStyles.paddingBottom
+		paddingStyles.borderLeftWidth = eleStyles.paddingLeft
+		paddingStyles.borderRightWidth = eleStyles.paddingRight
+		paddingStyles.width = "100%"
+		paddingStyles.height = "100%"
+
+		marginStyles.borderTopWidth = eleStyles.marginTop
+		marginStyles.borderBottomWidth = eleStyles.marginBottom
+		marginStyles.borderLeftWidth = eleStyles.marginLeft
+		marginStyles.borderRightWidth = eleStyles.marginRight
+
+		marginStyles.top = (elePos.top - parseFloat(eleStyles.marginTop.replace("px", ""))) + "px"
+		marginStyles.left = (elePos.left - parseFloat(eleStyles.marginLeft.replace("px", ""))) + "px"
+
+		marginBox.appendChild(borderBox)
+		borderBox.appendChild(paddingBox)
+
+		marginBox.unlink = function(){
+			marginBox.parentNode && marginBox.parentNode.removeChild(marginBox)
+		}
+
+		marginBox.relink = function(){
+			document.body.insertBefore(marginBox, domDebugger)
+		}
+
+		marginBox.addEventListener("click", marginBox.unlink)
+
+		marginBox.relink()
+
+		return marginBox
 	}
 
     var getElementCssRules = function(ele){
