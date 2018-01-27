@@ -31,7 +31,7 @@
 		var jsonBlock = templateToElement(templates.wrapper)
 
 		var hidden = templateToElement(templates.jsonHidden)
-		hidden.addEventListener("dblclick", function(ev){
+		attachEvent(hidden, "dblclick", function(ev){
 			ev.stopPropagation()
 			// take the hidden element out and replace it with the snown element instead
 			hidden.parentNode ? hidden.parentNode.removeChild(hidden) : false
@@ -51,7 +51,7 @@
 				returnNode.querySelector(".pair-key").style.cursor = "pointer"
 				var subJsonBlock = createAppropriateRepresentation(data, props, protoFrom)
 				append(returnNode.querySelector(".pair-val"), subJsonBlock)
-				returnNode.querySelector(".pair-key").addEventListener("dblclick", function(ev){
+				attachEvent(returnNode.querySelector(".pair-key"), "dblclick", function(ev){
 					ev.stopPropagation()
 
 					var target = subJsonBlock.querySelector(".data-div")
@@ -76,7 +76,7 @@
 		})
 
 		var shown = templateToElement(templates.jsonDisplay)
-		shown.addEventListener("dblclick", function(ev){
+		attachEvent(shown, "dblclick", function(ev){
 			ev.stopPropagation()
 			shown.parentNode ? shown.parentNode.removeChild(shown) : false
 			append(jsonBlock, hidden)
@@ -203,10 +203,10 @@
     var inputTextArea = inputConsole.querySelector("textarea")
 	inputTextArea.style.width = "100%"
 
-	inputConsole.querySelector(".exec-btn").addEventListener("click", function(){
+	attachEvent(inputConsole.querySelector(".exec-btn"), "click", function(){
         systemLog = true // disable quotest around string for this log
         var execInput = inputTextArea.value
-        domConsoleLog("Input:\n" + inputTextArea.value).addEventListener("click", function(){
+        attachEvent(domConsoleLog("Input:\n" + inputTextArea.value), "click", function(){
         	inputTextArea.value = execInput
 		})
         try {
@@ -221,7 +221,7 @@
         }
     })
     
-    inputConsole.querySelector(".clear-btn").addEventListener("click", function(){
+    attachEvent(inputConsole.querySelector(".clear-btn"), "click", function(){
     	inputTextArea.value = ""
     })
 
@@ -262,6 +262,6 @@
 		sourceWarn.apply(console, inputs)
 	}
 
-	window.addEventListener("error", function(ev){
+	attachEvent(window, "error", function(ev){
 		domConsoleLog(ev.message + "\nError in file: " + ev.fileName	+ " on line " + ev.lineno + ":" + ev.colno).className += " type-err"
 	})

@@ -80,7 +80,7 @@
 				xhrWrapper.body = body
 			}
 
-			currentXhr.addEventListener("loadend", function(){
+			attachEvent(currentXhr, "loadend", function(){
 				xhrWrapper.responce = currentXhr.responseText
 				xhrWrapper.status = currentXhr.status
 				xhrWrapper.recievedHeaders = {}
@@ -127,7 +127,7 @@
 		for (var request in xhrHistory){
 			void function(label, xhrWrapper){
 				var xhrItem = createDomStringRepresentation(label)
-				xhrItem.addEventListener("click", function(){
+				attachEvent(xhrItem, "click", function(){
 					createXhrDetailedView(xhrWrapper)
 				})
 
@@ -178,7 +178,7 @@
 		// responce view toggle button
 		var responceButton = document.createElement("button")
 		responceButton.innerText = "Responce"
-		responceButton.addEventListener("click", function(){
+		attachEvent(responceButton, "click", function(){
 			xhrStatsView.forEach(function(item){
 				item.parentNode == xhrDetails && xhrDetails.removeChild(item)
 			})
@@ -188,7 +188,7 @@
 		// stats view toggle button
 		var statsButton = document.createElement("button")
 		statsButton.innerText = "Stats"
-		statsButton.addEventListener("click", function(){
+		attachEvent(statsButton, "click", function(){
 			resultsView.parentNode == xhrDetails && xhrDetails.removeChild(resultsView)
 			xhrStatsView.forEach(function(item){
 				append(xhrDetails, item)

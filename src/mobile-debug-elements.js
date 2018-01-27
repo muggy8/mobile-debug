@@ -57,12 +57,12 @@
 			// it is default hidden show show on double click for default
 			nodeRepresentation.dblclickAction = show
 
-			nodeRepresentation.addEventListener("dblclick", function(ev){
+			attachEvent(nodeRepresentation, "dblclick", function(ev){
 				ev.stopPropagation()
 				nodeRepresentation.dblclickAction()
 			})
 
-			nodeRepresentation.addEventListener("click", function(ev){
+			attachEvent(nodeRepresentation, "click", function(ev){
 				ev.stopPropagation()
 
 				cssView.innerHTML = ""
@@ -140,7 +140,7 @@
 			document.body.insertBefore(marginBox, domDebugger)
 		}
 
-		marginBox.addEventListener("click", marginBox.unlink)
+		attachEvent(marginBox, "click", marginBox.unlink)
 
 		marginBox.relink()
 
@@ -187,7 +187,7 @@
 
         domPair.keyInput.value = rule.style[ruleIndex] || "New"
         domPair.valInput.value = rule.style.getPropertyValue(rule.style[ruleIndex])
-		domPair.deleteButton.addEventListener("click", function(){
+		attachEvent(domPair.deleteButton, "click", function(){
 			rule.style.removeProperty(rule.style[ruleIndex])
 			resetView()
 		})
@@ -230,10 +230,10 @@
             }
         }
 
-        domPair.keyInput.addEventListener("keyup", keyValEventHandler)
-        domPair.valInput.addEventListener("keyup", keyValEventHandler)
-        domPair.keyInput.addEventListener("input", keyValEventHandler)
-        domPair.valInput.addEventListener("input", keyValEventHandler)
+        attachEvent(domPair.keyInput, "keyup", keyValEventHandler)
+        attachEvent(domPair.valInput, "keyup", keyValEventHandler)
+        attachEvent(domPair.keyInput, "input", keyValEventHandler)
+        attachEvent(domPair.valInput, "input", keyValEventHandler)
 
         return domPair
     }
@@ -271,7 +271,7 @@
 	cssView.id = "css-view"
 
     var sizeSlider = templateToElement('<input type="range" min="1" max="99" step="1" style="width: 100%; margin:0;">')
-    sizeSlider.addEventListener("change", function(ev){
+    attachEvent(sizeSlider, "change", function(ev){
         domView.style.width = sizeSlider.value + "%"
         cssView.style.width = (100 - sizeSlider.value) + "%"
     })
