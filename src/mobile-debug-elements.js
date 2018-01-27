@@ -68,7 +68,7 @@
 				cssView.innerHTML = ""
 				append(cssView, createDomCssRepresentation(ele))
 
-				protoForEach(qs(domView, ".highlight"), function(item){
+				protoForEach(domView.querySelectorAll(".highlight"), function(item){
 					item.className = stringReplace(item.className, " highlight", "")
 				})
 				nodeRepresentation.className += " highlight"
