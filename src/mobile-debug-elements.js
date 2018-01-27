@@ -91,18 +91,10 @@
 		var borderBox = templateToElement(templates.wrapper)
 		var paddingBox = templateToElement(templates.wrapper)
 
-		var constraints = templateToElement(templates.wrapper)
-
 		var eleStyle = window.getComputedStyle(ele)
-
-		var constraintsStyles = constraints.style
 		var marginStyles = marginBox.style
 		var borderStyles = borderBox.style
 		var paddingStyles = paddingBox.style
-
-		constraintsStyles.width = eleStyle.width
-		constraintsStyles.height = eleStyle.height
-		constraints.position = "relitive"
 
 		marginStyles.borderStyle = borderStyles.borderStyle = paddingStyles.borderStyle = "solid"
 		marginStyles.position = "absolute"
@@ -110,6 +102,7 @@
 		borderStyles.borderColor = "rgba(252, 252, 50, 0.5)"
 		paddingStyles.borderColor = "rgba(100, 252, 50, 0.5)"
 		paddingStyles.backgroundColor = "rgba(50, 160, 252, 0.5)"
+		paddingStyles.boxSizing = borderStyles.boxSizing = "border-box"
 
 		var eleStyles = window.getComputedStyle(ele)
 
@@ -117,30 +110,20 @@
 		borderStyles.borderBottomWidth = eleStyles.borderBottomWidth
 		borderStyles.borderLeftWidth = eleStyles.borderLeftWidth
 		borderStyles.borderRightWidth = eleStyles.borderRightWidth
-		borderStyles.position = "relitive"
+		borderStyles.width = ele.offsetWidth + "px"
+		borderStyles.height = ele.offsetHeight + "px"
 
 		paddingStyles.borderTopWidth = eleStyles.paddingTop
 		paddingStyles.borderBottomWidth = eleStyles.paddingBottom
 		paddingStyles.borderLeftWidth = eleStyles.paddingLeft
 		paddingStyles.borderRightWidth = eleStyles.paddingRight
-		paddingStyles.position = "absolute"
-		paddingStyles.width = paddingStyles.height = "100%"
+		paddingStyles.width = "100%"
+		paddingStyles.height = "100%"
 
 		marginStyles.borderTopWidth = eleStyles.marginTop
 		marginStyles.borderBottomWidth = eleStyles.marginBottom
 		marginStyles.borderLeftWidth = eleStyles.marginLeft
 		marginStyles.borderRightWidth = eleStyles.marginRight
-
-		if (eleStyle.boxSizing == "border-box") {
-			constraints.appendChild(borderBox)
-			borderBox.appendChild(paddingBox)
-			marginBox.appendChild(constraints)
-		}
-		else {
-			constraints.appendChild(paddingBox)
-			borderBox.appendChild(constraints)
-			marginBox.appendChild(borderBox)
-		}
 
 		document.body.insertBefore(marginBox, domDebugger)
 		marginBox.appendChild(borderBox)
