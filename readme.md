@@ -47,7 +47,7 @@ The goal is to create a self contained script that you add wherever you want in 
 
 The console that this script generates lives in the DOM of the document that it is debugging meaning styles in the debugger may leak to global elements and vice versa. to mitigate this, all class names and ids of html elements and their selectors are scrambled on build to protect external elements from receiving any of these styles. in the rare case that there is a styling conflict, feel free to re-build the project and that should re-scramble the class names and ids again to hopefully not conflict.
 
-```
+```bash
 cd /path/to/project/dependency/folder
 git clone https://github.com/muggy8/mobile-debug.git
 cd mobile-debug
