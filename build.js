@@ -101,7 +101,7 @@ new Promise(function(accept, reject){
     // the reason we do this is because the editor exists in the same realm as any user's window / document / context so we can mangle the CSS class names and stuff to help prevent any user CSS from the page the user is working on from leaking over to the editor or vice versa
     var mangleIdClassLegth = 6
     var mangleIdClassMap = {}
-	var manuallyCleanCode = minified.code.replace(/\\n|\\t|\s{2,}/gi, "")
+	var manuallyCleanCode = minified.code.replace(/(\\n|\\t|\s){2,}/gi, "")
 	manuallyCleanCode = manuallyCleanCode.replace(/(styles\+=")([^"]+)/g, function(match, styleEquals, css){
 		// todo: add mangle CSS ID and class name logic here
 		// regex for matching clas names https://regex101.com/r/LVMrbv/2
