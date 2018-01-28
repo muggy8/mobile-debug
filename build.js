@@ -86,7 +86,10 @@ new Promise(function(accept, reject){
 	dist.write(scriptWhole)
 
 	var minified = UglifyJS.minify(scriptWhole, {
-		ecma: 5
+		ecma: 5,
+		mangle: {
+			toplevel: true
+		}
 	})
 
     // we now begin manually cleaning the code by minifying the CSS that are inline but the real goal is to extract all the ID and class names so we can replace them with random strings
@@ -104,7 +107,7 @@ new Promise(function(accept, reject){
         })
 		return styleEquals + minifyCss(css).styles
 	})
-	
+
 	manuallyCleanCode
 		.replace(/\w\.id=["']([^"']+)["']/g, function(matched, idName){
 			mangleIdClassMap[idName] = generateId(mangleIdClassLegth)
