@@ -33,17 +33,20 @@ The current only other alternative is to use FireBug Lite which is awfully hard 
 
 Include the debugger in the html output of a page you'd like to inspect and any actions that comes after it will be recorded (XMLHttpRequests and Console.logs).
 
-```HTML
-<script src="path/to/mobile-debug.min.js"></script>```
+```html
+<script src="path/to/mobile-debug.min.js"></script>
+```
 
 You can also just insert it via javascript like
 
 ```javascript
-document.appendChild(document.createElement("script")).src="path/to/mobile-debug.min.js"```
+document.appendChild(document.createElement("script")).src="path/to/mobile-debug.min.js"
+```
 
 The goal is to create a self contained script that you add wherever you want in your html file and after the script loads, all subsequent JavaScript outputs/activity will be also captured by the in dom debugger.
 
 The console that this script generates lives in the DOM of the document that it is debugging meaning styles in the debugger may leak to global elements and vice versa. to mitigate this, all class names and ids of html elements and their selectors are scrambled on build to protect external elements from receiving any of these styles. in the rare case that there is a styling conflict, feel free to re-build the project and that should re-scramble the class names and ids again to hopefully not conflict.
+
 ```
 cd /path/to/project/dependency/folder
 git clone https://github.com/muggy8/mobile-debug.git
