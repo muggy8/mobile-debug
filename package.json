@@ -1,6 +1,6 @@
 {
     "name": "mobile-inspector",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "a mobile friendly front end javascript, css and html debugger",
     "main": "dist/mobile-debug.js",
     "scripts": {
