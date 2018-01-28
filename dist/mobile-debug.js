@@ -264,6 +264,18 @@
 		#mobile-debug .data-div {
 			cursor: pointer;
             white-space: nowrap;
+		}
+
+		#mobile-debug .console-controls:after {
+			content: " ";
+			display: block;
+			clear: both;
+		}
+		#mobile-debug .console-controls > *{
+			float: left;
+			width: 33.33%;
+			padding: 0.5em;
+			text-align: center;
 		}`
 
 	var domConsole = templateToElement(templates.wrapper)
@@ -286,8 +298,11 @@
 	var inputConsole = templateToElement(
 		`<div>
 			<textarea></textarea>
-			<button class="exec-btn">execute</button>
-			<button class="clear-btn">clear</button>
+			<div class="console-controls">
+				<button class="exec-btn">Execute</button>
+				<button class="clear-input-btn">Clear Input</button>
+				<button class="clear-output-btn">Clear Output</button>
+			</div>
 		</div>`
 	)
 
@@ -311,9 +326,13 @@
             inputTextArea.value = ""
         }
     })
-    
-    attachEvent(qs(inputConsole, ".clear-btn"), click, function(){
+
+    attachEvent(qs(inputConsole, ".clear-input-btn"), click, function(){
     	inputTextArea.value = ""
+    })
+
+    attachEvent(qs(inputConsole, ".clear-output-btn"), click, function(){
+    	domConsole.innerHTML = ""
     })
 
 	var consoleModule = templateToElement(templates.wrapper)
