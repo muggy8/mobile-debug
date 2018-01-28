@@ -77,6 +77,7 @@
 	domDebugger.styles += `
 		#mobile-debug {
 			border-color: #DDD;
+			font-family: sans-serif;
 		}
 		#mobile-debug * {
 			border-color: inherit;
