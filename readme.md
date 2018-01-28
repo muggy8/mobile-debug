@@ -75,13 +75,13 @@ In the console view. you can type anything into the input block and execute the 
 
 <table>
 	<tr>
-		</td>
+		<td>
 			<img src="https://i.imgur.com/kPbcYEP.jpg" >
 		</td>
-		</td>
+		<td>
 			<img src="https://i.imgur.com/AdOmtGa.jpg" >
 		</td>
-		</td>
+		<td>
 			<img src="https://i.imgur.com/AG190rI.png" >
 		</td>
 	</tr>
@@ -97,16 +97,16 @@ Below the 2 sections is a slider, this is for your conveniece so you can resize 
 
 <table>
 	<tr>
-		</td>
+		<td>
 			<img src="https://i.imgur.com/Q3iQpQJ.png" >
 		</td>
-		</td>
+		<td>
 			<img src="https://i.imgur.com/MaJASxG.png" >
 		</td>
-		</td>
+		<td>
 			<img src="https://i.imgur.com/dxPCIm2.png" >
 		</td>
-		</td>
+		<td>
 			<img src="https://i.imgur.com/XbwisPu.png" >
 		</td>
 	</tr>
