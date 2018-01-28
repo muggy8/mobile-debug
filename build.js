@@ -89,6 +89,11 @@ new Promise(function(accept, reject){
 		ecma: 5,
 		mangle: {
 			toplevel: true
+		},
+		compress: {
+			properties: true,
+			dead_code: true,
+			unused: true
 		}
 	})
 
