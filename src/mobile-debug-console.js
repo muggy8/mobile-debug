@@ -182,7 +182,7 @@
 		var logBlock = templateToElement(templates.wrapper)
 		logBlock.className += " type-log"
 
-		Array.prototype.forEach.call(arguments, function(item){
+		protoForEach(arguments, function(item){
 			append(logBlock, createAppropriateRepresentation(item))
 		})
 

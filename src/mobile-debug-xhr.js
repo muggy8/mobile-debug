@@ -120,7 +120,7 @@
 
 	var generateXhrListView = function(){
 		// clear all children first
-		Array.prototype.forEach.call(xhrList.children, function(item){
+		protoForEach(xhrList.children, function(item){
 			xhrList.removeChild(item)
 		})
 
