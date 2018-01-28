@@ -47,7 +47,7 @@
 	var domDebugger = templateToElement(templates.wrapper)
 	domDebugger.id = "mobile-debug"
 	var stylesBlock = templateToElement(`<style></style>`)
-	append(domDebuggerstylesBlock)
+	append(domDebugger, stylesBlock)
 
 	Object.defineProperty(domDebugger, "styles", {
 		enumerable: false,
