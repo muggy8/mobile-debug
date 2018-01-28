@@ -3,25 +3,27 @@
 <table>
 	<tr>
 		<td>
-			<img src="https://i.imgur.com/fzjaNpC.png">
+			<img src="https://i.imgur.com/v1TxsUX.jpg">
 		</td>
 		<td>
-			<img src="https://i.imgur.com/eJCz0px.png">
+			<img src="https://i.imgur.com/Q3iQpQJ.png">
 		</td>
 		<td>
-			<img src="https://i.imgur.com/0VSeXNi.png">
+			<img src="https://i.imgur.com/kPbcYEP.jpg">
 		</td>
 		<td>
-			<img src="https://i.imgur.com/RMLMIgh.png">
+			<img src="https://i.imgur.com/hHblcYZ.png">
 		</td>
 	</tr>
 </table>
 
-This project is a current Work-in-Progress for a fire-bug style debugger for debugging web application on mobile devices. The current goal of this project is to create a debugger that is rendered in DOM and included with a single javascript file and allows you to view and edit CSS rules, evaluate JS code and view XMLHttpRequests. As these things are the most basic aspects of creating and debugging a web app
+This project is a HTML debugger for mobile devices. The Goal of this project is to create a light weight inspector that can be included with a line of javascript and provides basic debugging for HTML, XMLHttpRequests and a viewable and interactive console.
+
+The goal of this project is not to replace remote debugging but to provide the basic tools to developers who are often on the go without a computer at hand. For many of the more difficult tasks that you need to perform to optimize and debug your application, remote debugging is still the best option.
 
 ## Why
 
-There are various tools out there for debugging web sites on your mobile devices in Chrome and FireFox but the main reason you want to use a debugger like this is for when you are debugging and coding things on the fly and you do not have a computer at your disposal. (eg: you are on vacation and your client calls you about a serious bug, and you do not have a laptop handy to fix the bug, something like this is going to be very helpful)
+There are various tools out there for debugging web sites on your mobile devices in Chrome and FireFox but the main reason you want to use a debugger like this is for when you are debugging and coding things on away from your computer. (eg: you are on vacation and your client calls you about a serious bug, and you do not have a laptop handy to fix the bug, something like this is going to be very helpful)
 
 But in all seriousness, I want to make a game on my spare time and since I don't have that much time on my hands, I've decided to use my time on public transit each day. as a result I wanted something to let me develop my web app / game without a computer.
 
@@ -30,8 +32,11 @@ The current only other alternative is to use FireBug Lite which is awfully hard 
 ## Usage
 
 Include the debugger in the html output of a page you'd like to inspect and any actions that comes after it will be recorded.
+
 ```<script src="path/to/mobile-debug.min.js"></script>```
+
 You can also just insert it via javascript like
+
 ```document.appendChild(document.createElement("script")).src="path/to/mobile-debug.min.js"```
 
 The goal is to create a self contained script that you add wherever you want in your html file and after the script loads, all subsequent javascript outputs/activity will be also captured by the in dom debugger.
@@ -45,6 +50,70 @@ npm install
 node build
 ```
 
-## Current State
+## Interactions
 
-The core feature of the projects are complete and can be used in various web based environment to edit CSS, explore Dom and evaluate code. There are still a lot of bugs that are to be hammered out and some strange behaviors and minor features that still needs to be built but in general, this is good enough to be used for the main purpose it was created for.
+The inspector takes up the form of a small bar at the bottom of your page, you can feel feel to click on any of the 3 main tabs to bring up that part of the Inspector
+
+<table>
+	<tr>
+		<td>
+			<img src="https://i.imgur.com/v1TxsUX.jpg">
+		</td>
+		<td>
+			<img src="https://i.imgur.com/Q3iQpQJ.png">
+		</td>
+		<td>
+			<img src="https://i.imgur.com/kPbcYEP.jpg">
+		</td>
+		<td>
+			<img src="https://i.imgur.com/hHblcYZ.png">
+		</td>
+	</tr>
+</table>
+
+In the console view. you can type anything into the input block and execute the script. Doing this will clear the input area. if you want to load in a previous input, you can click on the "Input: ..." chunk in the console output to load that chunk of code into the input area. If you output an object, you can double click that object to view the properties of that object. This action is recurisve
+
+<table>
+	<tr>
+		</td>
+			<img src="https://i.imgur.com/kPbcYEP.jpg" >
+		</td>
+		</td>
+			<img src="https://i.imgur.com/AdOmtGa.jpg" >
+		</td>
+		</td>
+			<img src="https://i.imgur.com/AG190rI.png" >
+		</td>
+	</tr>
+</table>
+
+The Inspector view has 2 halfs the left half is the list of all the elements in the view and the right half is the selected element's styles. you can traverse your elements by double clicking any particular node and it will expand allowing you to explore further. By default nothing is expanded and the only element in view is the HTML element.
+
+you can single click on any node and highligh it doing this will also highlight the node in the actual page showing you the Box Model. This may not work well if you are using Transform in your HTML. to get rid of the highlight, you can click on anywhere in the highlighted area to make it go away.
+
+On the right side is the CSS rules that currently apply to the element you have selected. You can use this to change any CSS styling of any HTML element.
+
+Below the 2 sections is a slider, this is for your conveniece so you can resize the 2 halfs of the inspector as you choose
+
+<table>
+	<tr>
+		</td>
+			<img src="https://i.imgur.com/Q3iQpQJ.png" >
+		</td>
+		</td>
+			<img src="https://i.imgur.com/MaJASxG.png" >
+		</td>
+		</td>
+			<img src="https://i.imgur.com/dxPCIm2.png" >
+		</td>
+		</td>
+			<img src="https://i.imgur.com/XbwisPu.png" >
+		</td>
+	</tr>
+</table>
+
+The XHR tab is read only. it shows you a list of calls the current page has made and clicking on them will allow you to view it's response. The viewer doesn't attempt to prettify anything so what you see is what was recieved.
+
+You can alternatively click on stats to view the headers sent and headers recieved as well as a good slew of other options that you may find useful if they are sent (eg request body)
+
+<img src="https://i.imgur.com/hHblcYZ.png">
