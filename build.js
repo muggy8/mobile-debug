@@ -47,7 +47,7 @@ new Promise(function(accept, reject){
     })
 }).then(function(html){
     var getScriptPromises = html
-		.match(/<script[^>]+><\/script>/gi)
+		.match(/<script[^>]+>[^<]*<\/script>/gi)
 		.map(function(script){
 			var srcMatch = script.match(/src=\"([^"]+)\"/i)
 			if (srcMatch){

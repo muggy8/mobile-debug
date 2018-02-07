@@ -112,3 +112,8 @@
 			calculateBodyExtention()
 		}
 	})
+
+	var debuggerConfig = JSON.parse(document.currentScript.innerHTML)
+	for(var key in debuggerConfig.style){
+		domDebugger.style[key] = debuggerConfig.style[key]
+	}
