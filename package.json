@@ -1,8 +1,8 @@
 {
     "name": "mobile-inspector",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "a mobile friendly front end javascript, css and html debugger",
-    "main": "dist/mobile-debug.js",
+    "main": "dist/mobile-debug.min.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
