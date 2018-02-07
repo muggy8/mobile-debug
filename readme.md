@@ -124,3 +124,27 @@ The XHR tab is read only. it shows you a list of calls the current page has made
 You can alternatively click on stats to view the headers sent and headers received as well as a good slew of other options that you may find useful if they are sent (eg request body)
 
 <img src="https://i.imgur.com/hHblcYZ.png">
+
+## Configurations
+I don't really want to do this but it seem the most elegant solution to a z-index issue. You can put a JSON string into the body of the script tag which will be parsed with JSON.Parse and will allow different configurations for the Debugger.
+
+#### style
+```html
+<script src="path/to/mobile-debug.min.js">
+	{
+		"style": {
+			"zIndex": 1337,
+			"backgroundColor": "#BBB"
+		}
+	}
+</script>
+```
+The Style attribute pipes directly into the debugger's style attribute. This means it's equivilant of setting those styles by code like
+
+```javascript
+var debugger = document.querySelector("#mobile-debug")
+debugger.style.zIndex = 1337
+debugger.style.backgroundColor = "#BBB"
+```
+
+This is less doable in the minified version as the IDs and Classes of the debugger is scrambled on build to help prevent leakage of external styles into the debugger
