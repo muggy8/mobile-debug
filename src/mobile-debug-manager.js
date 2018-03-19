@@ -113,7 +113,10 @@
 		}
 	})
 
-	var debuggerConfig = JSON.parse(document.currentScript.innerHTML)
-	for(var key in debuggerConfig.style){
-		domDebugger.style[key] = debuggerConfig.style[key]
-	}
+    var debuggerConfig = document.currentScript.innerHTML
+    if (debuggerConfig){
+        var debuggerConfig = JSON.parse(debuggerConfig)
+    	for(var key in debuggerConfig.style){
+    		domDebugger.style[key] = debuggerConfig.style[key]
+    	}
+    }
