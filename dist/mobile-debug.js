@@ -532,8 +532,10 @@
         var foundRules = []
         // loop over style sheets in reverse order to find relivant style rules
         for (var i = document.styleSheets.length; i > 0; !function(styleSheet){
-            var rules = styleSheet.rules || styleSheet.cssRules
-            if (!rules){ // the stylesheet api sometimes wont give us styles because of CROS
+            try {
+                var rules = styleSheet.rules || styleSheet.cssRules
+            }
+            catch (o3o){ // the stylesheet api sometimes wont give us styles because of CROS
                 return
             }
             // loop over stylesheet rules in reverse order to find rules that apply to the element
@@ -1007,8 +1009,11 @@
 		}
 	})
 
-	var debuggerConfig = JSON.parse(document.currentScript.innerHTML)
-	for(var key in debuggerConfig.style){
-		domDebugger.style[key] = debuggerConfig.style[key]
-	}
+    var debuggerConfig = document.currentScript.innerHTML
+    if (debuggerConfig){
+        var debuggerConfig = JSON.parse(debuggerConfig)
+    	for(var key in debuggerConfig.style){
+    		domDebugger.style[key] = debuggerConfig.style[key]
+    	}
+    }
 })()
