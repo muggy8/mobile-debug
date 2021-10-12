@@ -74,70 +74,78 @@ new Promise(function(accept, reject){
 
 	return Promise.all(getScriptPromises)
 }).then(function(scriptBodies){
-	var dist = fs.createWriteStream("dist/mobile-debug.js")
-	var scriptWhole = "(function(){"
+	var scriptWhole = ""
 	scriptBodies.forEach(function(file){
 		if (file){
 			scriptWhole += "\n// file " + file.src + "\n" + file.contents
 		}
 	})
-	scriptWhole += "})()"
 
-	dist.write(scriptWhole)
+	var basicBulk = `(function(){${scriptWhole}})()`
+	var configurableBulk = `(function(init){var regex = RegExp('debug'); (regex.exec(document.location.search) || regex.exec(document.location.hash)) && init()})(function(){${scriptWhole}})`
 
-	var minified = UglifyJS.minify(scriptWhole, {
-		ecma: 5,
-		mangle: {
-			toplevel: true
-		},
-		compress: {
-			properties: true,
-			dead_code: true,
-			unused: true
-		}
-	})
+	var dist = fs.createWriteStream("dist/mobile-debug.js")
+	dist.write(basicBulk)
+	var configurableDist = fs.createWriteStream("dist/mobile-debug.live.js")
+	dist.write(configurableBulk)
+	mangleAndSave(configurableBulk, "dist/mobile-debug.live.min.js")
 
-    // we now begin manually cleaning the code by minifying the CSS that are inline but the real goal is to extract all the ID and class names so we can replace them with random strings
-    // the reason we do this is because the editor exists in the same realm as any user's window / document / context so we can mangle the CSS class names and stuff to help prevent any user CSS from the page the user is working on from leaking over to the editor or vice versa
-    var mangleIdClassLegth = 6
-    var mangleIdClassMap = {}
-	var manuallyCleanCode = minified.code.replace(/(\\n|\\t|\s){2,}/gi, "")
-	manuallyCleanCode = manuallyCleanCode.replace(/(styles\+=")([^"]+)/g, function(match, styleEquals, css){
-		// todo: add mangle CSS ID and class name logic here
-		// regex for matching clas names https://regex101.com/r/LVMrbv/2
-        var selectorsOnly = css.replace(/\{[^}]*\}/g, "")
-
-        selectorsOnly.replace(/([#\.>\s])([^#.{\s,>]+)/g, function(matched, type, classOrId){
-        	( type == "#" || type == "." ) && (mangleIdClassMap[classOrId] = generateId(mangleIdClassLegth))
-        })
-		return styleEquals + minifyCss(css).styles
-	})
-
-	manuallyCleanCode
-		.replace(/\w\.id=["']([^"']+)["']/g, function(matched, idName){
-			mangleIdClassMap[idName] = generateId(mangleIdClassLegth)
-			return matched
+	function mangleAndSave(code, saveLocation){
+		var minified = UglifyJS.minify(code, {
+			ecma: 5,
+			mangle: {
+				toplevel: true
+			},
+			compress: {
+				properties: true,
+				dead_code: true,
+				unused: true
+			}
 		})
-		.replace(/class=["']([^"']+)/g, function(matched, classNames){
-			classNames = classNames.split(" ")
-			classNames.forEach(function(cls){
-				if (cls){
-					mangleIdClassMap[cls] = generateId(mangleIdClassLegth)
-				}
+
+	  // we now begin manually cleaning the code by minifying the CSS that are inline but the real goal is to extract all the ID and class names so we can replace them with random strings
+	  // the reason we do this is because the editor exists in the same realm as any user's window / document / context so we can mangle the CSS class names and stuff to help prevent any user CSS from the page the user is working on from leaking over to the editor or vice versa
+	  var mangleIdClassLegth = 6
+	  var mangleIdClassMap = {}
+		var manuallyCleanCode = minified.code.replace(/(\\n|\\t|\s){2,}/gi, "")
+		manuallyCleanCode = manuallyCleanCode.replace(/(styles\+=")([^"]+)/g, function(match, styleEquals, css){
+			// todo: add mangle CSS ID and class name logic here
+			// regex for matching clas names https://regex101.com/r/LVMrbv/2
+	        var selectorsOnly = css.replace(/\{[^}]*\}/g, "")
+
+	        selectorsOnly.replace(/([#\.>\s])([^#.{\s,>]+)/g, function(matched, type, classOrId){
+	        	( type == "#" || type == "." ) && (mangleIdClassMap[classOrId] = generateId(mangleIdClassLegth))
+	        })
+			return styleEquals + minifyCss(css).styles
+		})
+
+		manuallyCleanCode
+			.replace(/\w\.id=["']([^"']+)["']/g, function(matched, idName){
+				mangleIdClassMap[idName] = generateId(mangleIdClassLegth)
+				return matched
 			})
+			.replace(/class=["']([^"']+)/g, function(matched, classNames){
+				classNames = classNames.split(" ")
+				classNames.forEach(function(cls){
+					if (cls){
+						mangleIdClassMap[cls] = generateId(mangleIdClassLegth)
+					}
+				})
+			})
+
+	    console.log(mangleIdClassMap)
+
+	    for(var replaceTarget in mangleIdClassMap){
+	        var replaceWith = mangleIdClassMap[replaceTarget]
+	        manuallyCleanCode = stringReplaceAll(manuallyCleanCode, replaceTarget, replaceWith)
+	    }
+
+		fs.writeFile(saveLocation, manuallyCleanCode, function(err){
+			err && console.log(err)
 		})
+		//console.log(minified.code)
+	}
 
-    console.log(mangleIdClassMap)
-
-    for(var replaceTarget in mangleIdClassMap){
-        var replaceWith = mangleIdClassMap[replaceTarget]
-        manuallyCleanCode = stringReplaceAll(manuallyCleanCode, replaceTarget, replaceWith)
-    }
-
-	fs.writeFile("dist/mobile-debug.min.js", manuallyCleanCode, function(err){
-		err && console.log(err)
-	})
-	//console.log(minified.code)
 }).catch(function(err){
 	console.log(err)
 })
