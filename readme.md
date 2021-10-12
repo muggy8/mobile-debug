@@ -123,6 +123,8 @@ The XHR tab is read only. it shows you a list of calls the current page has made
 
 You can alternatively click on stats to view the headers sent and headers received as well as a good slew of other options that you may find useful if they are sent (eg request body)
 
+As of version 1.1.0, the XHR view will also support displaying data sent using the [fetch api](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
+
 <img src="https://i.imgur.com/hHblcYZ.png">
 
 ## Configurations
@@ -148,3 +150,5 @@ debugger.style.backgroundColor = "#BBB"
 ```
 
 This is less doable in the minified version as the IDs and Classes of the debugger is scrambled on build to help prevent leakage of external styles into the debugger
+
+as of version 1.1.0, there's 2 variants of the script. one set is labeled `live` and the other set is not labeled anything. The `live` version is for use in production. It will not trigger the debugger unless you include `debug` in the URL of the current page when loading. The normal version will works as normal and will immediately create the debugger upon the script loading.
