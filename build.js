@@ -86,8 +86,10 @@ new Promise(function(accept, reject){
 
 	var dist = fs.createWriteStream("dist/mobile-debug.js")
 	dist.write(basicBulk)
+	mangleAndSave(basicBulk, "dist/mobile-debug.min.js")
+
 	var configurableDist = fs.createWriteStream("dist/mobile-debug.live.js")
-	dist.write(configurableBulk)
+	configurableDist.write(configurableBulk)
 	mangleAndSave(configurableBulk, "dist/mobile-debug.live.min.js")
 
 	function mangleAndSave(code, saveLocation){
