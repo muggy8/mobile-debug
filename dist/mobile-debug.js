@@ -691,6 +691,8 @@
 
 // file src/mobile-debug-xhr.js
 	var xhrHistory = {}
+
+	// part 1: replace the XHR prototype methods
 	var activeXhrs = []
 	var protoXhr = XMLHttpRequest.prototype
 	var xhrOpen = protoXhr.open
@@ -786,6 +788,60 @@
 			})
 		}
 	})
+
+	// part 2: replace the fetch method
+	if (typeof window.fetch != "undefined"){
+		var originalFetch = window.fetch
+		window.fetch = function(){
+			var url = arguments[0]
+			var configs = arguments[1]
+			var actualFetchOpperation = arguments.length > 1 ? originalFetch(url, configs) : originalFetch(url)
+
+			if (typeof url !== "string"){
+				url = url.toString()
+			}
+
+			var record = {}
+			record.url = url
+			record.fetch = actualFetchOpperation
+			if (!configs){
+				record.method = "GET"
+			}
+			else{
+				record.method = configs.method || "GET"
+				var configHeaders = configs.headers
+				if (configHeaders instanceof Headers){
+					tempHeaders = {}
+					configHeaders.forEach(function(value, key){
+						tempHeaders[key] = value
+					})
+					configHeaders = tempHeaders
+				}
+				record.sentHeaders = configHeaders
+
+				if (configs.body){
+					record.body = configs.body
+				}
+			}
+
+			xhrHistory[record.method + ":" + url] = record
+			generateXhrListView && generateXhrListView()
+
+			actualFetchOpperation.then(function(fetchResult){
+				fetchResult = fetchResult.clone()
+				record.status = fetchResult.status
+				fetchResult.text().then(function(fetchResultText){
+					record.responce = fetchResultText
+				})
+				record.recievedHeaders = {}
+				fetchResult.headers.forEach(function(value, key){
+					record.recievedHeaders[key] = value
+				})
+			})
+
+			return actualFetchOpperation
+		}
+	}
 
 	var xhrModule = templateToElement(templates.wrapper)
 	var xhrList = templateToElement(templates.wrapper)
