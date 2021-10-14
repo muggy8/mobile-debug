@@ -126,8 +126,8 @@
 		marginStyles.borderLeftWidth = eleStyles.marginLeft
 		marginStyles.borderRightWidth = eleStyles.marginRight
 
-		marginStyles.top = (elePos.top - parseFloat(stringReplace(eleStyles.marginTop, "px", ""))) + "px"
-		marginStyles.left = (elePos.left - parseFloat(stringReplace(eleStyles.marginLeft, "px", ""))) + "px"
+		marginStyles.top = (window.scrollY + elePos.top - parseFloat(stringReplace(eleStyles.marginTop, "px", ""))) + "px"
+		marginStyles.left = (window.scrollX + elePos.left - parseFloat(stringReplace(eleStyles.marginLeft, "px", ""))) + "px"
 
 		append(marginBox, borderBox)
 		append(borderBox, paddingBox)
