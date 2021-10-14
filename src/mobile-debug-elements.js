@@ -9,7 +9,7 @@
 
 	var currentHighligher
 	var createDomHtmlRepresentation = function(ele){
-		if (!ele){
+		if (!ele || ele === domDebugger || ele === currentHighligher){
 			return
 		}
 
@@ -42,7 +42,7 @@
 				protoMap(childNodes, function(item){
 					return createDomHtmlRepresentation(item)
 				}).forEach(function(item){
-					append(appendTarget, item)
+					item && append(appendTarget, item)
 				})
 
 				nodeRepresentation.dblclickAction = hide
@@ -81,6 +81,10 @@
 		}
 		else if (ele instanceof Text){
 			systemLog = true;
+			if (!ele.nodeValue.trim()){
+				return
+			}
+			
 			return createDomStringRepresentation(ele.nodeValue)
 		}
 
